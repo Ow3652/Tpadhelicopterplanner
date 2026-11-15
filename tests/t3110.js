@@ -1,0 +1,26 @@
+const {chromium}=require('playwright');(async()=>{
+const b=await chromium.launch();const c=await b.newContext({viewport:{width:1180,height:820}});
+const p=await c.newPage();const er=[];p.on('pageerror',e=>er.push(e.message));
+let mode='ok',urls=[];
+await p.route('**/script.google.com/**',r=>{const u=r.request().url();urls.push(u);
+ if(mode==='ok')return r.fulfill({status:200,contentType:'text/plain',headers:{'access-control-allow-origin':'*'},body:u.includes('type=taf')?'TAF VTBD 060500Z 0606/0712 18008KT 9999 SCT020':'METAR VTBD 060230Z VRB02KT 9999 FEW030 30/24 Q1015 NOSIG\nMETAR VTBD 060200Z VRB03KT 9999 FEW030 29/24 Q1015 NOSIG'});
+ if(mode==='error')return r.fulfill({status:200,contentType:'text/plain',headers:{'access-control-allow-origin':'*'},body:'ERROR: aviationweather.gov ตอบ HTTP 500'});
+ if(mode==='empty')return r.fulfill({status:200,contentType:'text/plain',headers:{'access-control-allow-origin':'*'},body:''});
+ return r.abort()});
+await p.route('**/aviationweather.gov/**',r=>{urls.push('DIRECT '+r.request().url());return r.abort()});
+await p.goto('http://localhost:8765/'+encodeURIComponent('Tpad helicopter planner v4.1.6.html'));await p.waitForTimeout(5000);
+const open=async code=>{await p.evaluate(code=>{const i=DB.AP.findIndex(q=>(q.c||'').trim()===code),a=DB.AP[i],w=wp(a.la,a.lo,M.z);M.cx=w[0];M.cy=w[1];M.touched=true;M.pop={c:'AP',i};drawMap(false)},code);await p.waitForTimeout(400)};
+const txt=async()=>(await p.locator('#awxo').innerText()).replace(/\n/g,' / ');
+await open('VTBD');
+console.log('title',await p.title());
+await p.click('#pop [data-wx="METAR:VTBD"]');await p.waitForTimeout(500);console.log('1 no proxy:',await txt());
+await p.evaluate(()=>{AC.px="https://script.google.com/macros/s/TESTID/exec";acSave()});
+await p.click('#pop [data-wx="METAR:VTBD"]');await p.waitForTimeout(500);console.log('2 proxy ok:',await txt());
+await p.click('#pop [data-wx="TAF:VTBD"]');await p.waitForTimeout(500);console.log('3 taf:',await txt());
+mode='error';await p.click('#pop [data-wx="METAR:VTBD"]');await p.waitForTimeout(500);console.log('4 ERROR body:',await txt());
+mode='empty';await p.click('#pop [data-wx="METAR:VTBD"]');await p.waitForTimeout(500);console.log('5 empty:',await txt());
+mode='abort';await p.click('#pop [data-wx="METAR:VTBD"]');await p.waitForTimeout(500);console.log('6 proxy fail:',await txt());
+await p.evaluate(()=>{AC.px="https://script.google.com/macros/s/TESTID/exec?a=1"});mode='ok';await p.click('#pop [data-wx="TAF:VTBD"]');await p.waitForTimeout(500);
+console.log('urls');urls.forEach(u=>console.log('  ',u));
+await p.screenshot({path:'/tmp/t/wx2.png'});
+console.log('errors',er);await b.close()})();

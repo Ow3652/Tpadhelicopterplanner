@@ -1,0 +1,7 @@
+# ไม่ขึ้นรีโป
+archive/
+*.xlsx
+heli-route-planner.html
+artifacts/
+node_modules/
+*.log

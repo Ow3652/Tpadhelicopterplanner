@@ -1,0 +1,2 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await (await b.newContext()).newPage();const er=[];p.on('pageerror',e=>er.push(e.message));await p.goto('http://localhost:8765/'+encodeURIComponent('Tpad helicopter planner v4.1.3.html'));await p.waitForTimeout(800);
+console.log(await p.evaluate(()=>{const v=eval("DB.VOR");return JSON.stringify(v.filter(x=>x.c==='HHN'))+" count "+v.length}),er);await b.close()})()

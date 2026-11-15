@@ -1,0 +1,7 @@
+const {chromium}=require('playwright');(async()=>{
+const b=await chromium.launch();const p=await (await b.newContext({viewport:{width:1180,height:820}})).newPage();const er=[];p.on('pageerror',e=>er.push(e.message));await p.goto('http://localhost:8765/'+encodeURIComponent('Tpad helicopter planner v4.1.2.html'));await p.waitForTimeout(800);
+await p.evaluate(()=>{pts=[{name:'A',lat:'1400.00N',lon:'10100.00E'},{name:'B',lat:'1406.00N',lon:'10100.00E'},{name:'C',lat:'1406.00N',lon:'10108.00E'}];drawPts()});
+await p.click('#fs');await p.waitForTimeout(300);await p.click('#uis');await p.click('#fib');await p.click('#simbtn');await p.click('#smrun');
+await p.evaluate(()=>{RMION=true;HSION=true;instUpd();navGo();const L=navList();directTo("",L.b[1]);M.z=13;gpsCenter()});await p.waitForTimeout(600);
+const r=await p.evaluate(()=>{const g=[...document.querySelectorAll('#ov path')].find(x=>x.getAttribute('fill')==='#1a73e8');const bb=g.getBoundingClientRect();const x=bb.x+bb.width/2,y=bb.y+bb.height*0.6;const st=document.elementsFromPoint(x,y).map(e=>e.tagName+(e.id?'#'+e.id:'')+(e.getAttribute&&e.getAttribute('class')?'.'+e.getAttribute('class'):''));const ov=document.getElementById('ov');const kids=[...ov.children].slice(-6).map(e=>e.tagName+':'+(e.getAttribute('class')||'')+':'+(e.innerHTML||'').slice(0,40));return{st:st.slice(0,6),kids}});
+console.log(JSON.stringify(r,null,1));await p.screenshot({path:'s2300.png',clip:{x:380,y:260,width:420,height:300}});console.log(er);await b.close()})()
