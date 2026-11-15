@@ -2,9 +2,9 @@
 
 โปรแกรมวางแผนเส้นทางบินเฮลิคอปเตอร์ (ไฟล์ HTML ไฟล์เดียว) สำหรับงานการบินตำรวจ ใช้ได้บน PC / iPad / Google Sites
 
-- ใช้งาน: https://ow3652.github.io/Tpadhelicopterplanner/
+- ใช้งาน: https://ow3652.github.io/Tpadhelicopterplanner/ (เปิดใน Safari แล้ว "เพิ่มไปยังหน้าจอโฮม" เพื่อใช้ออฟไลน์ได้)
 - ประวัติการเปลี่ยนแปลง: [CHANGELOG.md](CHANGELOG.md)
-- คู่มือ: โฟลเดอร์ [docs/](docs/) (เป็นของ v4.1.6 ยังไม่ปรับให้ตรง v4.2.x)
+- คู่มือ: โฟลเดอร์ [docs/](docs/) (ฉบับ v4.2.3)
 - สคริปต์ Google Apps Script: `Pub_point Apps Script.gs` (จุดร่วม + ข้อมูลส่วนตัวรายคน), `METAR proxy Apps Script.gs`, `ADSB proxy Apps Script.gs`
 - ชุดทดสอบ: [tests/](tests/) (Playwright จำลองใน Chromium ไม่ใช่อุปกรณ์จริง)
 

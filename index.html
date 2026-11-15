@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.2.3</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.3.0</title>
+<meta name="theme-color" content="#0f6c78">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tpad Heli">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -272,6 +278,12 @@ svg.plot{width:100%;height:auto;background:var(--field);border:1px solid var(--l
 .saved{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
 .saved:last-child{border-bottom:0}
 .saved small{color:var(--mute);display:block}
+#pwabar{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:6px;align-items:center;max-width:92vw;pointer-events:none}
+#pwabar>div{pointer-events:auto;background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:8px;font-size:13px;line-height:1.4;box-shadow:0 2px 10px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+#pwabar .pwoff{background:var(--err);color:#fff}
+#pwabar button{font:inherit;border:0;border-radius:6px;padding:5px 10px;cursor:pointer;background:var(--accent);color:var(--accent-ink);min-height:32px}
+#pwabar button.pwlater{background:transparent;color:inherit;border:1px solid currentColor}
+@media print{#pwabar{display:none!important}}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;max-width:90vw;display:none;z-index:40}
 textarea{width:100%;min-height:120px;font:12px/1.4 ui-monospace,Menlo,monospace;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px}
 details{margin-top:12px}
@@ -471,7 +483,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.2.3</h1><div class="hr"><button class="b s" id="fs0" type="button" aria-label="เปิดแผนที่เต็มจอ">⛶ แผนที่เต็มจอ</button><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.3.0</h1><div class="hr"><button class="b s" id="fs0" type="button" aria-label="เปิดแผนที่เต็มจอ">⛶ แผนที่เต็มจอ</button><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -2508,7 +2520,7 @@ async function saveFile(fn,text,mime){let d=null;try{d=window.claude&&await clau
 if(d){try{await d.save({filename:fn,data:text});return true}catch(e){if(e&&e.code==="declined")return false}}
 try{const u=URL.createObjectURL(new Blob([text],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return true}catch(e){return false}}
 function embeddedHtml(){const c=document.documentElement.cloneNode(true),q=x=>c.querySelector(x);
-["#tl","#ov","#plog","#pts","#res-out","#list","#slist","#qr","#qn","#chips","#lbrb","#lbsb","#lbab","#mselb","#ctm","#fp","#wx","#pop","#ulist","#heli","#lay","#qc","#toast","#shb","#pl5l","#cvout","#pl5m","#fqr","#fqn"].forEach(x=>{const e=q(x);if(e)e.innerHTML=""});
+["#tl","#ov","#plog","#pts","#res-out","#list","#slist","#qr","#qn","#chips","#lbrb","#lbsb","#lbab","#mselb","#ctm","#fp","#wx","#pop","#ulist","#heli","#lay","#qc","#toast","#pwabar","#shb","#pl5l","#cvout","#pl5m","#fqr","#fqn"].forEach(x=>{const e=q(x);if(e)e.innerHTML=""});
 ["#lbr","#lbs","#lba","#msel","#mpt"].forEach(x=>{const e=q(x);if(e)e.classList.remove("on")});
 ["#fp","#pop","#gd","#ctm"].forEach(x=>{const e=q(x);if(e)e.setAttribute("hidden","")});
 ["#pop","#toast"].forEach(x=>{const e=q(x);if(e)e.removeAttribute("style")});
@@ -2517,7 +2529,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.2.3 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.3.0 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4125,6 +4137,37 @@ window.hsiCard=function(){const h=(typeof cardHD==="function")?cardHD():null;con
 window.simStart=start;window.simStop=stop;
 function init(){build();}
 init()})();
+</script>
+<script id="pwa">
+/* PWA v4.3.0: ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+   อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
+(function(){
+var bar=null,offEl=null,accepted=false;
+function getBar(){if(!bar){bar=document.createElement("div");bar.id="pwabar";document.body.appendChild(bar)}return bar}
+function setOffline(){var off=("onLine" in navigator)&&!navigator.onLine;
+ if(off&&!offEl){offEl=document.createElement("div");offEl.className="pwoff";offEl.textContent="⚠ ออฟไลน์ · METAR/TAF, ADS-B และซิงก์ชีตใช้ไม่ได้ (ส่วนอื่นใช้ได้ตามปกติ)";getBar().appendChild(offEl)}
+ else if(!off&&offEl){offEl.remove();offEl=null;try{toast("กลับมาออนไลน์แล้ว")}catch(e){}}}
+window.addEventListener("online",setOffline);window.addEventListener("offline",setOffline);setOffline();
+if(!("serviceWorker" in navigator)||!/^https?:$/.test(location.protocol))return;
+var updEl=null;
+function promptUpdate(w){if(updEl)return;updEl=document.createElement("div");updEl.id="pwaupd";
+ var t=document.createElement("span");t.textContent="มีเวอร์ชันใหม่ของแอป · การอัปเดตจะโหลดหน้าใหม่ ควรบันทึกเส้นทางก่อน";
+ var ok=document.createElement("button");ok.type="button";ok.textContent="อัปเดตตอนนี้";
+ var no=document.createElement("button");no.type="button";no.className="pwlater";no.textContent="ภายหลัง";
+ ok.onclick=function(){accepted=true;ok.disabled=true;ok.textContent="กำลังอัปเดต…";try{w.postMessage("SKIP_WAITING")}catch(e){location.reload()}};
+ no.onclick=function(){updEl.remove();updEl=null};
+ updEl.append(t,ok,no);getBar().appendChild(updEl)}
+navigator.serviceWorker.addEventListener("controllerchange",function(){if(accepted){accepted=false;location.reload()}});
+navigator.serviceWorker.register("sw.js").then(function(reg){
+ if(reg.waiting&&navigator.serviceWorker.controller)promptUpdate(reg.waiting);
+ reg.addEventListener("updatefound",function(){var nw=reg.installing;if(!nw)return;
+  nw.addEventListener("statechange",function(){if(nw.state==="installed"){
+   if(navigator.serviceWorker.controller)promptUpdate(nw);
+   else{try{toast("เก็บแอปไว้ใช้ออฟไลน์แล้ว")}catch(e){}}}})});
+ function chk(){if(navigator.onLine!==false)reg.update().catch(function(){})}
+ setTimeout(chk,3000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});setInterval(chk,30*60*1000);
+}).catch(function(){});
+})();
 </script>
 </body>
 </html>
