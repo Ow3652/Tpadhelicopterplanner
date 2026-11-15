@@ -24,7 +24,7 @@ await p.goto(U);await p.waitForTimeout(1500);
 await p.waitForFunction(()=>navigator.serviceWorker.getRegistration().then(r=>r&&r.active&&r.active.state==='activated'),null,{timeout:15000}).catch(()=>{});
 const st=await p.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();const ks=await caches.keys();const c=ks.length?await caches.open(ks[0]):null;const ents=c?(await c.keys()).map(x=>new URL(x.url).pathname):[];return{act:!!(r&&r.active),state:r&&r.active&&r.active.state,ks,ents,man:document.querySelector('link[rel=manifest]').href}});
 t('P1 SW active',st.act&&st.state==='activated',st.state);
-t('P1 cache ชื่อ tpad-'+ver,st.ks.includes('tpad-'+ver),st.ks);
+t('P1 cache ชื่อ tpad-'+ver+'-<build>',st.ks.length===1&&st.ks[0].startsWith('tpad-'+ver+'-b'),st.ks);
 t('P1 precache ครบ 6 รายการ',['/index.html','/manifest.json','/icon-192.png','/icon-512.png','/apple-touch-icon.png'].every(x=>st.ents.includes(x))&&st.ents.some(x=>x==='/'),st.ents);
 const mj=await (await p.request.get(U+'manifest.json')).json();t('P1 manifest ใช้ได้ (standalone, start_url ./)',mj.display==='standalone'&&mj.start_url==='./'&&mj.icons.length>=2);
 for(const i of mj.icons){const r=await p.request.get(U+i.src);t('P1 icon '+i.src+' 200',r.status()===200)}
@@ -35,11 +35,14 @@ t('P2 หน้าถูกควบคุมโดย SW',await p.evaluate(()=>
 await c.setOffline(true);
 await p.reload();await p.waitForTimeout(1800);
 const ti=await p.title();t('P2 เปิดตอนออฟไลน์ได้ (title)',/วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4\./.test(ti),ti);
-t('P2 แถบ "ออฟไลน์" แสดง',await p.evaluate(()=>!!document.querySelector('#pwabar .pwoff')));
+t('P2 แถบ "ออฟไลน์" แสดงสั้นๆ และไม่รับการกด (pointer-events:none)',await p.evaluate(()=>{const e=document.querySelector('#pwabar .pwoff');return !!e&&getComputedStyle(e).pointerEvents==='none'}));
+t('P2 มีไอคอนออฟไลน์ในแถบหัว',await p.evaluate(()=>{const i=document.getElementById('offi');return !!i&&i.getBoundingClientRect().width>10&&!!i.closest('.hr')}));
+await p.waitForTimeout(4500);
+t('P2 แถบข้อความหายเองใน ~4 วินาที แต่ไอคอนยังอยู่',await p.evaluate(()=>!document.querySelector('#pwabar .pwoff')&&!!document.getElementById('offi')));
 t('P2 แอปทำงาน (แผนที่/แท็บมี)',await p.evaluate(()=>!!document.querySelector('#map,.tabs,[role=tablist]')||document.querySelectorAll('button').length>20));
 const nav=await p.evaluate(()=>fetch('index.html').then(r=>r.status).catch(()=>-1));t('P2 index.html ตอบจากแคช',nav===200,nav);
 await c.setOffline(false);await p.waitForTimeout(800);
-t('P2 กลับออนไลน์ แถบออฟไลน์หาย',await p.evaluate(()=>!document.querySelector('#pwabar .pwoff')));
+t('P2 กลับออนไลน์ ไอคอนออฟไลน์หาย',await p.evaluate(()=>!document.getElementById('offi')&&!document.querySelector('#pwabar .pwoff')));
 // อัปเดต
 let html=fs.readFileSync(path.join(SITE,'index.html'),'utf8');
 put('index.html',html.replace('</body>','<!--UPDATED-MARK--></body>').replace(/v 4\.\d+\.\d+/g,'v 9.9.9'));
@@ -55,7 +58,7 @@ t('P3 โหลดซ้ำ (ยังไม่กดอัปเดต) แถ�
 await Promise.all([p.waitForNavigation({timeout:15000}).catch(()=>{}),p.click('#pwaupd button:not(.pwlater)')]);
 await p.waitForTimeout(2000);
 t('P3 กด "อัปเดตตอนนี้" แล้วได้เวอร์ชันใหม่',(await p.title()).includes('9.9.9')&&(await p.content()).includes('UPDATED-MARK'),await p.title());
-const ks2=await p.evaluate(()=>caches.keys());t('P3 ลบแคชเวอร์ชันเก่า เหลือ tpad-9.9.9',ks2.length===1&&ks2[0]==='tpad-9.9.9',ks2);
+const ks2=await p.evaluate(()=>caches.keys());t('P3 ลบแคชเวอร์ชันเก่า เหลือแคชใหม่อันเดียว',ks2.length===1&&ks2[0].startsWith('tpad-9.9.9-'),ks2);
 t('P* ไม่มี pageerror',errs.length===0,errs.slice(0,2));
 await c.close();
 // file://
