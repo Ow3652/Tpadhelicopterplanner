@@ -49,7 +49,7 @@
 ## การเผยแพร่ผ่าน GitHub (v4.2.3 ขึ้นไป)
 - PC (`D:\ow52\Project\TPAD`) เป็นต้นฉบับหลัก ส่งขึ้น GitHub ทางเดียว ห้ามแก้ไฟล์บน GitHub โดยตรง
 - รีโป https://github.com/Ow3652/Tpadhelicopterplanner (public) หน้าเว็บ https://ow3652.github.io/Tpadhelicopterplanner/ ไฟล์ `index.html` = สำเนาของไฟล์เวอร์ชันปัจจุบัน
-- ขึ้นรีโป: `index.html`, ไฟล์ใน `pwa\` (วางที่รากรีโป), `CHANGELOG.md`, `CLAUDE.md`, `README.md`, `tests/`, สคริปต์ METAR/ADSB/Pub_point, `docs/` (คู่มือ ใช้ชื่อคงที่ `docs/manual.pdf` และ `docs/manual.docx` เป็นสำเนาของคู่มือฉบับล่าสุด เพราะลิงก์ "📖 คู่มือ" ในแอปชี้ไฟล์นี้ ห้ามเปลี่ยนชื่อ) ไม่ขึ้น: `archive/`, xlsx, PDF คู่มือเก่า, `heli-route-planner.html`
+- ขึ้นรีโป: `index.html`, ไฟล์ใน `pwa\` (วางที่รากรีโป), `CHANGELOG.md`, `CLAUDE.md`, `README.md`, `tests/`, สคริปต์ METAR/ADSB/Pub_point, `docs/` (คู่มือ ใช้ชื่อคงที่ `docs/manual.pdf` และ `docs/manual.docx` เป็นสำเนาของคู่มือฉบับล่าสุด เพราะลิงก์ "📖 คู่มือ" ในแอปชี้ไฟล์นี้ ห้ามเปลี่ยนชื่อ และมี `docs/manual.html` + `docs/img/` (คู่มือแบบ HTML สำหรับหน้าซ้อนในแอป สร้างจากต้นฉบับคู่มือทุกครั้งที่ออกคู่มือใหม่ เพิ่ม CSS `@media screen`)) ไม่ขึ้น: `archive/`, xlsx, PDF คู่มือเก่า, `heli-route-planner.html`
 - **ห้ามใส่ความลับในไฟล์ใดๆ ที่ขึ้นรีโป** (รหัสซิงก์, OWNER_KEY, ID ชีตส่วนตัว, อีเมล) ค่าลับอยู่ใน Script Properties ของ Apps Script เท่านั้น ประวัติ git เก็บถาวร ถ้าหลุดต้องเปลี่ยนค่านั้นเสมอ
 - ก่อนส่งขึ้นทุกครั้ง ค้นหาข้อความ `OWNER_KEY =`, ID ชีตส่วนตัว, อีเมล, รหัสจริง
 - ผู้ใช้ต้องกรอกรหัสซิงก์/ลิงก์ Apps Script/รหัสปลด ADS-B ใหม่เมื่อเปลี่ยนที่อยู่เว็บ (localStorage แยกตามที่อยู่)

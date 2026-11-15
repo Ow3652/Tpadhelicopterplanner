@@ -2522,7 +2522,7 @@ async function saveFile(fn,text,mime){let d=null;try{d=window.claude&&await clau
 if(d){try{await d.save({filename:fn,data:text});return true}catch(e){if(e&&e.code==="declined")return false}}
 try{const u=URL.createObjectURL(new Blob([text],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return true}catch(e){return false}}
 function embeddedHtml(){const c=document.documentElement.cloneNode(true),q=x=>c.querySelector(x);
-["#tl","#ov","#plog","#pts","#res-out","#list","#slist","#qr","#qn","#chips","#lbrb","#lbsb","#lbab","#mselb","#ctm","#fp","#wx","#pop","#ulist","#heli","#lay","#qc","#toast","#pwabar","#offi","#omd","#shb","#pl5l","#cvout","#pl5m","#fqr","#fqn"].forEach(x=>{const e=q(x);if(e)e.innerHTML=""});
+["#tl","#ov","#plog","#pts","#res-out","#list","#slist","#qr","#qn","#chips","#lbrb","#lbsb","#lbab","#mselb","#ctm","#fp","#wx","#pop","#ulist","#heli","#lay","#qc","#toast","#pwabar","#offi","#omd","#mnv","#shb","#pl5l","#cvout","#pl5m","#fqr","#fqn"].forEach(x=>{const e=q(x);if(e)e.innerHTML=""});
 ["#lbr","#lbs","#lba","#msel","#mpt"].forEach(x=>{const e=q(x);if(e)e.classList.remove("on")});
 ["#fp","#pop","#gd","#ctm"].forEach(x=>{const e=q(x);if(e)e.setAttribute("hidden","")});
 ["#pop","#toast"].forEach(x=>{const e=q(x);if(e)e.removeAttribute("style")});
@@ -4175,6 +4175,28 @@ navigator.serviceWorker.register("sw.js").then(function(reg){
  function chk(){if(navigator.onLine!==false)reg.update().catch(function(){})}
  setTimeout(chk,3000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});setInterval(chk,30*60*1000);
 }).catch(function(){});
+})();
+</script>
+<script id="manv">
+/* ปุ่ม "📖 คู่มือ": ปกติเปิด PDF ในแท็บใหม่ แต่ในแอปที่ติดตั้งลงหน้าจอโฮม (standalone) หรือไฟล์ที่เปิดจากเครื่อง การเปิดลิงก์จะไม่มีปุ่มปิด/ย้อนกลับ
+   จึงเปิดคู่มือแบบ HTML ในกรอบซ้อนทับที่มีปุ่ม "ปิดคู่มือ" ของแอปเอง (docs/manual.html บน GitHub Pages) */
+(function(){
+var a=document.getElementById("mnl");if(!a)return;var box=null,fr=null;
+var URLH="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.html";
+function standalone(){try{return(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true}catch(e){return false}}
+function close(){if(box){box.remove();box=null;fr=null;document.removeEventListener("keydown",key)}}
+function key(e){if(e.key==="Escape")close()}
+function open(){if(box)return;
+ if(!document.getElementById("mnvcss")){var st=document.createElement("style");st.id="mnvcss";
+  st.textContent="#mnv{position:fixed;inset:0;z-index:100020;background:var(--bg);display:flex;flex-direction:column}#mnv .mnb{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:var(--surface);border-bottom:1px solid var(--line);color:var(--ink)}#mnv .mnb button{min-height:44px;min-width:110px;font-size:1rem}#mnv iframe{flex:1;width:100%;border:0;background:#fff}";
+  document.head.appendChild(st)}
+ box=document.createElement("div");box.id="mnv";box.setAttribute("role","dialog");box.setAttribute("aria-label","คู่มือการใช้งาน");
+ var bar=document.createElement("div");bar.className="mnb";var t=document.createElement("b");t.textContent="📖 คู่มือการใช้งาน";
+ var x=document.createElement("button");x.type="button";x.className="b";x.id="mnx";x.textContent="✕ ปิดคู่มือ";x.onclick=close;bar.append(t,x);
+ fr=document.createElement("iframe");fr.title="คู่มือการใช้งาน";
+ fr.src=/^https?:$/.test(location.protocol)?"docs/manual.html":URLH;
+ box.append(bar,fr);document.body.appendChild(box);document.addEventListener("keydown",key)}
+a.addEventListener("click",function(e){if(!standalone()&&location.protocol!=="file:")return;e.preventDefault();open()});
 })();
 </script>
 <script id="omap">

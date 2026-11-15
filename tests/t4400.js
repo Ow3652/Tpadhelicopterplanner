@@ -98,11 +98,25 @@ t('T9 เปิด docs/manual.pdf (ลิงก์คู่มือ) ใต้
 await pg.close();
 t('T10 ไม่มี pageerror',errs.length===0,errs);
 await p.close();
+// ปุ่มคู่มือ: แท็บเบราว์เซอร์ธรรมดาเปิดแท็บใหม่ (ไม่มีกรอบซ้อน) / แอปที่ติดตั้ง (standalone) ใช้กรอบซ้อนที่มีปุ่มปิด
+fs.writeFileSync(path.join(SITE,'docs','manual.html'),'<!doctype html><meta charset=utf-8><title>manual</title><h1 id=h>คู่มือจำลอง</h1>');
+{const pn=await c.newPage();await pn.goto(U);await pn.waitForTimeout(800);
+ const [pop]=await Promise.all([pn.waitForEvent('popup',{timeout:5000}).catch(()=>null),pn.click('#mnl')]);
+ t('T12 แท็บธรรมดา: กดคู่มือเปิดแท็บใหม่ ไม่มีกรอบซ้อน',!!pop&&!(await pn.$('#mnv')));if(pop)await pop.close().catch(()=>{});await pn.close();
+ const ps=await c.newPage();await ps.addInitScript(()=>{Object.defineProperty(navigator,'standalone',{get:()=>true})});await ps.goto(U);await ps.waitForTimeout(800);
+ await ps.click('#mnl');await ps.waitForSelector('#mnv');
+ const fr=ps.frames().find(f=>/docs\/manual\.html$/.test(f.url()));await ps.waitForTimeout(800);
+ const txt=await (ps.frames().find(f=>/docs\/manual\.html$/.test(f.url()))||ps.mainFrame()).evaluate(()=>document.body.textContent).catch(()=>'');
+ t('T12 แอปที่ติดตั้ง: กดคู่มือเปิดกรอบซ้อนในหน้าเดิม (ไม่ออกจากแอป) และโหลดคู่มือได้',/คู่มือจำลอง/.test(txt)&&ps.url()===U,ps.url());
+ t('T12 มีปุ่ม "ปิดคู่มือ" อยู่ในกรอบ มองเห็นและกดได้',await ps.isVisible('#mnx'));
+ await ps.click('#mnx');t('T12 กดปิดแล้วกลับหน้าแอป',!(await ps.$('#mnv'))&&await ps.isVisible('#offb'));
+ await ps.click('#mnl');await ps.waitForSelector('#mnv');await ps.keyboard.press('Escape');t('T12 กด Esc ปิดคู่มือได้',!(await ps.$('#mnv')));await ps.close()}
 // file:// ไม่ใช้
 const f=await b.newContext({viewport:{width:1280,height:800}});await f.route(/^https?:/,r=>r.abort());
 const fp=await f.newPage();const fe=[];fp.on('pageerror',e=>fe.push(e.message));
-await fp.goto('file://'+path.join(ROOT,APP));await fp.waitForTimeout(1200);await fp.click('#offb');
+await fp.goto('file://'+path.join(ROOT,APP));await fp.waitForTimeout(1200);await fp.click('#offb');await fp.click('#omx');await fp.click('#mnl');const fm=await fp.isVisible('#mnx');await fp.click('#mnx');await fp.click('#offb');
 t('T11 file:// เปิดหน้าจอได้ แสดงข้อความว่าใช้ไม่ได้ ไม่มี error',await fp.isVisible('#omun')&&!(await fp.isVisible('#omok'))&&fe.length===0,fe);
+t('T12 file:// (เช่น Pagira): กดคู่มือได้กรอบซ้อนที่มีปุ่มปิด',fm);
 await b.close();srv.close();
 console.log('\nสรุป '+pass+' ผ่าน '+fail+' ไม่ผ่าน');process.exit(fail?1:0);
 })();
