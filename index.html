@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.3.0</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.4.0</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -484,7 +484,8 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.3.0</h1><div class="hr"><button class="b s" id="fs0" type="button" aria-label="เปิดแผนที่เต็มจอ">⛶ แผนที่เต็มจอ</button><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.4.0</h1><div class="hr"><button class="b s" id="fs0" type="button" aria-label="เปิดแผนที่เต็มจอ">⛶ แผนที่เต็มจอ</button><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน (PDF)</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -1655,7 +1656,7 @@ function blkUi(){document.querySelectorAll(".blkc").forEach(i=>{i.value=BLK;i.hi
 var IS=1;
 const TERR={};var RFS=0;
 function mapRefresh(){RFS=Date.now();for(const k in TERR)delete TERR[k];try{for(const[,im]of M.cache)im.remove();M.cache.clear()}catch(e){}try{for(const[,im]of WX.img)im.remove();WX.img.clear()}catch(e){}drawMap(false);toast("รีเฟรชแผนที่แล้ว — กำลังโหลดภาพแผนที่ใหม่")}
-function tileErr(L){TERR[L.k]=(TERR[L.k]||0)+1;if(TERR[L.k]===10&&LAY.k===L.k)toast("โหลดไทล์แผนที่ “"+L.n+"” ไม่ได้ (ไม่มีอินเทอร์เน็ต หรือเซิร์ฟเวอร์ปฏิเสธ)"+" ลองเปลี่ยนชนิดแผนที่")}
+function tileErr(L){TERR[L.k]=(TERR[L.k]||0)+1;if(TERR[L.k]===10&&LAY.k===L.k)toast(navigator.onLine===false?"ออฟไลน์: ไม่มีแผนที่ “"+L.n+"” ที่เก็บไว้สำหรับบริเวณนี้ (โหลดล่วงหน้าได้ที่ 📥 แผนที่ออฟไลน์)":"โหลดไทล์แผนที่ “"+L.n+"” ไม่ได้ (ไม่มีอินเทอร์เน็ต หรือเซิร์ฟเวอร์ปฏิเสธ)"+" ลองเปลี่ยนชนิดแผนที่")}
 function setLayer(k,keep){LAY=LAYERS.find(l=>l.k===k)||LAYERS[0];$("at").innerHTML=LAY.at;
 for(const[,im]of M.cache)im.remove();M.cache.clear();
 try{if(!keep)localStorage.setItem("heliLayer",LAY.k)}catch(e){}blkUi();drawMap(false)}
@@ -1891,7 +1892,7 @@ const CLKS=["clk","clk2","clk3"];CLKS.forEach(i=>{$(i).onchange=()=>{if($(i).che
 $("msz").onchange=()=>{document.querySelector(".grid").dataset.s=$("msz").value};
 function fsToggle(){const f=mp.classList.toggle("full");if(f)setTimeout(()=>{pnlPlace();dock()},0);$("fs").textContent=f?"✕":"⛶ เต็มจอ";$("fs").setAttribute("aria-label",f?"ย่อกลับ":"เต็มจอ");$("fs").title=f?"ย่อกลับ":"เต็มจอ";document.body.style.overflow=f?"hidden":"";if(f){syncFp();$("fp").hidden=true}else $("fp").hidden=true;fpSync();sarFs(f);mptFs(f);if(f)mptShow(!!M.mpt)}
 $("fs").onclick=()=>fsToggle();$("fs0").onclick=()=>{if(!mp.classList.contains("full"))fsToggle()};
-$("fp").innerHTML=`<div class="ph"><b>ชั้นข้อมูล</b><button class="pc" aria-label="ย่อ/ขยาย">▾</button></div><div class="pb"><div class="fp2 fp3"><label>ชนิดแผนที่<span class="lrow"><select id="lay2"></select><input type="color" class="blkc" hidden value="#000000" aria-label="สีพื้นหลังแผนที่ว่าง" title="สีพื้นหลังแผนที่ว่าง"></span></label><label>รูปแบบพิกัด<select id="fmt2"><option value="ddmmss">DDMMSS</option><option value="ddmm">DDMM.MM</option><option value="dd">DD.DDDD</option></select></label></div><div class="fp2"><label>ขนาดไอคอน<select id="isz2"><option value="1">ใหญ่ (100%)</option><option value="0.75">75%</option><option value="0.5">50%</option></select></label><label>🌧 ชั้นฝน<select id="wxm2"><option value="off">ปิด</option><option value="radar">เรดาร์ฝนจริง</option><option value="fc">พยากรณ์ฝน</option></select></label><label class="chip" title="แสดง/ซ่อนทิศทาง / ระยะทาง (Range Bearing) บนเส้นทาง Active"><input type="checkbox" id="frb">R/B</label></div><div class="brr"><label>☀ ความสว่างแผนที่<input type="range" id="bri2" min="20" max="100" value="100" style="width:100%"></label><label class="chip" title="แสดงพิกัดเคอร์เซอร์ที่ขอบบนสุดของแผนที่"><input type="checkbox" id="fcur">พิกัด</label><label class="chip" style="--c:#e60000" title="แสดง/ซ่อนยอดเขา"><input type="checkbox" id="f_MT">${ico("MT",20)} ยอดเขา</label></div><div class="fpl">`+CATS.filter(t=>t.k!=="MT").map(t=>`<label class="chip" style="--c:${t.c}"><input type="checkbox" id="f_${t.k}">${ico(t.k,20)} ${t.n.replace("Reporting Point","RP")}</label>`).join("")+`<label class="chip" style="--c:#000" title="เส้นแนวเขตป้องกันประเทศ (TADIZ)"><input type="checkbox" id="ftd"><svg width="20" height="20" viewBox="-13 -13 26 26" aria-hidden="true" style="vertical-align:middle"><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#777" stroke-width="5" stroke-linejoin="round"/><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#cfcfcf" stroke-width="2.5" stroke-linejoin="round"/></svg> TADIZ</label><button class="b s" data-all="0">Hide All</button><label class="chip" title="เส้นแนวเขตจังหวัด"><input type="checkbox" id="fpv"><svg width="20" height="20" viewBox="-13 -13 26 26" aria-hidden="true" style="vertical-align:middle"><path d="M-10 -6L-2 -9L8 -5L10 3L2 9L-8 6Z" fill="none" stroke="#000" stroke-width="5" stroke-linejoin="round"/><path d="M-10 -6L-2 -9L8 -5L10 3L2 9L-8 6Z" fill="none" stroke="#c8c8c8" stroke-width="2.4" stroke-linejoin="round"/></svg> เขตจังหวัด <input type="color" id="fpvc" value="#c8c8c8" aria-label="สีเส้นเขตจังหวัด" title="สีเส้นเขตจังหวัด" style="width:24px;height:20px;padding:0;border:1px solid var(--line);background:none;margin:0 0 0 2px;vertical-align:middle"></label><label class="chip" title="เส้นแนวเขตชายแดน"><input type="checkbox" id="fbd"><svg width="20" height="20" viewBox="-13 -13 26 26" aria-hidden="true" style="vertical-align:middle"><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#000" stroke-width="5.5" stroke-linejoin="round"/><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg> Border</label><button class="b s" data-all="1">Show All</button></div><div class="chip" style="flex-wrap:wrap;margin:16px 0 8px;cursor:default">สีเส้นทาง Active <input type="color" class="rcol" aria-label="เลือกสีเส้นทาง"><span class="sws"></span></div><div class="chip fgrp" style="cursor:default"><b>Double click</b><label><input type="checkbox" id="fclk">จุดในเส้นทาง</label><label><input type="checkbox" id="fclk2">จุดร่วม</label><label><input type="checkbox" id="fclk3">จุดของฉัน</label></div> <div class="acs"><label class="chip" style="--c:#2962ff" title="ตำแหน่งเครื่องบิน/เฮลิคอปเตอร์จาก ADS-B (ข้อมูลสาธารณะ)"><input type="checkbox" id="fac">✈ Traffic</label>
+$("fp").innerHTML=`<div class="ph"><b>ชั้นข้อมูล</b><button class="pc" aria-label="ย่อ/ขยาย">▾</button></div><div class="pb"><div class="fp2 fp3"><label>ชนิดแผนที่<span class="lrow"><select id="lay2"></select><input type="color" class="blkc" hidden value="#000000" aria-label="สีพื้นหลังแผนที่ว่าง" title="สีพื้นหลังแผนที่ว่าง"></span></label><label>รูปแบบพิกัด<select id="fmt2"><option value="ddmmss">DDMMSS</option><option value="ddmm">DDMM.MM</option><option value="dd">DD.DDDD</option></select></label></div><div class="fp2"><button type="button" class="b s" id="offb2">📥 แผนที่ออฟไลน์</button></div><div class="fp2"><label>ขนาดไอคอน<select id="isz2"><option value="1">ใหญ่ (100%)</option><option value="0.75">75%</option><option value="0.5">50%</option></select></label><label>🌧 ชั้นฝน<select id="wxm2"><option value="off">ปิด</option><option value="radar">เรดาร์ฝนจริง</option><option value="fc">พยากรณ์ฝน</option></select></label><label class="chip" title="แสดง/ซ่อนทิศทาง / ระยะทาง (Range Bearing) บนเส้นทาง Active"><input type="checkbox" id="frb">R/B</label></div><div class="brr"><label>☀ ความสว่างแผนที่<input type="range" id="bri2" min="20" max="100" value="100" style="width:100%"></label><label class="chip" title="แสดงพิกัดเคอร์เซอร์ที่ขอบบนสุดของแผนที่"><input type="checkbox" id="fcur">พิกัด</label><label class="chip" style="--c:#e60000" title="แสดง/ซ่อนยอดเขา"><input type="checkbox" id="f_MT">${ico("MT",20)} ยอดเขา</label></div><div class="fpl">`+CATS.filter(t=>t.k!=="MT").map(t=>`<label class="chip" style="--c:${t.c}"><input type="checkbox" id="f_${t.k}">${ico(t.k,20)} ${t.n.replace("Reporting Point","RP")}</label>`).join("")+`<label class="chip" style="--c:#000" title="เส้นแนวเขตป้องกันประเทศ (TADIZ)"><input type="checkbox" id="ftd"><svg width="20" height="20" viewBox="-13 -13 26 26" aria-hidden="true" style="vertical-align:middle"><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#777" stroke-width="5" stroke-linejoin="round"/><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#cfcfcf" stroke-width="2.5" stroke-linejoin="round"/></svg> TADIZ</label><button class="b s" data-all="0">Hide All</button><label class="chip" title="เส้นแนวเขตจังหวัด"><input type="checkbox" id="fpv"><svg width="20" height="20" viewBox="-13 -13 26 26" aria-hidden="true" style="vertical-align:middle"><path d="M-10 -6L-2 -9L8 -5L10 3L2 9L-8 6Z" fill="none" stroke="#000" stroke-width="5" stroke-linejoin="round"/><path d="M-10 -6L-2 -9L8 -5L10 3L2 9L-8 6Z" fill="none" stroke="#c8c8c8" stroke-width="2.4" stroke-linejoin="round"/></svg> เขตจังหวัด <input type="color" id="fpvc" value="#c8c8c8" aria-label="สีเส้นเขตจังหวัด" title="สีเส้นเขตจังหวัด" style="width:24px;height:20px;padding:0;border:1px solid var(--line);background:none;margin:0 0 0 2px;vertical-align:middle"></label><label class="chip" title="เส้นแนวเขตชายแดน"><input type="checkbox" id="fbd"><svg width="20" height="20" viewBox="-13 -13 26 26" aria-hidden="true" style="vertical-align:middle"><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#000" stroke-width="5.5" stroke-linejoin="round"/><path d="M-10 6L-4 -6L2 4L10 -8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg> Border</label><button class="b s" data-all="1">Show All</button></div><div class="chip" style="flex-wrap:wrap;margin:16px 0 8px;cursor:default">สีเส้นทาง Active <input type="color" class="rcol" aria-label="เลือกสีเส้นทาง"><span class="sws"></span></div><div class="chip fgrp" style="cursor:default"><b>Double click</b><label><input type="checkbox" id="fclk">จุดในเส้นทาง</label><label><input type="checkbox" id="fclk2">จุดร่วม</label><label><input type="checkbox" id="fclk3">จุดของฉัน</label></div> <div class="acs"><label class="chip" style="--c:#2962ff" title="ตำแหน่งเครื่องบิน/เฮลิคอปเตอร์จาก ADS-B (ข้อมูลสาธารณะ)"><input type="checkbox" id="fac">✈ Traffic</label>
 <div id="acopt" hidden><div id="acunl" hidden style="margin:6px 0;padding:6px 8px;border:1px solid var(--line);border-radius:8px"><small>🔒 มี URL ตัวกลางที่ล็อกไว้ ใส่รหัสเพื่อปลดล็อก</small><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><input type="password" id="acpw" inputmode="numeric" autocomplete="off" placeholder="รหัส" style="margin:0;flex:1"><button type="button" class="b s" id="acunb">ปลดล็อก</button></div><small id="acune" style="color:#c62828"></small></div><div class="fp2"><label>แหล่งข้อมูล<select id="acsrc"><option value="auto">อัตโนมัติ (ลองตามลำดับ)</option><option value="proxy">ผ่านตัวกลาง Apps Script (แนะนำถ้าเรียกตรงไม่ได้)</option><option value="lol">adsb.lol</option><option value="live">airplanes.live</option><option value="fi">adsb.fi</option><option value="demo">โหมดจำลอง (ไม่ใช้อินเทอร์เน็ต)</option></select></label><label>อัปเดตทุก<select id="acint"><option value="3">3 วินาที</option><option value="5">5 วินาที</option><option value="10">10 วินาที</option><option value="15">15 วินาที</option></select></label></div>
 <label style="display:block;margin:4px 0">URL ตัวกลาง Apps Script (ถ้ามี)<input type="text" id="acpx" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%;box-sizing:border-box"></label>
 <div style="margin:4px 0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center"><label style="white-space:nowrap">เฮลิคอปเตอร์ <input type="color" id="accolh" class="acc"></label><label style="white-space:nowrap">เครื่องบินอื่น <input type="color" id="accolf" class="acc"></label><button type="button" id="accolr" class="b s" style="white-space:nowrap">สีเริ่มต้น</button></div>
@@ -2521,7 +2522,7 @@ async function saveFile(fn,text,mime){let d=null;try{d=window.claude&&await clau
 if(d){try{await d.save({filename:fn,data:text});return true}catch(e){if(e&&e.code==="declined")return false}}
 try{const u=URL.createObjectURL(new Blob([text],{type:mime})),a=document.createElement("a");a.href=u;a.download=fn;a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return true}catch(e){return false}}
 function embeddedHtml(){const c=document.documentElement.cloneNode(true),q=x=>c.querySelector(x);
-["#tl","#ov","#plog","#pts","#res-out","#list","#slist","#qr","#qn","#chips","#lbrb","#lbsb","#lbab","#mselb","#ctm","#fp","#wx","#pop","#ulist","#heli","#lay","#qc","#toast","#pwabar","#offi","#shb","#pl5l","#cvout","#pl5m","#fqr","#fqn"].forEach(x=>{const e=q(x);if(e)e.innerHTML=""});
+["#tl","#ov","#plog","#pts","#res-out","#list","#slist","#qr","#qn","#chips","#lbrb","#lbsb","#lbab","#mselb","#ctm","#fp","#wx","#pop","#ulist","#heli","#lay","#qc","#toast","#pwabar","#offi","#omd","#shb","#pl5l","#cvout","#pl5m","#fqr","#fqn"].forEach(x=>{const e=q(x);if(e)e.innerHTML=""});
 ["#lbr","#lbs","#lba","#msel","#mpt"].forEach(x=>{const e=q(x);if(e)e.classList.remove("on")});
 ["#fp","#pop","#gd","#ctm"].forEach(x=>{const e=q(x);if(e)e.setAttribute("hidden","")});
 ["#pop","#toast"].forEach(x=>{const e=q(x);if(e)e.removeAttribute("style")});
@@ -2530,7 +2531,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.3.0 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.4.0 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4140,7 +4141,7 @@ function init(){build();}
 init()})();
 </script>
 <script id="pwa">
-/* PWA v4.3.0: ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.4.0; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
@@ -4174,6 +4175,145 @@ navigator.serviceWorker.register("sw.js").then(function(reg){
  function chk(){if(navigator.onLine!==false)reg.update().catch(function(){})}
  setTimeout(chk,3000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk()});setInterval(chk,30*60*1000);
 }).catch(function(){});
+})();
+</script>
+<script id="omap">
+/* แผนที่ออฟไลน์ v4.4.0: เก็บภาพแผนที่ (tile) ไว้ในเครื่อง ใช้ได้เฉพาะเมื่อเปิดผ่านเว็บ (http/https) และมี service worker (sw.js)
+   1) เก็บอัตโนมัติ: ภาพที่เคยเปิดดู เก็บไว้ในแคช "tiles-auto" มีเพดานขนาด ลบแผ่นเก่าสุดก่อน (ทำใน sw.js)
+   2) ดาวน์โหลดตามพื้นที่: ผู้ใช้เลือกพื้นที่/ชนิดแผนที่/ระดับซูม เก็บใน "tiles-area" ไม่ถูกลบเอง
+   คีย์แคชต้องตรงกับ tkey() ใน sw.js */
+(function(){
+var CA="tiles-auto",CR="tiles-area",KC="heliOmCfg",KA="heliOmAreas";
+var OK=!!window.caches&&/^https?:$/.test(location.protocol);
+var KB={topo:[28],cyc:[30],osm:[18],sat:[30],hyb:[30,8],etopo:[25],est:[18],hot:[22]};
+var MAXN=30000,WARNN=8000;
+var cfg={auto:true,cap:200},areas=[],ST={busy:false,abort:null},root=null,estT=0;
+try{var c0=JSON.parse(localStorage.getItem(KC)||"null");if(c0){cfg.auto=c0.auto!==false;cfg.cap=+c0.cap||200}}catch(e){}
+try{areas=JSON.parse(localStorage.getItem(KA)||"[]");if(!Array.isArray(areas))areas=[]}catch(e){areas=[]}
+function saveCfg(){try{localStorage.setItem(KC,JSON.stringify(cfg))}catch(e){}postCfg()}
+function saveAreas(){try{localStorage.setItem(KA,JSON.stringify(areas))}catch(e){}}
+function postCfg(){try{if(!("serviceWorker" in navigator))return;navigator.serviceWorker.ready.then(function(r){if(r.active)r.active.postMessage({t:"tilecfg",auto:cfg.auto,capMB:cfg.cap})})}catch(e){}}
+function tkey(u){try{var x=new URL(u);x.searchParams.delete("_r");return"https://"+x.hostname.replace(/^[abc]\./,"")+x.pathname+x.search}catch(e){return u}}
+async function tput(name,key,resp){var b=await resp.blob();var h=new Headers({"content-type":resp.headers.get("content-type")||"image/png","x-sz":String(b.size)});await(await caches.open(name)).put(key,new Response(b,{headers:h}));return b.size}
+function esc2(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function mb(n){return n>=1048576*10?Math.round(n/1048576)+" MB":n>=1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB"}
+function ll(x,y,z){var s=256*Math.pow(2,z);return[Math.atan(Math.sinh(Math.PI*(1-2*y/s)))*180/Math.PI,x/s*360-180]}
+function lay(k){return LAYERS.find(function(l){return l.k===k})}
+function tr(b,z){var n=Math.pow(2,z),a=wp(b[2],b[1],z),d=wp(b[0],b[3],z);
+ return[Math.max(0,Math.floor(a[0]/256)),Math.min(n-1,Math.floor(d[0]/256)),Math.max(0,Math.floor(a[1]/256)),Math.min(n-1,Math.floor(d[1]/256))]}
+function cnt(b,z0,z1,ks){var t=0;ks.forEach(function(k){var L=lay(k);if(!L)return;for(var z=z0;z<=z1;z++){var r=tr(b,z);t+=(r[1]-r[0]+1)*(r[3]-r[2]+1)*L.u.length}});return t}
+function est(b,z0,z1,ks){var t=0;ks.forEach(function(k){var L=lay(k),kb=KB[k]||[25];if(!L)return;L.u.forEach(function(u,i){var c=cnt(b,z0,z1,[k])/L.u.length;t+=c*(kb[i]||kb[0])*1024})});return t}
+function list(a){var o=[];a.layers.forEach(function(k){var L=lay(k);if(!L)return;L.u.forEach(function(u){for(var z=a.zmin;z<=a.zmax;z++){var r=tr(a.bbox,z);for(var x=r[0];x<=r[1];x++)for(var y=r[2];y<=r[3];y++){var url=u.replace("{s}","a").replace("{z}",z).replace("{x}",x).replace("{y}",y);o.push({url:url,key:tkey(url)})}}})});return o}
+function viewBox(){var W=mp.clientWidth,H=mp.clientHeight,rz=typeof RZ!=="undefined"&&RZ,hw=W/2,hh=H/2;if(rz){hw=hh=Math.hypot(W,H)/2}
+ var a=ll(M.cx-hw,M.cy-hh,M.z),d=ll(M.cx+hw,M.cy+hh,M.z);return[Math.min(a[0],d[0]),Math.min(a[1],d[1]),Math.max(a[0],d[0]),Math.max(a[1],d[1])]}
+function radBox(nm){var c=ll(M.cx,M.cy,M.z),dl=nm/60,dn=nm/(60*Math.max(.2,Math.cos(c[0]*Math.PI/180)));return[c[0]-dl,c[1]-dn,c[0]+dl,c[1]+dn]}
+function routeBox(buf){var v=calcData.valid;if(!v||!v.length)return null;var s=90,w=180,n=-90,e=-180;v.forEach(function(p){s=Math.min(s,p.la);n=Math.max(n,p.la);w=Math.min(w,p.lo);e=Math.max(e,p.lo)});
+ var la=(s+n)/2,dl=buf/60,dn=buf/(60*Math.max(.2,Math.cos(la*Math.PI/180)));return[s-dl,w-dn,n+dl,e+dn]}
+function css(){if(document.getElementById("omcss"))return;var s=document.createElement("style");s.id="omcss";
+ s.textContent="#omd{position:fixed;inset:0;z-index:100010;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:10px}#omd[hidden]{display:none}"+
+ "#omd .omb{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;width:min(640px,100%);max-height:94vh;overflow:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;font-size:.93rem}"+
+ "#omd .omh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;position:sticky;top:-12px;background:var(--surface);padding:6px 0;z-index:1}"+
+ "#omd input,#omd select{width:auto;margin:0}#omd input[type=checkbox],#omd input[type=radio]{width:22px;height:22px;padding:0;flex:none}#omd label{font-size:.93rem;color:var(--ink);margin:4px 0}#omd .omr label{display:inline-flex}#omd section{border-top:1px solid var(--line);padding:8px 0}#omd h3{margin:0 0 6px;font-size:1rem}#omd select,#omd input[type=number]{font-size:16px;margin:0 4px;padding:6px}"+
+ "#omd .omr{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}#omd .omr label{display:inline-flex;align-items:center;gap:5px;margin:2px 0}#omd .b{min-height:40px}"+
+ "#omd .omp{height:14px;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--field);margin:6px 0}#omd .omp i{display:block;height:100%;width:0;background:var(--accent)}"+
+ "#omd .omw{color:var(--err)}#omd small,#omd .omn{color:var(--mute);font-size:.85em}#omd .oma{border:1px solid var(--line);border-radius:8px;padding:6px 8px;margin:6px 0}#omd .oma .omr{margin-top:4px}"+
+ ".hlk{display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap;margin:2px 0 6px;font-size:.88rem}.hlk a{color:var(--accent);font-weight:500}.hlk .b{white-space:nowrap}";
+ document.head.appendChild(s)}
+function build(){if(root)return;css();root=document.createElement("div");root.id="omd";root.hidden=true;
+ var ls=LAYERS.filter(function(l){return l.k!=="blank"}).map(function(l){return'<label><input type="checkbox" data-ly="'+l.k+'"> '+esc2(l.n)+'</label>'}).join("");
+ var zo=function(a,b,d){var o="";for(var i=a;i<=b;i++)o+='<option value="'+i+'"'+(i===d?" selected":"")+'>'+i+'</option>';return o};
+ root.innerHTML='<div class="omb" role="dialog" aria-label="แผนที่ออฟไลน์"><div class="omh"><b>📥 แผนที่ออฟไลน์</b><button type="button" class="b s" id="omx">✕ ปิด</button></div>'+
+ '<div id="omun" class="omw" hidden></div><div id="omok">'+
+ '<section><h3>1) เก็บอัตโนมัติ</h3><label><input type="checkbox" id="omauto"> เก็บภาพแผนที่ที่เปิดดูไว้ในเครื่องโดยอัตโนมัติ</label>'+
+ '<label>เพดานขนาด <select id="omcap"><option value="100">100 MB</option><option value="200">200 MB</option><option value="500">500 MB</option><option value="1000">1,000 MB</option></select><span class="omn">เต็มแล้วจะลบแผ่นที่เก่าสุดก่อน</span></label>'+
+ '<div class="omr"><span id="omast" class="omn"></span><button type="button" class="b s" id="omclra">ล้างแคชอัตโนมัติ</button></div></section>'+
+ '<section><h3>2) ดาวน์โหลดตามพื้นที่</h3><div class="omr"><label><input type="radio" name="omsrc" value="view" checked> จอแผนที่ตอนนี้</label><label><input type="radio" name="omsrc" value="rad"> รัศมีรอบกลางจอ <input type="number" id="omrad" value="30" min="2" max="300" style="width:70px"> NM</label>'+
+ '<label><input type="radio" name="omsrc" value="rt"> เส้นทาง Active + ขอบ <input type="number" id="ombuf" value="15" min="2" max="150" style="width:70px"> NM</label></div>'+
+ '<div style="margin-top:6px"><b>ชนิดแผนที่</b> <span class="omn">(เลือกเท่าที่ใช้จริง ยิ่งหลายชนิดยิ่งใช้พื้นที่)</span><div class="omr" id="omly">'+ls+'</div></div>'+
+ '<div class="omr" style="margin-top:6px"><label>ซูมตั้งแต่ <select id="omz0">'+zo(5,12,8)+'</select></label><label>ถึง <select id="omz1">'+zo(8,16,13)+'</select></label><span class="omn">ซูม 13≈เห็นถนนสายรอง · 15≈ละเอียดมาก</span></div>'+
+ '<label>ชื่อพื้นที่ <input type="text" id="omname" placeholder="เช่น รอบกรุงเทพ" style="font-size:16px;padding:6px;width:min(260px,70%)"></label>'+
+ '<div id="omest" style="margin:6px 0"></div><div class="omr"><button type="button" class="b" id="omgo">ดาวน์โหลด</button><button type="button" class="b" id="omstop" hidden>หยุด</button></div>'+
+ '<div class="omp" id="ompw" hidden><i id="ompb"></i></div><div id="omst" class="omn"></div></section>'+
+ '<section><h3>3) พื้นที่ที่ดาวน์โหลดไว้</h3><div id="omal"></div><div class="omr"><button type="button" class="b s" id="omclr">ลบพื้นที่ทั้งหมด</button></div></section>'+
+ '<section><small id="omin"></small><br><small>• ใช้ได้เฉพาะแอปที่เปิดจากเว็บ (หรือติดตั้งลงหน้าจอโฮม) ไฟล์ที่เปิดผ่าน Pagira ใช้ไม่ได้<br>• ระหว่างดาวน์โหลดให้เปิดแอปค้างไว้และต่อ Wi-Fi ไม่ควรสลับแอป<br>• ภาพที่เก็บไว้จะไม่อัปเดตเอง ต้องดาวน์โหลดใหม่ (ลบแล้วโหลดซ้ำ) เมื่อต้องการภาพล่าสุด<br>• เมื่อซูมลึกกว่าที่ดาวน์โหลดไว้ ออฟไลน์จะเห็นพื้นว่าง<br>• ภาพแผนที่เป็นของผู้ให้บริการแต่ละราย (OpenStreetMap, OpenTopoMap, CyclOSM, Esri) ให้ดาวน์โหลดเฉพาะพื้นที่ปฏิบัติงานจริงและไม่ดาวน์โหลดจำนวนมาก ตามเงื่อนไขการใช้งานของแต่ละราย</small></section></div></div>';
+ document.body.appendChild(root);
+ root.addEventListener("click",function(e){if(e.target===root)close()});
+ q("omx").onclick=close;
+ q("omauto").onchange=function(){cfg.auto=q("omauto").checked;saveCfg()};
+ q("omcap").onchange=function(){cfg.cap=+q("omcap").value;saveCfg();stats()};
+ q("omclra").onclick=async function(){if(!confirm("ล้างแคชแผนที่ที่เก็บอัตโนมัติทั้งหมด? (พื้นที่ที่ดาวน์โหลดไว้ไม่ถูกลบ)"))return;await caches.delete(CA);toast("ล้างแคชอัตโนมัติแล้ว");stats()};
+ q("omclr").onclick=async function(){if(ST.busy){toast("กำลังดาวน์โหลดอยู่ กดหยุดก่อน");return}if(!areas.length&&!confirm("ไม่มีรายการ ล้างแคชพื้นที่ที่เหลืออยู่ทั้งหมด?"))return;if(areas.length&&!confirm("ลบพื้นที่ที่ดาวน์โหลดไว้ทั้งหมด?"))return;await caches.delete(CR);areas=[];saveAreas();render();stats();toast("ลบพื้นที่ที่ดาวน์โหลดไว้แล้ว")};
+ q("omgo").onclick=start;q("omstop").onclick=function(){if(ST.abort)ST.abort.v=true};
+ root.querySelectorAll('input[name="omsrc"],[data-ly],#omz0,#omz1,#omrad,#ombuf').forEach(function(el){el.addEventListener("change",upd);el.addEventListener("input",upd)})}
+function q(id){return document.getElementById(id)}
+function sel(){var k=[];root.querySelectorAll("[data-ly]").forEach(function(c){if(c.checked)k.push(c.dataset.ly)});return k}
+function curBox(){var s=root.querySelector('input[name="omsrc"]:checked').value;
+ if(s==="view")return viewBox();if(s==="rad")return radBox(Math.min(300,Math.max(2,+q("omrad").value||30)));
+ return routeBox(Math.min(150,Math.max(2,+q("ombuf").value||15)))}
+function upd(){clearTimeout(estT);estT=setTimeout(upd2,60)}
+function upd2(){if(!root)return;var el=q("omest"),go=q("omgo");var b=curBox();
+ if(!b){el.innerHTML='<span class="omw">ยังไม่มีเส้นทาง Active ให้คำนวณพื้นที่</span>';go.disabled=true;return}
+ var z0=+q("omz0").value,z1=+q("omz1").value;if(z1<z0){q("omz1").value=z0;z1=z0}
+ var ks=sel();if(!ks.length){el.innerHTML='<span class="omw">เลือกชนิดแผนที่อย่างน้อย 1 ชนิด</span>';go.disabled=true;return}
+ var n=cnt(b,z0,z1,ks),by=est(b,z0,z1,ks),la=(b[0]+b[2])/2,wn=(b[3]-b[1])*60*Math.cos(la*Math.PI/180),hn=(b[2]-b[0])*60;
+ var h='พื้นที่ราว '+Math.round(wn)+' × '+Math.round(hn)+' NM · '+n.toLocaleString("en-US")+' แผ่น · ประมาณ <b>'+mb(by)+'</b> <span class="omn">(ค่าประมาณ ขนาดจริงอาจต่างได้)</span>';
+ var bad=false;if(n>MAXN){h+='<br><span class="omw">มากเกินไป (เกิน '+MAXN.toLocaleString("en-US")+' แผ่น) ลดพื้นที่ ระดับซูม หรือจำนวนชนิดแผนที่</span>';bad=true}
+ else if(n>WARNN)h+='<br><span class="omw">จำนวนมาก ควรลดเฉพาะที่จำเป็น และโหลดตอนมี Wi-Fi</span>';
+ el.innerHTML=h;go.disabled=bad||ST.busy;el.dataset.n=n;el.dataset.by=by;
+ if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(function(s){if(!s||!s.quota)return;var fr=s.quota-(s.usage||0);if(by>fr*0.8){el.insertAdjacentHTML("beforeend",'<br><span class="omw">พื้นที่ว่างที่เครื่องให้แอปอาจไม่พอ (เหลือราว '+mb(fr)+')</span>')}else el.insertAdjacentHTML("beforeend",'<br><span class="omn">พื้นที่ว่างที่เครื่องให้แอปราว '+mb(fr)+'</span>')}).catch(function(){})}
+async function stats(){var el=q("omast");if(!el)return;el.textContent="กำลังนับ…";
+ try{var c=await caches.open(CA),ks=await c.keys(),tot=0,m=Math.min(ks.length,60);
+  for(var i=0;i<m;i++){var r=await c.match(ks[Math.floor(i*ks.length/m)]);tot+=r?+r.headers.get("x-sz")||0:0}
+  el.textContent="ตอนนี้เก็บอยู่ "+ks.length.toLocaleString("en-US")+" แผ่น"+(ks.length?" (ประมาณ "+mb(m?tot/m*ks.length:0)+")":"")}catch(e){el.textContent=""}
+ var ca=await caches.open(CR).catch(function(){return null});
+ var inf=q("omin"),tx="";try{var ak=ca?await ca.keys():[];tx="พื้นที่ที่ดาวน์โหลดไว้: "+ak.length.toLocaleString("en-US")+" แผ่น"}catch(e){}
+ try{if(navigator.storage&&navigator.storage.persisted){var p=await navigator.storage.persisted();tx+=" · การป้องกันไม่ให้ระบบลบเอง: "+(p?"เปิดอยู่":"ยังไม่ได้ขอ/ไม่ได้รับ")}}catch(e){}
+ try{if(!navigator.serviceWorker||!navigator.serviceWorker.controller)tx+=" · ⚠ แอปยังไม่พร้อมใช้ออฟไลน์ (เปิดแอปใหม่หนึ่งครั้งหลังติดตั้ง)"}catch(e){}
+ inf.textContent=tx}
+function render(){var el=q("omal");if(!el)return;if(!areas.length){el.innerHTML='<span class="omn">ยังไม่มีพื้นที่ที่ดาวน์โหลดไว้</span>';return}
+ el.innerHTML=areas.map(function(a,i){var full=a.done>=a.n;return'<div class="oma"><b>'+esc2(a.name)+'</b> '+(full?'<span class="omn">· ครบ</span>':'<span class="omw">· ไม่ครบ '+a.done.toLocaleString("en-US")+'/'+a.n.toLocaleString("en-US")+'</span>')+
+ '<br><span class="omn">'+a.layers.map(function(k){var L=lay(k);return L?L.n.replace(/\s*\(.*\)/,""):k}).join(", ")+' · ซูม '+a.zmin+'–'+a.zmax+' · '+mb(a.bytes||0)+' · '+esc2((a.at||"").slice(0,10))+'</span>'+
+ '<div class="omr"><button type="button" class="b s" data-oc="'+i+'">'+(full?'ตรวจ/โหลดซ้ำส่วนที่ขาด':'โหลดต่อ')+'</button><button type="button" class="b s" data-ox="'+i+'">ลบ</button></div></div>'}).join("");
+ el.querySelectorAll("[data-oc]").forEach(function(b){b.onclick=function(){run(areas[+b.dataset.oc])}});
+ el.querySelectorAll("[data-ox]").forEach(function(b){b.onclick=function(){delArea(+b.dataset.ox)}})}
+async function delArea(i){if(ST.busy){toast("กำลังดาวน์โหลดอยู่ กดหยุดก่อน");return}var a=areas[i];if(!a||!confirm("ลบพื้นที่ “"+a.name+"” ออกจากเครื่อง?"))return;
+ var keep=new Set();areas.forEach(function(o,j){if(j!==i)list(o).forEach(function(t){keep.add(t.key)})});
+ var c=await caches.open(CR),n=0;for(const t of list(a)){if(!keep.has(t.key)){if(await c.delete(t.key))n++}}
+ areas.splice(i,1);saveAreas();render();stats();toast("ลบ “"+a.name+"” แล้ว ("+n.toLocaleString("en-US")+" แผ่น)")}
+async function start(){if(ST.busy)return;var b=curBox();if(!b)return;var ks=sel(),z0=+q("omz0").value,z1=+q("omz1").value,n=cnt(b,z0,z1,ks);
+ if(!ks.length||n>MAXN||n<1)return;
+ var nm=(q("omname").value||"").trim()||("พื้นที่ "+(areas.length+1));
+ if(n>WARNN&&!confirm("จะดาวน์โหลด "+n.toLocaleString("en-US")+" แผ่น ใช้เวลานานและใช้พื้นที่มาก ต้องการต่อหรือไม่?"))return;
+ var a={id:Date.now(),name:nm,layers:ks,zmin:z0,zmax:z1,bbox:b.map(function(v){return+v.toFixed(5)}),n:n,done:0,bytes:0,at:new Date().toISOString()};
+ areas.push(a);saveAreas();render();run(a)}
+async function run(a){if(ST.busy)return;ST.busy=true;ST.abort={v:false};var ac=ST.abort,ks=list(a),i=0,done=0,fail=0,bytes=0,msg="",wl=null,last=0;
+ q("omgo").disabled=true;q("omstop").hidden=false;q("ompw").hidden=false;
+ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){})}catch(e){}
+ try{if(navigator.wakeLock)wl=await navigator.wakeLock.request("screen")}catch(e){}
+ var c=await caches.open(CR);
+ function prog(force){var t=Date.now();if(!force&&t-last<250)return;last=t;q("ompb").style.width=(done/ks.length*100).toFixed(1)+"%";q("omst").textContent="ดาวน์โหลด “"+a.name+"” "+done.toLocaleString("en-US")+" / "+ks.length.toLocaleString("en-US")+" แผ่น · "+mb(bytes)+(fail?" · ล้มเหลว "+fail:"")}
+ async function worker(){while(i<ks.length&&!ac.v){var t=ks[i++];
+  try{var h=await c.match(t.key);if(h){bytes+=+h.headers.get("x-sz")||0;done++;prog();continue}
+   var r=null;for(var k=0;k<2&&!ac.v;k++){try{r=await fetch(t.url,{mode:"cors",credentials:"omit"});if(r.ok)break;r=null}catch(e){r=null}}
+   if(r){bytes+=await tput(CR,t.key,r);done++}else{fail++;if(fail>=20&&fail>done){msg="ผู้ให้บริการไม่ตอบ/ปฏิเสธ หรือไม่มีอินเทอร์เน็ต — หยุดดาวน์โหลด";ac.v=true}}
+  }catch(e){fail++;if(e&&e.name==="QuotaExceededError"){msg="พื้นที่เก็บข้อมูลเต็ม — หยุดดาวน์โหลด (ลบแผนที่เก่าหรือลดขนาด)";ac.v=true}}
+  prog()}}
+ await Promise.all([1,2,3,4].map(worker));
+ a.done=done;a.bytes=bytes;a.at=new Date().toISOString();saveAreas();prog(true);
+ if(wl)try{wl.release()}catch(e){}
+ var okAll=done>=ks.length;q("omst").textContent=(okAll?"เสร็จแล้ว: ":ac.v?"หยุดแล้ว: ":"จบ: ")+"“"+a.name+"” "+done.toLocaleString("en-US")+" / "+ks.length.toLocaleString("en-US")+" แผ่น ("+mb(bytes)+")"+(fail?" · ล้มเหลว "+fail:"")+(msg?" · "+msg:"");
+ ST.busy=false;ST.abort=null;q("omstop").hidden=true;q("omgo").disabled=false;render();stats();upd2();
+ try{toast(okAll?"ดาวน์โหลดแผนที่ “"+a.name+"” เสร็จแล้ว":"ดาวน์โหลด “"+a.name+"” ยังไม่ครบ ("+done+"/"+ks.length+")")}catch(e){}}
+function open(){build();var un=q("omun"),okd=q("omok");
+ if(!OK){un.hidden=false;un.textContent="ฟังก์ชันนี้ใช้ได้เมื่อเปิดแอปผ่านเว็บ (https) หรือติดตั้งลงหน้าจอโฮมเท่านั้น ไฟล์ที่เปิดจากเครื่อง/Pagira ใช้ไม่ได้";okd.hidden=true}
+ else{un.hidden=true;okd.hidden=false;q("omauto").checked=cfg.auto;q("omcap").value=String(cfg.cap);
+  if(!root.dataset.init){var cur=(typeof LAY!=="undefined"&&LAY.k)||"topo";if(cur==="blank")cur="topo";var f=root.querySelector('[data-ly="'+cur+'"]');if(f)f.checked=true;root.dataset.init="1"}
+  render();stats();upd2()}
+ root.hidden=false}
+function close(){if(root)root.hidden=true}
+function bind(){["offb","offb2"].forEach(function(id){var b=document.getElementById(id);if(b)b.onclick=open})}
+bind();
+if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}},4000);
 })();
 </script>
 </body>

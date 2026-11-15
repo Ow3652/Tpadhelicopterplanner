@@ -1,13 +1,16 @@
 /* Service worker ของ Tpad Helicopter Planner
  * ทุกครั้งที่ออกเวอร์ชันใหม่ ต้องแก้ VERSION ให้ตรงกับเลขเวอร์ชันของ index.html (และตั้ง BUILD กลับเป็น b1) ถ้าแก้ไฟล์แอปโดยใช้เลขเดิม ให้เพิ่ม BUILD (ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่รู้ว่ามีของใหม่)
  * หลักการ: เก็บไฟล์ของแอปไว้ในเครื่อง เปิดจากเครื่องก่อนเสมอ (ใช้ออฟไลน์ได้)
- * ไม่ยุ่งกับคำขอไปโดเมนอื่น (Apps Script, ภาพแผนที่, ฟอนต์) ปล่อยให้เบราว์เซอร์จัดการเอง
+ * คำขอข้ามโดเมน: แคชเฉพาะ "ภาพแผนที่ (tile)" จากโดเมนที่กำหนดใน isTile() เท่านั้น
+ *   (Apps Script, METAR, ADS-B, ฟอนต์, เรดาร์ฝน ห้ามแคช ปล่อยให้เบราว์เซอร์จัดการเอง)
+ * แคชแผนที่แยกจากแคชของแอป (ชื่อไม่ขึ้นต้นด้วย tpad-) เพื่อไม่ถูกลบเมื่ออัปเดตเวอร์ชัน
  * เวอร์ชันใหม่จะรอ (ไม่สลับเอง) จนกว่าผู้ใช้กด "อัปเดตตอนนี้" ในแอป
  */
-const VERSION = '4.3.0';
+const VERSION = '4.4.0';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b2';
+const BUILD = 'b1';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
+const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {
@@ -28,19 +31,27 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('message', (e) => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
+  else if (e.data && e.data.t === 'tilecfg') {
+    CFG = { auto: !!e.data.auto, capMB: Math.max(1, +e.data.capMB || 200) };
+    e.waitUntil(caches.open(TC_CFG).then((c) => c.put('cfg', new Response(JSON.stringify(CFG)))));
+  }
 });
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin) {
+    if (isTile(url)) e.respondWith(tileFetch(e, url));
+    return;
+  }
   const scope = new URL(self.registration.scope);
   if (!url.pathname.startsWith(scope.pathname)) return;
   const isNav = req.mode === 'navigate';
   const rel = url.pathname.slice(scope.pathname.length);
   const isCore = rel === '' || CORE.includes(rel);
-  if (!isNav && !isCore) return;
+  // การนำทางไปไฟล์อื่น (เช่น docs/manual.pdf) ต้องไม่ถูกแทนด้วย index.html
+  if (isNav ? !(rel === '' || rel === 'index.html') : !isCore) return;
   e.respondWith(
     caches.open(CACHE).then(async (c) => {
       const hit = (await c.match(rel === '' ? './' : rel, { ignoreSearch: true })) || (isNav ? await c.match('index.html') : null);
@@ -50,3 +61,65 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
+
+/* ---------- แคชภาพแผนที่ (tile) ---------- */
+const TILEHOST = /(^|\.)(tile\.opentopomap\.org|tile-cyclosm\.openstreetmap\.fr|tile\.openstreetmap\.org|tile\.openstreetmap\.fr)$/;
+function isTile(u) {
+  return TILEHOST.test(u.hostname) || (u.hostname === 'server.arcgisonline.com' && u.pathname.indexOf('/MapServer/tile/') > 0);
+}
+// คีย์แคช: ตัดโดเมนย่อย a/b/c และพารามิเตอร์ _r ออก (ต้องตรงกับฟังก์ชัน tkey ในหน้าแอป)
+function tkey(u) {
+  try { const x = new URL(u); x.searchParams.delete('_r'); return 'https://' + x.hostname.replace(/^[abc]\./, '') + x.pathname + x.search; }
+  catch (e) { return u; }
+}
+let CFG = null;
+async function cfg() {
+  if (CFG) return CFG;
+  CFG = { auto: true, capMB: 200 };
+  try {
+    const r = await (await caches.open(TC_CFG)).match('cfg');
+    if (r) CFG = Object.assign(CFG, await r.json());
+  } catch (e) {}
+  return CFG;
+}
+async function tput(name, key, resp) {
+  const b = await resp.blob();
+  const h = new Headers({ 'content-type': resp.headers.get('content-type') || 'image/png', 'x-sz': String(b.size) });
+  await (await caches.open(name)).put(key, new Response(b, { headers: h }));
+  return b.size;
+}
+let putN = 0;
+async function trim(capMB) {
+  const c = await caches.open(TC_AUTO), ks = await c.keys();
+  if (ks.length * 30 * 1024 < capMB * 1024 * 1024 * 0.6) return;   // ยังห่างเพดานมาก ไม่ต้องนับ
+  let tot = 0; const sz = [];
+  for (const k of ks) { const r = await c.match(k); const n = r ? +r.headers.get('x-sz') || 25000 : 0; sz.push(n); tot += n; }
+  const cap = capMB * 1024 * 1024;
+  if (tot <= cap) return;
+  for (let i = 0; i < ks.length && tot > cap * 0.9; i++) { await c.delete(ks[i]); tot -= sz[i]; }   // ลบแผ่นที่เก่าสุดก่อน
+}
+async function tileFetch(e, url) {
+  const key = tkey(url.href), fresh = url.searchParams.has('_r');
+  // caches.match ด้วย cacheName ไม่สร้างแคชเปล่าขึ้นมาเอง
+  if (!fresh) {
+    const h = (await caches.match(key, { cacheName: TC_AREA })) || (await caches.match(key, { cacheName: TC_AUTO }));
+    if (h) return h;
+  }
+  let r;
+  try { r = await fetch(url.href, { mode: 'cors', credentials: 'omit' }); }
+  catch (err) {
+    if (self.navigator && navigator.onLine === false) return Response.error();
+    try { return await fetch(e.request); } catch (e2) { return Response.error(); }   // เซิร์ฟเวอร์ไม่ส่ง CORS: ใช้ได้แต่ไม่เก็บ
+  }
+  if (r.ok) {
+    const cp = r.clone();
+    e.waitUntil((async () => {
+      try {
+        const c = await cfg();
+        if (await caches.match(key, { cacheName: TC_AREA })) { await tput(TC_AREA, key, cp); return; }
+        if (c.auto) { await tput(TC_AUTO, key, cp); if (++putN % 40 === 0) await trim(c.capMB); }
+      } catch (err) {}
+    })());
+  }
+  return r;
+}

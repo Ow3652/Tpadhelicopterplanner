@@ -4,7 +4,7 @@
 
 - ใช้งาน: https://ow3652.github.io/Tpadhelicopterplanner/ (เปิดใน Safari แล้ว "เพิ่มไปยังหน้าจอโฮม" เพื่อใช้ออฟไลน์ได้)
 - ประวัติการเปลี่ยนแปลง: [CHANGELOG.md](CHANGELOG.md)
-- คู่มือ: โฟลเดอร์ [docs/](docs/) (ฉบับ v4.2.3)
+- คู่มือ: [docs/manual.pdf](docs/manual.pdf) และ [docs/manual.docx](docs/manual.docx) (ฉบับ v4.4.0) มีลิงก์ในหน้าแอปด้วย
 - สคริปต์ Google Apps Script: `Pub_point Apps Script.gs` (จุดร่วม + ข้อมูลส่วนตัวรายคน), `METAR proxy Apps Script.gs`, `ADSB proxy Apps Script.gs`
 - ชุดทดสอบ: [tests/](tests/) (Playwright จำลองใน Chromium ไม่ใช่อุปกรณ์จริง)
 
