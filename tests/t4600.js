@@ -54,45 +54,49 @@ await p.evaluate(()=>{document.getElementById('flon').click()});await p.waitForT
 t('T1 เปิด FLTA: พูดทดสอบเสียง (เปิดเสียงบน iPad ด้วยการกด)',await p.evaluate(()=>window.__said.some(s=>/Terrain alerting on/.test(s))));
 t('T1 ค่าตั้งซิงก์ช่องในชั้นข้อมูล และเก็บใน localStorage',await p.evaluate(()=>document.getElementById('flon2').checked&&JSON.parse(localStorage.getItem('heliTaws')).fl===true));
 await p.evaluate(()=>{window.__said=[]});
-r=await at(14.0,100.543,90,120,null);
-t('T2 ห่างจุดชน ~3 NM ที่ 120 kt (~90 วิ): CAUTION',r.st==='caution'&&r.tc>60&&r.tc<=120&&/CAUTION – TERRAIN/.test(r.txt)&&r.cls.includes('fl-caution'),JSON.stringify({st:r.st,tc:r.tc,e:r.e}));
+r=await at(14.0,100.5861,90,120,null);
+t('T2 b2 ห่างจุดชน ~0.5 NM ที่ 120 kt (~15 วิ): CAUTION',r.st==='caution'&&r.tc>10&&r.tc<=20&&/CAUTION – TERRAIN/.test(r.txt)&&r.cls.includes('fl-caution'),JSON.stringify({st:r.st,tc:r.tc,e:r.e}));
 t('T2 พูด "Caution, terrain" และวาดพัดตรวจ + จุดชนบนแผนที่',await p.evaluate(()=>window.__said.some(s=>/Caution, terrain/.test(s)))&&r.poly&&r.x);
 await p.evaluate(()=>{window.__said=[]});
-r=await at(14.0,100.578,90,120,null);
-t('T3 ห่าง ~1 NM (~30 วิ): WARNING',r.st==='warn'&&r.tc<=60&&/WARNING – TERRAIN/.test(r.txt)&&r.cls.includes('fl-warn'),JSON.stringify({st:r.st,tc:r.tc}));
+r=await at(14.0,100.5913,90,120,null);
+t('T3 b2 ห่าง ~0.2 NM (~6 วิ): WARNING',r.st==='warn'&&r.tc<=10&&/WARNING – TERRAIN/.test(r.txt)&&r.cls.includes('fl-warn'),JSON.stringify({st:r.st,tc:r.tc}));
 t('T3 พูด "Warning, terrain"',await p.evaluate(()=>window.__said.some(s=>/Warning, terrain/.test(s))));
 await p.evaluate(()=>{window.__said=[];document.getElementById('flmute').click()});await p.waitForTimeout(100);
 await p.evaluate(()=>{FL.said=0;MLP.t=Date.now();flTick()});
 t('T3 กด 🔇 ปิดเสียงเตือนครั้งนี้: ไม่พูดซ้ำ',await p.evaluate(()=>window.__said.length===0&&FL.mute));
 r=await at(14.0,100.492,90,120,null);
-t('T4 ห่าง ~6 NM (~180 วิ เกิน 120): ไม่เตือน และกลับมาเปิดเสียงเมื่อพ้นเหตุ',r.st==='clear'&&/FLTA ✓/.test(r.txt)&&await p.evaluate(()=>!FL.mute),r.st);
-// v4.6.1: พัดข้างละ 45° — ภูเขาเฉียงซ้าย 40° เตือน / เฉียง 70° (นอกพัด) ไม่เตือน (240 kt ระยะ 120 วิ = 8 NM)
-const offAx=async rel=>{const q=await p.evaluate(rel=>flDest(14.0,100.8,(90-rel+180+360)%360,19.5/60*60),rel);return at(q.la,q.lo,90,240,null)};
-r=await offAx(40);
-t('T5b v4.6.1 ภูเขาเฉียงซ้าย 40° (ในพัด 45°): CAUTION',r.st==='caution',JSON.stringify({st:r.st,tc:r.tc}));
-r=await offAx(70);
-t('T5b v4.6.1 ภูเขาเฉียงซ้าย 70° (นอกพัด): ไม่เตือน',r.st==='clear',r.st);
+r=await at(14.0,100.572,90,120,null);
+t('T4 b2 ห่าง ~1.3 NM (~40 วิ เกิน 20 วิ): ไม่เตือน',r.st==='clear',JSON.stringify({st:r.st,tc:r.tc}));
+t('T4 ห่าง ~6 NM (เกิน 20 วิ): ไม่เตือน และกลับมาเปิดเสียงเมื่อพ้นเหตุ',r.st==='clear'&&/FLTA ✓/.test(r.txt)&&await p.evaluate(()=>!FL.mute),r.st);
+// v4.6.1 b2: พัดข้างละ 30° — ภูเขาเฉียงซ้าย 20° เตือน / เฉียง 80° (นอกพัด) ไม่เตือน (240 kt ระยะ 20 วิ = 1.33 NM, ขอบเตือน 11.95 NM จากยอด)
+const offAx=async rel=>{const q=await p.evaluate(rel=>flDest(14.0,100.8,(90-rel+180+360)%360,12.95),rel);return at(q.la,q.lo,90,240,null)};
+r=await offAx(20);
+t('T5b b2 ภูเขาเฉียงซ้าย 20° (ในพัด 30°): CAUTION',r.st==='caution',JSON.stringify({st:r.st,tc:r.tc}));
+r=await offAx(80);
+t('T5b b2 ภูเขาเฉียงซ้าย 80° (นอกพัด): ไม่เตือน',r.st==='clear',r.st);
 const fan=await p.evaluate(()=>{const F=FL.path&&FL.path.F;if(!F)return null;const b=(a,c)=>{const r=Math.PI/180,y=Math.sin((c.lo-a.lo)*r)*Math.cos(c.la*r),x=Math.cos(a.la*r)*Math.sin(c.la*r)-Math.sin(a.la*r)*Math.cos(c.la*r)*Math.cos((c.lo-a.lo)*r);return(Math.atan2(y,x)/r+360)%360};return{l:Math.round(b(F[0],F[1])),r:Math.round(b(F[0],F[F.length-1]))}});
-t('T5b v4.6.1 พัดที่วาด: 45° ถึง 135° (Track 090 ± 45°)',fan&&fan.l===45&&fan.r===135,JSON.stringify(fan));
-// เส้นโค้งทำนาย: เลี้ยว 3°/วิ (รวม 360° ใน 120 วิ) → คาไว้ 80° · เลี้ยว 0.2°/วิ → โค้ง 24°
+t('T5b b2 วาดเฉพาะเส้นขอบพัด ไม่ลงสี และไม่มีเส้นโค้งกลางพัด',await p.evaluate(()=>{const sv=document.getElementById('flv');const pg=[...sv.querySelectorAll('polygon')];return pg.length>0&&pg.every(e=>e.getAttribute('fill')==='none')&&!sv.querySelector('polyline')}));
+t('T5b b2 พัดที่วาด: 60° ถึง 120° (Track 090 ± 30°)',fan&&fan.l===60&&fan.r===120,JSON.stringify(fan));
+// เส้นโค้งทำนาย (ใช้ตรวจ ไม่วาด): b2 ระยะ 20 วิ → เลี้ยว 3°/วิ โค้ง 60° (ไม่ถึงเพดาน 80°) · 6°/วิ คาไว้ 80° · 0.2°/วิ โค้ง 4°
 const curve=async rate=>p.evaluate(rate=>{clearInterval(FL.tm);const now=Date.now();FL.hh=[];for(let i=0;i<=4;i++)FL.hh.push({t:now-4000+i*1000,hd:(90+rate*(i-4)+360)%360});MLP.on=true;MLP.la=13.0;MLP.lo=100.0;MLP.hd=90;MLP.sp=120/1.943844;MLP.alt=null;MLP.t=now;const r=flEval(now),C=r.path.C,a=C[C.length-2],c=C[C.length-1],rr=Math.PI/180,y=Math.sin((c.lo-a.lo)*rr)*Math.cos(c.la*rr),x=Math.cos(a.la*rr)*Math.sin(c.la*rr)-Math.sin(a.la*rr)*Math.cos(c.la*rr)*Math.cos((c.lo-a.lo)*rr);return Math.round(((Math.atan2(y,x)/rr-90+540)%360)-180)},rate);
-const c3=await curve(3),c02=await curve(0.2);
-t('T5c v4.6.1 เส้นโค้งทำนาย: เลี้ยวขวา 3°/วิ คาไว้ที่ ~80°',c3>=76&&c3<=81,c3);
-t('T5c v4.6.1 เส้นโค้งทำนาย: เลี้ยวน้อย 0.2°/วิ โค้งน้อย (~24°)',c02>=20&&c02<=26,c02);
+const c3=await curve(3),c6=await curve(6),c02=await curve(0.2);
+t('T5c เส้นโค้งทำนาย: เลี้ยว 3°/วิ ใน 20 วิ โค้ง ~60°',c3>=55&&c3<=62,c3);
+t('T5c เส้นโค้งทำนาย: เลี้ยว 6°/วิ คาไว้ที่ ~80°',c6>=74&&c6<=81,c6);
+t('T5c เส้นโค้งทำนาย: เลี้ยวน้อย 0.2°/วิ โค้งน้อย (~4°)',c02>=2&&c02<=6,c02);
 r=await at(14.0,100.578,270,120,null);
 t('T5 จุดเดิมแต่บินออกจากภูเขา (270°): ไม่เตือน',r.st==='clear',r.st);
-r=await at(14.0,100.578,90,15,null);
+r=await at(14.0,100.5913,90,15,null);
 t('T6 GS 15 kt (< 20): งดเตือน',r.st==='inh'&&/งดเตือน/.test(r.txt),r.st);
 await p.evaluate(()=>twSet({alt:6000}));
-r=await at(14.0,100.578,90,120,null);
+r=await at(14.0,100.5913,90,120,null);
 t('T7 ความสูงบิน 6,000 ft (ยอด 4,921 + 500 = 5,421): ไม่เตือน',r.st==='clear',r.st);
-// ความสูง GPS + ร่อนลง: ไม่ร่อน = ไม่เตือน / ร่อน 10 ft/วิ = เตือน
+// ความสูง GPS + ร่อนลง: ไม่ร่อน = ไม่เตือน / ร่อน 30 ft/วิ = เตือน (b2 มองล่วงหน้า 20 วิ)
 await p.evaluate(()=>twSet({alt:1500,gps:true}));
-r=await at(14.0,100.75,90,120,5600);
+r=await at(14.0,100.79,90,120,5600);
 t('T8 ความสูง GPS 5,600 ft ระดับคงที่ ใกล้ยอด: ไม่เตือน',r.st==='clear',r.st);
 const dsc=await p.evaluate(async()=>{clearInterval(FL.tm);FL.hist=[];FL.hh=[];FL.st='clear';const t0=Date.now()-10000;
- for(let i=0;i<=10;i++){MLP.t=t0+i*1000;MLP.alt=(5700-10*i)/3.28084;flTick(t0+i*1000)}MLP.t=Date.now();MLP.alt=5600/3.28084;flTick();return{st:FL.st,vs:FL.vs,tc:FL.tc}});
-t('T8 ความสูง GPS ร่อนลง 10 ft/วิ: คาดว่าจะต่ำลง จึงเตือน',(dsc.st==='caution'||dsc.st==='warn')&&dsc.vs<-8,JSON.stringify(dsc));
+ for(let i=0;i<=10;i++){MLP.t=t0+i*1000;MLP.alt=(5900-30*i)/3.28084;flTick(t0+i*1000)}MLP.t=Date.now();MLP.alt=5600/3.28084;flTick();return{st:FL.st,vs:FL.vs,tc:FL.tc}});
+t('T8 ความสูง GPS ร่อนลง 30 ft/วิ: คาดว่าจะต่ำลง จึงเตือน',(dsc.st==='caution'||dsc.st==='warn')&&dsc.vs<-25,JSON.stringify(dsc));
 await p.evaluate(()=>twSet({gps:false}));
 // ออฟไลน์บริเวณที่ไม่เคยโหลด: ไม่มีข้อมูล ≠ ปลอดภัย
 mode='fail';await c.setOffline(true);
@@ -139,7 +143,7 @@ await c2.route(/ow3652\.github\.io\/Tpadterrain\//,r=>{const u=r.request().url()
 await c2.route(/tile\.|arcgis|openstreetmap|elevation-tiles|fonts\.g|script\.google|aviationweather|rainviewer|cartocdn|open-meteo|adsb|airplanes/,r=>r.abort());
 const p2=await c2.newPage();p2.on('pageerror',e=>errs.push('iPad: '+e.message));await p2.goto(U);await p2.waitForTimeout(1500);
 await p2.click('#fs');await p2.waitForTimeout(300);if(await p2.isVisible('#uis'))await p2.click('#uis');await p2.waitForTimeout(300);
-await p2.evaluate(()=>{flSet({fl:true});clearInterval(FL.tm);MLP.on=true;MLP.la=14.0;MLP.lo=100.578;MLP.hd=90;MLP.sp=120/1.943844;MLP.alt=null;MLP.t=Date.now();flTick()});await p2.waitForTimeout(1500);
+await p2.evaluate(()=>{flSet({fl:true});clearInterval(FL.tm);MLP.on=true;MLP.la=14.0;MLP.lo=100.5913;MLP.hd=90;MLP.sp=120/1.943844;MLP.alt=null;MLP.t=Date.now();flTick()});await p2.waitForTimeout(1500);
 const lay=await p2.evaluate(()=>{MLP.t=Date.now();FL.since=0;flTick();const fb=document.getElementById('flb').getBoundingClientRect(),bs=[...document.querySelectorAll('.mc .mr>*,.mc2>*')].filter(e=>e.id&&e.getClientRects().length),tb=Math.max(...bs.map(e=>e.getBoundingClientRect().bottom));
  const cov=bs.filter(e=>{const r=e.getBoundingClientRect(),h=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return !(h&&(h===e||e.contains(h)))}).map(e=>e.id);return{st:FL.st,top:Math.round(fb.top),tb:Math.round(tb),cov}});
 const cx=await p2.evaluate(async()=>{const c=wp(14.0,100.8,11);M.z=11;M.cx=c[0];M.cy=c[1];drawMap(false);await new Promise(r=>setTimeout(r,1500));drawMap(false);await new Promise(r=>setTimeout(r,300));return document.getElementById('cur').textContent});
