@@ -1,17 +1,30 @@
-// ตรวจแนวตั้งของแถวกรอกรหัส เทียบกับปุ่มแผนที่เต็มจอ (iPad แนวตั้ง/แนวนอน, PC, มือถือ) ต้องต่างกันไม่เกิน 1 พิกเซล
+// ตรวจหน้าตาหัวหน้าจอ v4.4.0: (ก) แถวบน: ลิงก์คู่มือ/ปุ่มแผนที่ออฟไลน์/ข้อความกรอกรหัส/ช่องรหัส/ชื่อ user อยู่แนวเดียวกัน
+// (ข) iPad แนวตั้ง: ปุ่มแผนที่เต็มจออยู่ขวาสุดของแถวแท็บ ระดับเดียวกับแท็บ ขอบขวาตรงกับช่องรหัส และแท็บไม่ต้องเลื่อน (iPad Pro 11 และ iPad gen 9 กว้าง 810)
+// (ค) แผงเมนูที่ซ่อนในแผนที่เต็มจอ: ลำดับปุ่ม เมนู → ย้อนกลับ → ทำซ้ำ → ✕
 // ต้องเปิดเซิร์ฟเวอร์ที่พอร์ต 8765 ในโฟลเดอร์ที่มีไฟล์แอป (python -m http.server 8765) ชื่อไฟล์ตามตัวแปร FILE
 const {chromium,devices}=require('playwright');
-const FILE=process.env.FILE||'Tpad helicopter planner v4.3.0.html';
-(async()=>{const b=await chromium.launch();let bad=0;
-for(const [nm,dv,vp] of [['iPad Pro 11 แนวตั้ง',devices['iPad Pro 11'],null],['iPad Pro 11 แนวนอน',devices['iPad Pro 11 landscape'],null],['PC',null,{width:1280,height:800}],['มือถือ',devices['iPhone 13'],null]]){
+const FILE=process.env.FILE||'Tpad helicopter planner v4.4.0.html';
+(async()=>{const b=await chromium.launch();let bad=0;const ck=(ok,...a)=>{if(!ok)bad++;console.log(ok?'PASS':'FAIL',...a)};
+for(const [nm,dv,vp] of [['iPad Pro 11 แนวตั้ง',devices['iPad Pro 11'],null],['iPad gen 9 แนวตั้ง (810)',{...devices['iPad (gen 7)'],viewport:{width:810,height:1080}},null],['iPad Pro 11 แนวนอน',devices['iPad Pro 11 landscape'],null],['PC',null,{width:1280,height:800}],['มือถือ',devices['iPhone 13'],null]]){
  const c=await b.newContext(dv?{...dv}:{viewport:vp});await c.route(/tile|arcgis|openstreetmap|fonts\.g|script\.google|aviationweather|rainviewer|cartocdn/,r=>r.abort());
  await c.addInitScript("try{localStorage.setItem('heliMyKey','k1')}catch(e){}");
  const p=await c.newPage();await p.route(/script\.google\.com/,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({ok:true,rows:[],routes:[],user:'somchai'})}));
  await p.goto('http://localhost:8765/'+encodeURIComponent(FILE));await p.waitForTimeout(2500);
  const m=await p.evaluate(()=>{const cy=e=>{const x=e.getBoundingClientRect();return x.y+x.height/2};const lab=document.querySelector('.tkey');
   let tx=null;for(const n of lab.childNodes){if(n.nodeType===3&&n.textContent.trim()){const rg=document.createRange();rg.selectNodeContents(n);tx=cy(rg)}}
-  const fs=document.getElementById('fs0');const fsv=fs&&fs.getBoundingClientRect().width>0;
-  return {fs:fsv?cy(fs):null,text:tx,input:cy(document.getElementById('mykey2')),user:(()=>{const u=document.getElementById('myuser');return u&&!u.hidden?cy(u):null})()}});
- const ref=m.fs!=null?m.fs:m.input;const d=[m.text,m.input,m.user].filter(x=>x!=null).map(x=>Math.abs(x-ref));const mx=Math.max(...d);
- const ok=mx<=1;if(!ok)bad++;console.log(ok?'PASS':'FAIL',nm,'ปุ่มแผนที่เต็มจอ='+(m.fs==null?'(ซ่อน)':m.fs.toFixed(1)),'ข้อความ='+m.text.toFixed(1),'ช่องรหัส='+m.input.toFixed(1),'ชื่อ='+(m.user==null?'-':m.user.toFixed(1)),'ต่างสูงสุด',mx.toFixed(2));await c.close()}
+  const fs=document.getElementById('fs0'),fb=fs.getBoundingClientRect(),fsv=fb.width>0,key=document.getElementById('mykey2').getBoundingClientRect(),tabs=document.querySelector('.tabs');
+  const u=document.getElementById('myuser');
+  return {mnl:cy(document.getElementById('mnl')),offb:cy(document.getElementById('offb')),text:tx,input:cy(document.getElementById('mykey2')),user:u&&!u.hidden&&u.getBoundingClientRect().width>0?cy(u):null,
+   fsv,fsy:fsv?cy(fs):null,t1:cy(document.getElementById('t1')),fsR:fb.right,keyR:key.right,fsInTabs:!!fs.closest('.tabs'),tabsFit:tabs.scrollWidth<=tabs.clientWidth+1,
+   mnlLeftOfKey:document.getElementById('mnl').getBoundingClientRect().right<=lab.getBoundingClientRect().left+1,order:['uiu','uir','uix'].map(i=>[...document.getElementById('uib').children].indexOf(document.getElementById(i)))}});
+ const ref=m.input;const d=[m.mnl,m.offb,m.text,m.user].filter(x=>x!=null).map(x=>Math.abs(x-ref));
+ const narrow=(dv?dv.viewport.width:vp.width)<500; // มือถือแคบมาก ปล่อยให้ขึ้นบรรทัดใหม่ได้
+ if(!narrow){ck(Math.max(...d)<=1.5,nm,'แถวบน ลิงก์/ปุ่ม/ข้อความ/ช่องรหัส แนวเดียวกัน ต่างสูงสุด',Math.max(...d).toFixed(2));
+ ck(m.mnlLeftOfKey,nm,'ลิงก์คู่มือ/ปุ่มแผนที่ออฟไลน์ อยู่ซ้ายของช่องกรอกรหัส/ชื่อ user')}else console.log('ข้าม (มือถือแคบ ขึ้นบรรทัดใหม่)',nm);
+ ck(m.fsInTabs,nm,'ปุ่มแผนที่เต็มจออยู่ในแถวแท็บ');
+ if(m.fsv){ck(Math.abs(m.fsy-m.t1)<=2.5,nm,'ปุ่มเต็มจอระดับเดียวกับแท็บ ต่าง',Math.abs(m.fsy-m.t1).toFixed(2));
+  ck(Math.abs(m.fsR-m.keyR)<=3,nm,'ขอบขวาปุ่มเต็มจอตรงกับช่องรหัส',m.fsR.toFixed(0)+' vs '+m.keyR.toFixed(0));
+  ck(m.tabsFit,nm,'แท็บทั้งหมดอยู่ในจอ ไม่ต้องเลื่อน')}
+ ck(m.order[0]<m.order[1]&&m.order[1]<m.order[2],nm,'ลำดับปุ่มในเมนูเต็มจอ: ย้อนกลับ ทำซ้ำ ✕',m.order.join(','));
+ await c.close()}
 await b.close();process.exit(bad?1:0)})();

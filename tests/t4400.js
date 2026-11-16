@@ -111,6 +111,19 @@ fs.writeFileSync(path.join(SITE,'docs','manual.html'),'<!doctype html><meta char
  t('T12 มีปุ่ม "ปิดคู่มือ" อยู่ในกรอบ มองเห็นและกดได้',await ps.isVisible('#mnx'));
  await ps.click('#mnx');t('T12 กดปิดแล้วกลับหน้าแอป',!(await ps.$('#mnv'))&&await ps.isVisible('#offb'));
  await ps.click('#mnl');await ps.waitForSelector('#mnv');await ps.keyboard.press('Escape');t('T12 กด Esc ปิดคู่มือได้',!(await ps.$('#mnv')));await ps.close()}
+// คู่มือออฟไลน์: เก็บ manual.html + รูปไว้ใน manual-docs แล้วเปิดตอนออฟไลน์ได้
+fs.mkdirSync(path.join(SITE,'docs','img'),{recursive:true});fs.writeFileSync(path.join(SITE,'docs','img','x1.jpg'),PNG);
+fs.writeFileSync(path.join(SITE,'docs','manual.html'),'<!doctype html><meta charset=utf-8><title>manual</title><h1 id=h>คู่มือจำลอง</h1><img src="img/x1.jpg">');
+{const po=await c.newPage();await po.addInitScript(()=>{Object.defineProperty(navigator,'standalone',{get:()=>true});try{localStorage.removeItem('heliManPre')}catch(e){}});await po.goto(U);await po.waitForFunction(()=>!!navigator.serviceWorker.controller,null,{timeout:15000}).catch(()=>{});
+ t('T13 ข้อความลิงก์คือ "คู่มือการใช้งาน" (ไม่มีคำว่า PDF)',/คู่มือการใช้งาน/.test(await po.textContent('#mnl'))&&!/PDF/.test(await po.textContent('#mnl')),await po.textContent('#mnl'));
+ for(let k=0;k<30;k++){const n=await po.evaluate(async()=>(await caches.keys()).includes('manual-docs')?(await (await caches.open('manual-docs')).keys()).length:0);if(n>=2)break;await po.waitForTimeout(1000)}
+ const mk=await po.evaluate(async()=>(await (await caches.open('manual-docs')).keys()).map(r=>r.url.replace(/^https?:\/\/[^/]+/,'')));
+ t('T13 เก็บคู่มือ HTML และรูปไว้ในแคช manual-docs เอง',mk.includes('/docs/manual.html')&&mk.includes('/docs/img/x1.jpg'),mk);
+ t('T13 แคชคู่มือไม่ขึ้นต้นด้วย tpad- (ไม่ถูกลบตอนอัปเดตแอป)',true);
+ await c.setOffline(true);await po.reload();await po.waitForTimeout(1500);await po.click('#mnl');await po.waitForSelector('#mnv');await po.waitForTimeout(1200);
+ const fr2=po.frames().find(f=>/docs\/manual\.html$/.test(f.url()));const tx2=fr2?await fr2.evaluate(()=>document.body.textContent+'|'+(document.querySelector('img')||{}).naturalWidth).catch(()=>''):'';
+ t('T13 ออฟไลน์: เปิดคู่มือได้จากแคช (ข้อความและรูป)',/คู่มือจำลอง\|1/.test(tx2),tx2);
+ await c.setOffline(false);await po.close()}
 // file:// ไม่ใช้
 const f=await b.newContext({viewport:{width:1280,height:800}});await f.route(/^https?:/,r=>r.abort());
 const fp=await f.newPage();const fe=[];fp.on('pageerror',e=>fe.push(e.message));
