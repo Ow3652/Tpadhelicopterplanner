@@ -167,6 +167,24 @@ t('T15 v4.6.2 SIM: แถว ALT อยู่ใต้ SPD และเหนื
 t('T15 v4.6.2 SIM ALT: ค่าเริ่มเท่ากับ FLY ALT และ +/− ทีละ 100 ft (1500→1800→1700) ซิงก์กับกล่องชั้นข้อมูล',sa.v0==='1500'&&sa.a1===1800&&sa.l1==='1800'&&sa.a2===1700,JSON.stringify(sa));
 t('T15 v4.6.2 SIM ALT: ไม่เกิน 10,000 ft และไม่ต่ำกว่า 0',sa.a3===10000&&sa.v3==='10000'&&sa.a6===0,JSON.stringify(sa));
 t('T15 v4.6.2 แก้ FLY ALT ที่อื่น ช่อง ALT ใน SIM ตามด้วย (3000 → − = 2900)',sa.v4==='3000'&&sa.a5===2900,JSON.stringify(sa));
+// v4.6.2 b2: เปิดกล่อง SIM ด้วยปุ่มจริง — ตัวเลข HDG, ไฟ TIME/ROUTE/HDG/RUN/PAUSE, ไม่มีเมนูกดค้าง, ไม่มี JS error
+const sm=await p.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const errs=[];const oe=window.onerror;window.onerror=(m)=>{errs.push(String(m))};
+pts.length=0;pts.push({name:"AAA",lat:"14.0",lon:"100.3"},{name:"BBB",lat:"14.1",lon:"100.6"});drawPts();calc();render();
+const sb=document.getElementById('simbox');if(sb.hidden)document.getElementById('simbtn').click();await W(100);const q=s=>sb.querySelector(s),tap=b=>{b.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));b.dispatchEvent(new PointerEvent('pointerup',{bubbles:true}))};
+const o={};o.h0=document.getElementById('smhdg').value;tap(q('button[data-hg="1"]'));tap(q('button[data-hg="1"]'));await W(100);o.h1=document.getElementById('smhdg').value;o.hdgOn=document.getElementById('smhdgb').classList.contains('on');
+q('[data-sc="8"]').click();await W(50);o.sc=[...sb.querySelectorAll('[data-sc]')].filter(x=>x.classList.contains('on')).map(x=>x.dataset.sc).join(',');o.scBg=getComputedStyle(q('[data-sc="8"]')).backgroundColor;q('[data-sc="1"]').click();
+SIM.mode='R';q('[data-sc="2"]').click();await W(50);o.routeOn=document.getElementById('smroute').classList.contains('on')&&!document.getElementById('smhdgb').classList.contains('on');q('[data-sc="1"]').click();
+const run=document.getElementById('smrun');o.r0={t:run.textContent,on:run.classList.contains('on')};run.click();await W(400);o.r1={t:run.textContent,on:run.classList.contains('on'),bg:getComputedStyle(run).backgroundColor};
+run.click();await W(200);o.r2={t:run.textContent,on:run.classList.contains('on')};run.click();await W(200);o.r3={t:run.textContent,on:run.classList.contains('on')};
+document.getElementById('smstop').click();await W(200);o.r4={t:run.textContent,on:run.classList.contains('on')};
+const ev=new MouseEvent('contextmenu',{bubbles:true,cancelable:true});q('button[data-sp="5"]').dispatchEvent(ev);o.ctxBlocked=ev.defaultPrevented;
+o.errs=errs;window.onerror=oe;sb.hidden=true;return o});
+t('T17 b2 SIM: กด HDG + แล้วตัวเลข HDG แสดงและเปลี่ยน (000 → 002) ไฟ HDG ติด',sm.h0==='000'&&sm.h1==='002'&&sm.hdgOn,JSON.stringify(sm));
+t('T17 b2 SIM: กด TIME 8x แล้วไฟ 8x ติด (ปุ่มเดียว สีเขียว)',sm.sc==='8'&&sm.scBg==='rgb(34, 197, 94)',JSON.stringify({sc:sm.sc,bg:sm.scBg}));
+t('T17 b2 SIM: โหมดตามเส้นทาง ไฟ ROUTE ติด ไฟ HDG ดับ',sm.routeOn,'');
+t('T17 b2 SIM: ปุ่มแสดงสถานะ START (ไม่มีไฟ) → RUN ไฟเขียว → PAUSE ไฟเขียว → RUN → STOP แล้วกลับเป็น START',sm.r0.t==='▶ START'&&!sm.r0.on&&sm.r1.t==='▶ RUN'&&sm.r1.on&&sm.r1.bg==='rgb(34, 197, 94)'&&sm.r2.t==='❚❚ PAUSE'&&sm.r2.on&&sm.r3.t==='▶ RUN'&&sm.r3.on&&sm.r4.t==='▶ START'&&!sm.r4.on,JSON.stringify([sm.r0,sm.r1,sm.r2,sm.r3,sm.r4]));
+t('T17 b2 SIM: กดค้างปุ่มในกล่อง SIM ไม่เปิดเมนูกดค้าง (contextmenu ถูกกันไว้)',sm.ctxBlocked,'');
+t('T17 b2 SIM: ไม่มี JavaScript error ระหว่างใช้กล่อง SIM',sm.errs.length===0,JSON.stringify(sm.errs));
 // v4.6.2 ข้อ 3: ป้าย FLY ALT
 t('T16 v4.6.2 กล่องชั้นข้อมูลใช้คำว่า FLY ALT (ft)',await p.evaluate(()=>/^FLY ALT \(ft\)/.test(document.getElementById('twalt2').closest('label').textContent.trim())));
 // ปิด FLTA
