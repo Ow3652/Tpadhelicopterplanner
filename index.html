@@ -420,8 +420,8 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 @media(max-width:620px){#map.full .mc2{top:calc(84px + env(safe-area-inset-top,0px));left:8px;right:8px;height:auto;flex-wrap:wrap;justify-content:flex-start}
 #map.full .lb,#map.full #lbs,#map.full #lba{left:8px;right:8px;width:auto;top:150px;bottom:auto}#map.full #msel{top:150px;bottom:auto;max-width:calc(100% - 16px)}}
 @media(orientation:portrait) and (hover:none) and (pointer:coarse) and (min-width:621px){#map.full .mc2{top:calc(62px + env(safe-area-inset-top,0px));left:8px;right:auto;flex-wrap:wrap}#map.full .mc>.mr+.mr{margin-top:54px}#map.full .fp{top:calc(var(--tbb,181px) + env(safe-area-inset-top,0px));max-height:calc(100% - var(--tbb,181px) - 42px)}}
-.hr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}#fs0{display:none;white-space:nowrap;margin-left:auto;flex:none;align-self:center}
-@media(orientation:portrait) and (hover:none) and (pointer:coarse) and (min-width:621px){#fs0{display:inline-block}.tab{padding-left:5px;padding-right:5px;font-size:.88rem}}
+.hr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}#fs0{display:inline-block;position:sticky;right:0;background:var(--bg,#fff);white-space:nowrap;margin-left:auto;flex:none;align-self:center}
+@media(orientation:portrait) and (hover:none) and (pointer:coarse) and (min-width:621px){.tab{padding-left:5px;padding-right:5px;font-size:.88rem}}
 .hd .hr{margin-left:auto}.hlk{display:inline-flex;gap:6px 10px;align-items:center;flex-wrap:wrap;font-size:.85rem}.hlk a{color:var(--accent);font-weight:500;white-space:nowrap;text-decoration:none}.hlk .b{white-space:nowrap}
 /* 4.1.6: iPad แนวนอน เต็มจอ — ปุ่มแถวบนชิดกันขึ้น ไม่ซ้อนกัน */
 @media(orientation:landscape) and (hover:none) and (pointer:coarse){#map.full .mc .mr,#map.full .mc2{gap:2px}#map.full .mc .b,#map.full .mc2 .b{padding-left:6px;padding-right:6px;font-size:12.5px}#map.full #rzl,#map.full #rzn,#map.full #rzr,#map.full #fs{min-width:34px}}

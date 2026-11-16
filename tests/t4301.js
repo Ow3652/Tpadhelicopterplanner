@@ -24,7 +24,8 @@ for(const [nm,dv,vp] of [['iPad Pro 11 แนวตั้ง',devices['iPad Pro 
  ck(m.fsInTabs,nm,'ปุ่มแผนที่เต็มจออยู่ในแถวแท็บ');
  if(m.fsv){ck(Math.abs(m.fsy-m.t1)<=2.5,nm,'ปุ่มเต็มจอระดับเดียวกับแท็บ ต่าง',Math.abs(m.fsy-m.t1).toFixed(2));
   ck(Math.abs(m.fsR-m.keyR)<=3,nm,'ขอบขวาปุ่มเต็มจอตรงกับช่องรหัส',m.fsR.toFixed(0)+' vs '+m.keyR.toFixed(0));
-  ck(m.tabsFit,nm,'แท็บทั้งหมดอยู่ในจอ ไม่ต้องเลื่อน')}
+  if(!narrow)ck(m.tabsFit,nm,'แท็บทั้งหมดอยู่ในจอ ไม่ต้องเลื่อน')}
+ ck(m.fsv,nm,'ปุ่มแผนที่เต็มจอแสดงอยู่ (ทุกขนาดจอ)');
  ck(m.order[0]<m.order[1]&&m.order[1]<m.order[2],nm,'ลำดับปุ่มในเมนูเต็มจอ: ย้อนกลับ ทำซ้ำ ✕',m.order.join(','));
  await c.close()}
 await b.close();process.exit(bad?1:0)})();
