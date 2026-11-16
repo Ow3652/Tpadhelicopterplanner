@@ -1,0 +1,117 @@
+// ทดสอบ FLTA v4.6.0 (เตือนภูมิประเทศข้างหน้า) Playwright/Chromium จำลอง ไม่ใช่ iPad/GPS จริง: วางเครื่องจำลองผ่าน MLP ใกล้ "ภูเขาจำลอง" 1,500 ม. ที่ 14.00N 100.80E
+// เสียงเตือนตรวจด้วยตัวแทน speechSynthesis · รัน: node tests/t4600.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8772 เอง ตั้ง SHOT=1 เพื่อเก็บภาพหน้าจอ)
+process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS='1';
+const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');const zlib=require('zlib');
+const ROOT=path.resolve(__dirname,'..');
+const APP=fs.readdirSync(ROOT).filter(f=>/^Tpad helicopter planner v\d+\.\d+\.\d+\.html$/.test(f)).sort().pop();
+const SITE=fs.mkdtempSync(path.join(os.tmpdir(),'fl-'));
+fs.copyFileSync(path.join(ROOT,APP),path.join(SITE,'index.html'));
+for(const f of fs.readdirSync(path.join(ROOT,'pwa')))fs.copyFileSync(path.join(ROOT,'pwa',f),path.join(SITE,f));
+const MIME={'.html':'text/html;charset=utf-8','.js':'application/javascript','.json':'application/json','.png':'image/png'};
+const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]);if(p.endsWith('/'))p+='index.html';const f=path.join(SITE,p);
+ if(!f.startsWith(SITE)||!fs.existsSync(f)){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':MIME[path.extname(f)]||'application/octet-stream'});r.end(fs.readFileSync(f))});
+let pass=0,fail=0;const t=(l,ok,x)=>{console.log(ok?'PASS':'FAIL',l,x===undefined?'':x);ok?pass++:fail++};
+// ---- สร้าง PNG แบบ Terrarium ----
+const CRC=(()=>{const T=new Int32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;T[n]=c}return b=>{let c=-1;for(const x of b)c=T[(c^x)&255]^(c>>>8);return(c^-1)>>>0}})();
+const chunk=(ty,d)=>{const l=Buffer.alloc(4);l.writeUInt32BE(d.length);const td=Buffer.concat([Buffer.from(ty),d]);const c=Buffer.alloc(4);c.writeUInt32BE(CRC(td));return Buffer.concat([l,td,c])};
+const MT={la:14.0,lo:100.8,r:.25,h:1500};
+const elevAt=(la,lo)=>{const d=Math.hypot(la-MT.la,(lo-MT.lo)*Math.cos(MT.la*Math.PI/180));return d>=MT.r?0:MT.h*(1-d/MT.r)};
+const ll=(x,y,z)=>{const s=256*2**z;return[Math.atan(Math.sinh(Math.PI*(1-2*y/s)))*180/Math.PI,x/s*360-180]};
+const cacheP=new Map();
+function tilePng(z,x,y){const k=z+'/'+x+'/'+y;if(cacheP.has(k))return cacheP.get(k);const raw=Buffer.alloc(256*(1+256*3));
+ for(let j=0;j<256;j++){raw[j*769]=0;for(let i=0;i<256;i++){const[la,lo]=ll(x*256+i+.5,y*256+j+.5,z);const v=elevAt(la,lo)+32768,R=Math.floor(v/256),G=Math.floor(v)%256,B=Math.floor((v-Math.floor(v))*256),o=j*769+1+i*3;raw[o]=R;raw[o+1]=G;raw[o+2]=B}}
+ const h=Buffer.alloc(13);h.writeUInt32BE(256,0);h.writeUInt32BE(256,4);h[8]=8;h[9]=2;h[10]=0;h[11]=0;h[12]=0;
+ const png=Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),chunk('IHDR',h),chunk('IDAT',zlib.deflateSync(raw)),chunk('IEND',Buffer.alloc(0))]);cacheP.set(k,png);return png}
+const tileMax=(z,x,y)=>{let m=0;for(let j=0;j<=16;j++)for(let i=0;i<=16;i++){const[la,lo]=ll(x*256+i*16,y*256+j*16,z);m=Math.max(m,elevAt(la,lo))}return m};
+const T11=(la,lo)=>{const n=2**11,x=Math.floor((lo+180)/360*n),r=la*Math.PI/180,y=Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n);return[x,y]};
+const P12=[];{const[a0,b0]=T11(MT.la+.4,MT.lo-.4),[a1,b1]=T11(MT.la-.4,MT.lo+.4);for(let x=a0;x<=a1;x++)for(let y=b0;y<=b1;y++)if(tileMax(11,x,y)>=300)P12.push([x,y])}
+const COV={v:1,source:'test',bbox:[5.5,97.2,20.6,105.8],zmin:5,zfull:11,zmax:12,z12parents:P12};
+const TPNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==','base64');
+
+(async()=>{
+await new Promise(r=>srv.listen(8772,r));const U='http://localhost:8772/';
+const ver=(APP.match(/v(\d+\.\d+\.\d+)/)||[])[1],swv=(fs.readFileSync(path.join(SITE,'sw.js'),'utf8').match(/VERSION = '([^']+)'/)||[])[1];
+t('T0 sw.js VERSION == เวอร์ชันแอป ('+ver+')',swv===ver,swv);
+const b=await chromium.launch();
+const c=await b.newContext({viewport:{width:1280,height:800}});let mode='ok';
+await c.addInitScript(()=>{window.__said=[];const ss={speak:u=>window.__said.push(u.text),cancel(){},getVoices:()=>[]};try{Object.defineProperty(window,'speechSynthesis',{value:ss,configurable:true})}catch(e){}window.SpeechSynthesisUtterance=function(x){this.text=x}});
+await c.route(/ow3652\.github\.io\/Tpadterrain\//,r=>{const u=r.request().url();if(mode==='fail')return r.abort();
+ if(/coverage\.json/.test(u))return r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(COV)});
+ const m=u.match(/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);if(!m)return r.fulfill({status:404,body:''});const z=+m[1],x=+m[2],y=+m[3];
+ if(z>12||tileMax(z,x,y)<=0)return r.fulfill({status:404,headers:{'access-control-allow-origin':'*'},body:'nf'});
+ r.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:tilePng(z,x,y)})});
+await c.route(/elevation-tiles-prod|tile\.opentopomap|tile-cyclosm|tile\.openstreetmap|arcgisonline/,r=>mode==='fail'?r.abort():r.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:TPNG}));
+await c.route(/rainviewer|cartocdn|aviationweather|fonts\.g|script\.google\.com|open-meteo|adsb|airplanes/,r=>r.abort());
+const p=await c.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('dialog',d=>d.accept());
+await p.goto(U);await p.waitForFunction(()=>typeof TOWN!=='undefined'&&TOWN.st!=='loading',null,{timeout:12000}).catch(()=>{});
+// วางเครื่อง (ตั้ง MLP เหมือน GPS/SIM) แล้วประเมิน 2 รอบ (รอบแรกโหลดข้อมูลความสูง)
+const at=async(la,lo,hd,kt,altft)=>{await p.evaluate(([la,lo,hd,kt,altft])=>{clearInterval(FL.tm);FL.st='clear';FL.since=0;FL.saidSt='';FL.hh=[];FL.hist=[];MLP.on=true;MLP.la=la;MLP.lo=lo;MLP.hd=hd;MLP.sp=kt/1.943844;MLP.alt=altft==null?null:altft/3.28084;MLP.t=Date.now();flTick()},[la,lo,hd,kt,altft]);
+ await p.waitForTimeout(1500);return p.evaluate(()=>{MLP.t=Date.now();FL.since=0;flTick();return{st:FL.st,tc:FL.tc,e:FL.pt&&Math.round(FL.pt.e),cls:document.getElementById('flb').className,txt:document.getElementById('flb').textContent,hid:document.getElementById('flb').hidden,poly:!!document.querySelector('#flv polygon'),x:!!document.querySelector('#flv path')}})};
+await p.evaluate(()=>{const c=wp(14.0,100.6,10);M.z=10;M.cx=c[0];M.cy=c[1];M.touched=true;M.init=true;drawMap(false)});
+let r=await at(14.0,100.543,90,120,null);
+t('T1 FLTA ปิด (ค่าเริ่มต้น): ไม่แสดงแถบ ไม่ประเมิน',r.hid&&r.st==='off',r.st);
+await p.evaluate(()=>{document.getElementById('flon').click()});await p.waitForTimeout(200);
+t('T1 เปิด FLTA: พูดทดสอบเสียง (เปิดเสียงบน iPad ด้วยการกด)',await p.evaluate(()=>window.__said.some(s=>/Terrain alerting on/.test(s))));
+t('T1 ค่าตั้งซิงก์ช่องในชั้นข้อมูล และเก็บใน localStorage',await p.evaluate(()=>document.getElementById('flon2').checked&&JSON.parse(localStorage.getItem('heliTaws')).fl===true));
+await p.evaluate(()=>{window.__said=[]});
+r=await at(14.0,100.543,90,120,null);
+t('T2 ห่างจุดชน ~3 NM ที่ 120 kt (~90 วิ): CAUTION',r.st==='caution'&&r.tc>60&&r.tc<=120&&/CAUTION – TERRAIN/.test(r.txt)&&r.cls.includes('fl-caution'),JSON.stringify({st:r.st,tc:r.tc,e:r.e}));
+t('T2 พูด "Caution, terrain" และวาดกรวยตรวจ + จุดชนบนแผนที่',await p.evaluate(()=>window.__said.some(s=>/Caution, terrain/.test(s)))&&r.poly&&r.x);
+await p.evaluate(()=>{window.__said=[]});
+r=await at(14.0,100.578,90,120,null);
+t('T3 ห่าง ~1 NM (~30 วิ): WARNING',r.st==='warn'&&r.tc<=60&&/WARNING – TERRAIN/.test(r.txt)&&r.cls.includes('fl-warn'),JSON.stringify({st:r.st,tc:r.tc}));
+t('T3 พูด "Warning, terrain"',await p.evaluate(()=>window.__said.some(s=>/Warning, terrain/.test(s))));
+await p.evaluate(()=>{window.__said=[];document.getElementById('flmute').click()});await p.waitForTimeout(100);
+await p.evaluate(()=>{FL.said=0;MLP.t=Date.now();flTick()});
+t('T3 กด 🔇 ปิดเสียงเตือนครั้งนี้: ไม่พูดซ้ำ',await p.evaluate(()=>window.__said.length===0&&FL.mute));
+r=await at(14.0,100.492,90,120,null);
+t('T4 ห่าง ~6 NM (~180 วิ เกิน 120): ไม่เตือน และกลับมาเปิดเสียงเมื่อพ้นเหตุ',r.st==='clear'&&/FLTA ✓/.test(r.txt)&&await p.evaluate(()=>!FL.mute),r.st);
+r=await at(14.0,100.578,270,120,null);
+t('T5 จุดเดิมแต่บินออกจากภูเขา (270°): ไม่เตือน',r.st==='clear',r.st);
+r=await at(14.0,100.578,90,15,null);
+t('T6 GS 15 kt (< 20): งดเตือน',r.st==='inh'&&/งดเตือน/.test(r.txt),r.st);
+await p.evaluate(()=>twSet({alt:6000}));
+r=await at(14.0,100.578,90,120,null);
+t('T7 ความสูงบิน 6,000 ft (ยอด 4,921 + 500 = 5,421): ไม่เตือน',r.st==='clear',r.st);
+// ความสูง GPS + ร่อนลง: ไม่ร่อน = ไม่เตือน / ร่อน 10 ft/วิ = เตือน
+await p.evaluate(()=>twSet({alt:1500,gps:true}));
+r=await at(14.0,100.75,90,120,5600);
+t('T8 ความสูง GPS 5,600 ft ระดับคงที่ ใกล้ยอด: ไม่เตือน',r.st==='clear',r.st);
+const dsc=await p.evaluate(async()=>{clearInterval(FL.tm);FL.hist=[];FL.hh=[];FL.st='clear';const t0=Date.now()-10000;
+ for(let i=0;i<=10;i++){MLP.t=t0+i*1000;MLP.alt=(5700-10*i)/3.28084;flTick(t0+i*1000)}MLP.t=Date.now();MLP.alt=5600/3.28084;flTick();return{st:FL.st,vs:FL.vs,tc:FL.tc}});
+t('T8 ความสูง GPS ร่อนลง 10 ft/วิ: คาดว่าจะต่ำลง จึงเตือน',(dsc.st==='caution'||dsc.st==='warn')&&dsc.vs<-8,JSON.stringify(dsc));
+await p.evaluate(()=>twSet({gps:false}));
+// ออฟไลน์บริเวณที่ไม่เคยโหลด: ไม่มีข้อมูล ≠ ปลอดภัย
+mode='fail';await c.setOffline(true);
+r=await at(18.5,99.5,90,120,null);
+t('T9 ออฟไลน์ ไม่มีข้อมูลความสูงด้านหน้า: แจ้ง "ไม่มีข้อมูล" ไม่ขึ้นว่าปลอดภัย',r.st==='nodata'&&/ไม่มีข้อมูลความสูงด้านหน้า/.test(r.txt),r.st);
+await c.setOffline(false);mode='ok';
+// ความสูงตรงเป้าชี้ (v4.6.0): PC = จุดที่เมาส์ชี้ แสดง ft ต่อท้ายพิกัด
+await p.evaluate(()=>{const c=wp(14.0,100.8,11);M.z=11;M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(1500);
+const mb=await p.locator('#map').boundingBox();await p.mouse.move(mb.x+mb.width/2,mb.y+mb.height/2);await p.waitForTimeout(1200);await p.mouse.move(mb.x+mb.width/2+1,mb.y+mb.height/2);await p.waitForTimeout(200);
+const ct=await p.evaluate(()=>document.getElementById('cur').textContent);
+const ft=+((ct.match(/·\s*([\d,]+) ft/)||[])[1]||'0').replace(/,/g,'');
+t('T9b PC: กล่องพิกัดตรงเมาส์แสดงความสูง ft (ยอดเขา ≈4,900 ft)',ft>4700&&ft<5000,ct);
+await p.evaluate(()=>{const c=wp(13.0,100.0,11);M.cx=c[0];M.cy=c[1];drawMap(false)});await p.mouse.move(mb.x+mb.width/2,mb.y+mb.height/2);await p.waitForTimeout(1500);await p.mouse.move(mb.x+mb.width/2+1,mb.y+mb.height/2);await p.waitForTimeout(200);
+const ct2=await p.evaluate(()=>document.getElementById('cur').textContent);
+t('T9b PC: ชี้ที่ราบห่างภูเขา (13N 100E) แสดง 0 ft',/· 0 ft/.test(ct2),ct2);
+// ปิด FLTA
+await p.evaluate(()=>document.getElementById('flon2').click());await p.waitForTimeout(200);
+t('T10 ปิด FLTA: แถบหาย กรวยหาย',await p.evaluate(()=>document.getElementById('flb').hidden&&!document.querySelector('#flv polygon')));
+// iPad เต็มจอ: แถบเตือนอยู่ใต้แถวปุ่ม ไม่บังปุ่ม
+const c2=await b.newContext({...devices['iPad Pro 11 landscape']});await c2.addInitScript(()=>{const ss={speak(){},cancel(){},getVoices:()=>[]};try{Object.defineProperty(window,'speechSynthesis',{value:ss,configurable:true})}catch(e){}window.SpeechSynthesisUtterance=function(x){this.text=x}});
+await c2.route(/ow3652\.github\.io\/Tpadterrain\//,r=>{const u=r.request().url();if(/coverage\.json/.test(u))return r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(COV)});const m=u.match(/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);if(!m||tileMax(+m[1],+m[2],+m[3])<=0)return r.fulfill({status:404,body:'nf'});r.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:tilePng(+m[1],+m[2],+m[3])})});
+await c2.route(/tile\.|arcgis|openstreetmap|elevation-tiles|fonts\.g|script\.google|aviationweather|rainviewer|cartocdn|open-meteo|adsb|airplanes/,r=>r.abort());
+const p2=await c2.newPage();p2.on('pageerror',e=>errs.push('iPad: '+e.message));await p2.goto(U);await p2.waitForTimeout(1500);
+await p2.click('#fs');await p2.waitForTimeout(300);if(await p2.isVisible('#uis'))await p2.click('#uis');await p2.waitForTimeout(300);
+await p2.evaluate(()=>{flSet({fl:true});clearInterval(FL.tm);MLP.on=true;MLP.la=14.0;MLP.lo=100.578;MLP.hd=90;MLP.sp=120/1.943844;MLP.alt=null;MLP.t=Date.now();flTick()});await p2.waitForTimeout(1500);
+const lay=await p2.evaluate(()=>{MLP.t=Date.now();FL.since=0;flTick();const fb=document.getElementById('flb').getBoundingClientRect(),bs=[...document.querySelectorAll('.mc .mr>*,.mc2>*')].filter(e=>e.id&&e.getClientRects().length),tb=Math.max(...bs.map(e=>e.getBoundingClientRect().bottom));
+ const cov=bs.filter(e=>{const r=e.getBoundingClientRect(),h=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return !(h&&(h===e||e.contains(h)))}).map(e=>e.id);return{st:FL.st,top:Math.round(fb.top),tb:Math.round(tb),cov}});
+const cx=await p2.evaluate(async()=>{const c=wp(14.0,100.8,11);M.z=11;M.cx=c[0];M.cy=c[1];drawMap(false);await new Promise(r=>setTimeout(r,1500));drawMap(false);await new Promise(r=>setTimeout(r,300));return document.getElementById('cur').textContent});
+const ft2=+((cx.match(/·\s*([\d,]+) ft/)||[])[1]||'0').replace(/,/g,'');
+t('T11 iPad: กล่องพิกัดกากบาทกลางจอแสดงความสูง ft',ft2>4700&&ft2<5000,cx);
+t('T11 iPad เต็มจอ: แถบ WARNING อยู่ใต้แถวปุ่ม และไม่บังปุ่ม',lay.st==='warn'&&lay.top>=lay.tb&&lay.cov.length===0,JSON.stringify(lay));
+if(process.env.SHOT)await p2.screenshot({path:'/tmp/fl_ipad.png'});
+await c2.close();
+t('T12 ไม่มี JavaScript error',errs.length===0,errs.slice(0,3));
+console.log(`\nผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})();

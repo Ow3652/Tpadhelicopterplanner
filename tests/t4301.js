@@ -3,7 +3,7 @@
 // (ค) แผงเมนูที่ซ่อนในแผนที่เต็มจอ: ลำดับปุ่ม เมนู → ย้อนกลับ → ทำซ้ำ → ✕
 // ต้องเปิดเซิร์ฟเวอร์ที่พอร์ต 8765 ในโฟลเดอร์ที่มีไฟล์แอป (python -m http.server 8765) ชื่อไฟล์ตามตัวแปร FILE
 const {chromium,devices}=require('playwright');
-const FILE=process.env.FILE||'Tpad helicopter planner v4.5.0.html';
+const FILE=process.env.FILE||'Tpad helicopter planner v4.6.0.html';
 (async()=>{const b=await chromium.launch();let bad=0;const ck=(ok,...a)=>{if(!ok)bad++;console.log(ok?'PASS':'FAIL',...a)};
 for(const [nm,dv,vp] of [['iPad Pro 11 แนวตั้ง',devices['iPad Pro 11'],null],['iPad gen 9 แนวตั้ง (810)',{...devices['iPad (gen 7)'],viewport:{width:810,height:1080}},null],['iPad Pro 11 แนวนอน',devices['iPad Pro 11 landscape'],null],['PC',null,{width:1280,height:800}],['มือถือ',devices['iPhone 13'],null]]){
  const c=await b.newContext(dv?{...dv}:{viewport:vp});await c.route(/tile|arcgis|openstreetmap|fonts\.g|script\.google|aviationweather|rainviewer|cartocdn/,r=>r.abort());
