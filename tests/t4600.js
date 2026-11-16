@@ -139,7 +139,36 @@ t('T13 v4.6.1 ไม่มีเส้นทาง Active: ซ่อนกรา
 await p.evaluate(()=>{document.getElementById('mprof').style.width='';prfShow(false)});
 if(process.env.SHOT){await p.setViewportSize({width:1280,height:800});await p.evaluate(()=>{pts.length=0;pts.push({name:"MYPOT",lat:"13.8",lon:"100.3"},{name:"KRTLK",lat:"14.0",lon:"100.8"},{name:"TKSMC",lat:"14.3",lon:"101.2"},{name:"KSTMC",lat:"14.32",lon:"101.25"});drawPts();calc();render();document.getElementById('fs').click()});await p.waitForTimeout(500);await p.evaluate(()=>{prfShow(true);const c=wp(14.0,100.8,9);M.z=9;M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(2500);await p.screenshot({path:'/tmp/s461_prof.png'});
 await p.evaluate(()=>{prfShow(false);flSet({fl:true});clearInterval(FL.tm);const now=Date.now();FL.hh=[];for(let i=0;i<=4;i++)FL.hh.push({t:now-4000+i*1000,hd:90+3*(i-4)});MLP.on=true;MLP.la=13.93;MLP.lo=100.45;MLP.hd=90;MLP.sp=140/1.943844;MLP.alt=null;MLP.t=now;flTick(now);const c=wp(13.95,100.55,11);M.z=11;M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(1500);await p.screenshot({path:'/tmp/s461_fl.png'});
-await p.evaluate(()=>document.getElementById('fpb').click());await p.waitForTimeout(500);await p.screenshot({path:'/tmp/s461_lay.png'})}
+await p.evaluate(()=>document.getElementById('fpb').click());await p.waitForTimeout(500);await p.screenshot({path:'/tmp/s461_lay.png'});await p.evaluate(()=>document.getElementById('fpb').click());await p.evaluate(()=>{clearInterval(FL.tm);MLP.la=14.0;MLP.lo=100.5913;MLP.hd=90;MLP.t=Date.now();FL.hh=[];flTick();const c=wp(14.0,100.6,11);M.cx=c[0];M.cy=c[1];drawMap(false);document.getElementById('flb').click();const sb=document.getElementById('simbox');sb.hidden=false});await p.waitForTimeout(800);await p.screenshot({path:'/tmp/s462_ic.png'})}
+// v4.6.2 ข้อ 1: แตะกล่องเตือน → ย่อเป็นไอคอนสี่เหลี่ยม TERRAIN มุมล่างขวา สีตามระดับเตือน
+await p.evaluate(()=>twSet({alt:1500,gps:false}));
+r=await at(14.0,100.5861,90,120,null);
+const ic1=await p.evaluate(()=>{const b=document.getElementById('flb');b.click();const ic=document.getElementById('flic'),m=document.getElementById('map').getBoundingClientRect(),r=ic.getBoundingClientRect();return{st:FL.st,bh:b.hidden,ih:ic.hidden,txt:ic.textContent,cls:ic.className,w:Math.round(r.width),h:Math.round(r.height),dr:Math.round(m.right-r.right),db:Math.round(m.bottom-r.bottom),bg:getComputedStyle(ic).backgroundColor}});
+t('T14 v4.6.2 แตะกล่อง CAUTION: ย่อเป็นไอคอน TERRAIN สี่เหลี่ยม มุมล่างขวา สีเหลือง',ic1.st==='caution'&&ic1.bh&&!ic1.ih&&ic1.txt==='TERRAIN'&&/fl-caution/.test(ic1.cls)&&ic1.w===ic1.h&&ic1.dr>=0&&ic1.dr<30&&ic1.db>=0&&ic1.db<140&&ic1.bg==='rgb(255, 196, 0)',JSON.stringify(ic1));
+r=await at(14.0,100.5861,90,120,null);
+t('T14 v4.6.2 ระดับเดิม (CAUTION) ยังเป็นไอคอน ไม่เด้งกลับ',await p.evaluate(()=>document.getElementById('flb').hidden&&!document.getElementById('flic').hidden));
+r=await at(14.0,100.5913,90,120,null);
+t('T14 v4.6.2 ระดับสูงขึ้นเป็น WARNING: กล่องเตือนเต็มกลับมาเอง',r.st==='warn'&&!r.hid&&await p.evaluate(()=>document.getElementById('flic').hidden),JSON.stringify({st:r.st,hid:r.hid}));
+const ic2=await p.evaluate(()=>{document.getElementById('flb').click();const ic=document.getElementById('flic');return{ih:ic.hidden,cls:ic.className}});
+t('T14 v4.6.2 ย่อ WARNING: ไอคอนสีแดง',!ic2.ih&&/fl-warn/.test(ic2.cls),JSON.stringify(ic2));
+const ic3=await p.evaluate(()=>{document.getElementById('flic').click();return{bh:document.getElementById('flb').hidden,ih:document.getElementById('flic').hidden}});
+t('T14 v4.6.2 แตะไอคอน: กลับเป็นกล่องเตือนเต็ม',!ic3.bh&&ic3.ih,JSON.stringify(ic3));
+const ic4=await p.evaluate(()=>{const m=document.getElementById('flmute');if(m)m.click();return{bh:document.getElementById('flb').hidden,mute:FL.mute}});
+t('T14 v4.6.2 กดปุ่มปิดเสียงในกล่อง ไม่ย่อกล่อง',!ic4.bh&&ic4.mute,JSON.stringify(ic4));
+await p.evaluate(()=>{FL.mute=false;FL.min=false});
+// v4.6.2 ข้อ 2: SIM มี ALT ใต้ SPD เหนือ TIME ค่าเดียวกับ FLY ALT ทีละ 100 ft ถึง 10,000 ft
+const sa=await p.evaluate(async()=>{const sb=document.getElementById('simbox');sb.hidden=false;await new Promise(r=>setTimeout(r,50));const y=id=>document.getElementById(id).getBoundingClientRect();const o={spd:y('smspd').top,alt:y('smalt').top,time:y('smsc').top,v0:document.getElementById('smalt').value};
+const plus=sb.querySelector('button[data-al="100"]'),minus=sb.querySelector('button[data-al="-100"]');const tap=b=>{b.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));b.dispatchEvent(new PointerEvent('pointerup',{bubbles:true}))};
+tap(plus);tap(plus);tap(plus);await new Promise(r=>setTimeout(r,300));o.a1=TW.alt;o.l1=document.getElementById('twalt2').value;tap(minus);await new Promise(r=>setTimeout(r,300));o.a2=TW.alt;
+const e=document.getElementById('smalt');e.value='12345';e.dispatchEvent(new Event('change'));await new Promise(r=>setTimeout(r,50));o.a3=TW.alt;o.v3=e.value;
+twSet({alt:3000});await new Promise(r=>setTimeout(r,50));o.v4=e.value;tap(minus);await new Promise(r=>setTimeout(r,300));o.a5=TW.alt;
+TW.alt=50;twSet({alt:0});tap(minus);await new Promise(r=>setTimeout(r,300));o.a6=TW.alt;twSet({alt:1500});sb.hidden=true;return o});
+t('T15 v4.6.2 SIM: แถว ALT อยู่ใต้ SPD และเหนือ TIME',sa.alt>sa.spd&&sa.alt<sa.time,JSON.stringify(sa));
+t('T15 v4.6.2 SIM ALT: ค่าเริ่มเท่ากับ FLY ALT และ +/− ทีละ 100 ft (1500→1800→1700) ซิงก์กับกล่องชั้นข้อมูล',sa.v0==='1500'&&sa.a1===1800&&sa.l1==='1800'&&sa.a2===1700,JSON.stringify(sa));
+t('T15 v4.6.2 SIM ALT: ไม่เกิน 10,000 ft และไม่ต่ำกว่า 0',sa.a3===10000&&sa.v3==='10000'&&sa.a6===0,JSON.stringify(sa));
+t('T15 v4.6.2 แก้ FLY ALT ที่อื่น ช่อง ALT ใน SIM ตามด้วย (3000 → − = 2900)',sa.v4==='3000'&&sa.a5===2900,JSON.stringify(sa));
+// v4.6.2 ข้อ 3: ป้าย FLY ALT
+t('T16 v4.6.2 กล่องชั้นข้อมูลใช้คำว่า FLY ALT (ft)',await p.evaluate(()=>/^FLY ALT \(ft\)/.test(document.getElementById('twalt2').closest('label').textContent.trim())));
 // ปิด FLTA
 await p.evaluate(()=>document.getElementById('flon2').click());await p.waitForTimeout(200);
 t('T10 ปิด FLTA: แถบหาย กรวยหาย',await p.evaluate(()=>document.getElementById('flb').hidden&&!document.querySelector('#flv polygon')));
