@@ -309,6 +309,8 @@ summary{cursor:pointer;color:var(--mute)}
 input.tgt{box-shadow:0 0 0 2px var(--accent)}
 .flh{animation:flh 1.6s ease-out}
 #map img,#map svg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}#map img{pointer-events:none}@media(hover:none) and (pointer:coarse){#map.full #rzl,#map.full #rzn,#map.full #rzr,#map.full #fs{height:40px;min-width:42px;padding-top:0;padding-bottom:0}#map.full #fit,#map.full #rl,#map.full #mlbtn,#map.full #navbtn{height:40px;padding-top:0;padding-bottom:0}#map.full .mc2{height:40px}#map.full .mc2>.b,#map.full .mc2>.dd>.b{height:40px;padding-top:0;padding-bottom:0}}
+/* v4.4.1 b2: แถวที่สองของเมนูเต็มจอ (ชั้นข้อมูล … ซ่อนเมนู) สูงเท่าแถวบน 40px บนจอสัมผัส (iPad) */
+@media(hover:none) and (pointer:coarse){#map.full #fpb,#map.full #rfm,#map.full #sfb,#map.full #mb,#map.full #sb,#map.full #hun,#map.full #hre,#map.full #hui{height:40px;padding-top:0;padding-bottom:0}}
 #cmenu{position:absolute;z-index:9;background:#fff;color:#222;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.4);padding:4px;max-width:260px;max-height:60%;overflow:auto;-webkit-touch-callout:default}#cmenu small{display:block;color:#666;padding:2px 8px}#cmenu button{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:14px;padding:9px 10px;border-radius:6px;cursor:pointer;color:#222}#cmenu button:hover,#cmenu button:active{background:#e3f2fd}.rz.z0{fill:none}.rz{fill:rgba(255,160,185,.15);stroke:rgba(226,92,130,.85);stroke-width:1.5;pointer-events:none}
 a.cl{color:var(--accent);text-decoration:underline;cursor:pointer;font-weight:600}
 .pkon{background:var(--route)!important;color:#1b1300!important;border-color:var(--route)!important}
@@ -406,7 +408,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 .lb .empty{color:var(--mute);padding:4px 0}
 #ctm{position:absolute;z-index:100001;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px;box-shadow:0 2px 10px rgba(0,0,0,.35);font-size:13px;min-width:150px;cursor:default}
 #ctm[hidden]{display:none}
-#cur{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:8;pointer-events:none;background:rgba(0,0,0,.72);color:#fff;font:600 16px/1.1 ui-monospace,Menlo,Consolas,monospace;padding:5px 12px;border-radius:0 0 6px 6px;white-space:nowrap;font-variant-numeric:tabular-nums}#cur[hidden]{display:none}@media(max-width:1180px){#map.full.curon .mc,#map.full.curon .mc2{margin-top:30px}}
+#cur{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:8;pointer-events:none;background:rgba(0,0,0,.72);color:#fff;font:600 16px/1.1 ui-monospace,Menlo,Consolas,monospace;padding:5px 12px;border-radius:0 0 6px 6px;white-space:nowrap;font-variant-numeric:tabular-nums}#cur[hidden]{display:none}@media(max-width:1180px),(hover:none) and (pointer:coarse){#map.full.curon .mc,#map.full.curon .mc2{margin-top:30px}}/* v4.4.1 b2: รวมจอสัมผัสทุกขนาด (iPad Pro แนวนอน 1194px) ไม่ให้กล่องพิกัดทับปุ่มแถวบน */
 #cur.tap{pointer-events:auto;cursor:pointer;padding:8px 14px}
 #xh{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;z-index:7;pointer-events:none}#xh[hidden]{display:none}
 #msel{top:auto;bottom:36px;right:8px;width:max-content;min-width:250px;max-width:min(96vw,560px)}#msel td,#msel th{white-space:nowrap;padding:1px 6px 1px 0;text-align:left}
@@ -2423,7 +2425,9 @@ if(full){const mr=mp.getBoundingClientRect();["mac","msum"].forEach(id=>{const e
 pe.style.left="auto";pe.style.right="8px";pe.style.top=y+"px";pe.style.maxHeight="calc(100% - "+(y+8)+"px)";pe.style.width=full?"250px":""}
 function tbPort(){try{return matchMedia("(orientation: portrait) and (hover: none) and (pointer: coarse) and (min-width: 621px)").matches}catch(e){return false}}
 function tbBottom(){try{const mr=mp.getBoundingClientRect();let b=0;document.querySelectorAll(".mc .mr,.mc2").forEach(e=>{if(e.offsetParent)b=Math.max(b,e.getBoundingClientRect().bottom-mr.top)});return b}catch(e){return 0}}
-function topY(){try{if(mp.classList.contains("full")&&tbPort())return Math.max(108,Math.round(tbBottom())+8);return 108}catch(e){return 108}}
+function tbTouch(){try{return matchMedia("(hover: none) and (pointer: coarse) and (min-width: 621px)").matches}catch(e){return false}}
+/* v4.4.1 b2: ทั้งแนวตั้งและแนวนอน (เดิมเฉพาะแนวตั้ง) */
+function topY(){try{if(mp.classList.contains("full")&&tbTouch())return Math.max(108,Math.round(tbBottom())+8);return 108}catch(e){return 108}}
 function dock(){if(!mp.classList.contains("full"))return;try{lbTop()}catch(e){}let y=topY();{const m2=document.querySelector(".mc2");if(mp.clientWidth<=620&&m2)y=Math.max(y,m2.getBoundingClientRect().bottom-mp.getBoundingClientRect().top+8)}
 ["mac","msum"].forEach(id=>{const el=$(id),p=PNL[id];if(getComputedStyle(el).display==="none")return;if(p&&p.x!=null)return;
 el.style.left="auto";el.style.right="8px";el.style.bottom="auto";el.style.top=y+"px";y+=el.offsetHeight+8});{const el=$("mpt");if(el&&getComputedStyle(el).display!=="none"){const p=PNL.mpt;
@@ -3856,7 +3860,7 @@ if(nx===""){setUp(false);RMODE="";setRot(0);return true}
 RMODE=nx;setUp(true);const t=rotVal();setRot(t!=null?360-t:RZ,true);return true}
 function navUi(){const b=$("navbtn");b.hidden=false;const on=!!NAVON;try{navEnsure()}catch(e){}b.classList.toggle("on",!!RMION);b.setAttribute("aria-pressed",RMION?"true":"false");
 if(NAVON!==NAVACT){NAVACT=NAVON;navApply(NAVON)}navText();drawMap(false)}
-(function(){const m=$("map"),u=$("uib");const set=v=>{m.classList.toggle("uih",v);u.hidden=!v};$("hui").onclick=()=>set(true);$("uis").onclick=()=>set(false);$("uix").onclick=()=>$("fs").click();let was=m.classList.contains("full");new MutationObserver(()=>{const now=m.classList.contains("full");if(now===was)return;was=now;if(now)set(true);else if(m.classList.contains("uih")){m.classList.remove("uih");u.hidden=true}}).observe(m,{attributes:true,attributeFilter:["class"]})})();
+(function(){const m=$("map"),u=$("uib");const set=v=>{m.classList.toggle("uih",v);u.hidden=!v;setTimeout(()=>{try{dock();popPlace()}catch(e){}},0)};/* v4.4.1 b2: จัดกล่องข้อมูลใหม่เมื่อแสดง/ซ่อนเมนู ไม่ให้ทับแถวปุ่ม */$("hui").onclick=()=>set(true);$("uis").onclick=()=>set(false);$("uix").onclick=()=>$("fs").click();let was=m.classList.contains("full");new MutationObserver(()=>{const now=m.classList.contains("full");if(now===was)return;was=now;if(now)set(true);else if(m.classList.contains("uih")){m.classList.remove("uih");u.hidden=true}}).observe(m,{attributes:true,attributeFilter:["class"]})})();
 $("navbtn").onclick=()=>{RMION=!RMION;instUpd()};$("navclose").onclick=()=>{RMION=false;instUpd()};$("navx").onclick=()=>navToggle();
 function airGet(){return{heli:$("heli").value,ff:$("ff").value,unit:$("unit").value,gs:$("gs").value,res:$("res").value,dep:$("dep").value,tof:$("tof").value,lfob:$("lfob")?$("lfob").value:""}}
 function airSet(q){$("heli").value=q.heli;$("ff").value=q.ff;$("unit").value=q.unit;$("gs").value=q.gs;$("res").value=q.res;$("dep").value=q.dep;$("tof").value=q.tof;if($("lfob")&&q.tof)$("lfob").value=q.lfob;try{macSync()}catch(e){}try{calc()}catch(e){}}

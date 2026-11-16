@@ -27,5 +27,14 @@ for(const [nm,dv,vp] of [['iPad Pro 11 แนวตั้ง',devices['iPad Pro 
   if(!narrow)ck(m.tabsFit,nm,'แท็บทั้งหมดอยู่ในจอ ไม่ต้องเลื่อน')}
  ck(m.fsv,nm,'ปุ่มแผนที่เต็มจอแสดงอยู่ (ทุกขนาดจอ)');
  ck(m.order[0]<m.order[1]&&m.order[1]<m.order[2],nm,'ลำดับปุ่มในเมนูเต็มจอ: ย้อนกลับ ทำซ้ำ ✕',m.order.join(','));
+ if(dv&&dv.hasTouch){await p.evaluate(()=>{const m=document.getElementById('map');if(!m.classList.contains('full'))document.getElementById('fs').click()});await p.waitForTimeout(400);
+  if(!(await p.evaluate(()=>document.getElementById('fit').getClientRects().length))){await p.click('text=เมนู');await p.waitForTimeout(400)}
+  const hh=await p.evaluate(()=>['fit','fpb','rfm','sfb','mb','hun','hre','hui'].map(id=>{const e=document.getElementById(id);return e&&e.getClientRects().length?e.getBoundingClientRect().height:null}));
+  const top=hh[0],rest=hh.slice(1).filter(x=>x!=null);
+  ck(top!=null&&rest.length>0&&rest.every(x=>Math.abs(x-top)<=2),nm,'แถวที่สองเมนูเต็มจอ (ชั้นข้อมูล…ซ่อนเมนู) สูงเท่าแถวบน (v4.4.1 b2)',top+' vs '+rest.map(x=>x.toFixed(0)).join(','))
+  if(!narrow){await p.waitForTimeout(300);const ov=await p.evaluate(()=>{const bs=[...document.querySelectorAll('.mc .mr>*,.mc2>*')].filter(e=>e.id&&e.getClientRects().length);
+   const cov=bs.filter(e=>{const q=e.getBoundingClientRect(),h=document.elementFromPoint(q.left+q.width/2,q.top+q.height/2);return !(h&&(h===e||e.contains(h)))}).map(e=>e.id);
+   const c=document.getElementById('cur'),cr=c.hidden?null:c.getBoundingClientRect();const hit=cr?bs.filter(e=>{const q=e.getBoundingClientRect();return q.left<cr.right&&q.right>cr.left&&q.top<cr.bottom&&q.bottom>cr.top}).map(e=>e.id):[];return cov.concat(hit)});
+   ck(ov.length===0,nm,'ปุ่มเมนูเต็มจอไม่ถูกกล่องข้อมูล/กล่องพิกัดทับ (v4.4.1 b2)',ov.join(' '))}}
  await c.close()}
 await b.close();process.exit(bad?1:0)})();
