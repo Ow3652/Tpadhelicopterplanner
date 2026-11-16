@@ -95,6 +95,11 @@ t('T8 ออฟไลน์: TAWS ยังแสดงจากแคช (อ�
 await p.evaluate(()=>{M.z=13;const c=wp(14.0,100.8,13);M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(2000);P=await px();
 t('T8 ออฟไลน์ซูม 13 (ข้อมูลถึงซูม 12): ยังแสดงสีจากแผ่นแม่',P.r>50,P);
 await c.setOffline(false);mode='ok';await p.reload();await p.waitForTimeout(1500);
+// ปุ่ม 📥 ดาวน์โหลด TAWS ในชั้นข้อมูล: เปิดหน้าดาวน์โหลดเลือกเฉพาะข้อมูลความสูง ซูม 8–12 ตามเส้นทาง Active (b2)
+await p.evaluate(()=>document.getElementById('twdl').click());await p.waitForSelector('#omd:not([hidden])');
+const dl=await p.evaluate(()=>({ly:[...document.querySelectorAll('#omd [data-ly]')].filter(c=>c.checked).map(c=>c.dataset.ly),z0:document.getElementById('omz0').value,z1:document.getElementById('omz1').value,src:document.querySelector('#omd input[name=omsrc]:checked').value,nm:document.getElementById('omname').value}));
+t('T9 ปุ่ม 📥 ดาวน์โหลด TAWS: เลือกเฉพาะข้อมูลความสูง ซูม 8–12 ตามเส้นทาง Active',dl.ly.join()==='terrain'&&dl.z0==='8'&&dl.z1==='12'&&dl.src==='rt'&&/TAWS/.test(dl.nm),JSON.stringify(dl));
+await p.click('#omx');await p.evaluate(()=>{document.getElementById('omname').value=''});
 // หน้าดาวน์โหลดออฟไลน์มีตัวเลือกข้อมูลความสูง และจำกัดซูม 12
 await p.click('#offb');await p.waitForSelector('#omd:not([hidden])');
 const om=await p.evaluate(()=>{const tf=document.querySelector('#omd [data-ly="terrain"]');return{has:!!tf,checked:tf&&tf.checked}});
@@ -113,6 +118,11 @@ const c2=await b.newContext({...devices['iPad Pro 11 landscape']});await c2.rout
 const p2=await c2.newPage();p2.on('pageerror',e=>errs.push('iPad: '+e.message));await p2.goto(U);await p2.waitForTimeout(1500);await p2.click('#fs');await p2.waitForTimeout(400);if(await p2.isVisible('#uis'))await p2.click('#uis');await p2.waitForTimeout(400);
 const hh=await p2.evaluate(()=>['fit','twb','pfb'].map(id=>document.getElementById(id).getBoundingClientRect().height));
 t('T10 iPad เต็มจอ: ปุ่ม TAWS/กราฟความสูงสูงเท่าแถวบน',hh.every(h=>Math.abs(h-hh[0])<=2),hh.join(','));
+await p2.click('#fpb');await p2.waitForTimeout(500);
+const row=await p2.evaluate(()=>['twon2','twalt2','twgps'].map(id=>{const e=document.getElementById(id),l=e.closest('label')||e;const r=l.getBoundingClientRect();return{t:Math.round(r.top),b:Math.round(r.bottom),l:Math.round(r.left),r:Math.round(r.right),fp:document.getElementById('fp').getBoundingClientRect().right}}));
+t('T10 ชั้นข้อมูล: TAWS / ความสูงบิน / ใช้ความสูง GPS อยู่แถวเดียวกัน (b2)',Math.max(...row.map(x=>x.b))-Math.min(...row.map(x=>x.b))<=10&&row[0].r<=row[1].l&&row[1].r<=row[2].l&&row[2].r<=row[2].fp,JSON.stringify(row.map(x=>[x.l,x.b])));
+if(process.env.SHOT)await p2.locator('#fp').screenshot({path:'/tmp/tw_fp.png'});
+await p2.click('#fpb');await p2.waitForTimeout(300);
 await p2.click('#twb');await p2.waitForTimeout(800);
 t('T10 iPad: เปิด TAWS แบบไม่มีข้อมูล แจ้งสถานะในคำอธิบาย',await p2.evaluate(()=>{const l=document.getElementById('twl');return !l.hidden&&/ข้อมูลความสูง/.test(l.textContent)}));
 await p2.click('#pfb');await p2.waitForTimeout(800);
