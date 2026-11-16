@@ -95,10 +95,11 @@ t('T8 ออฟไลน์: TAWS ยังแสดงจากแคช (อ�
 await p.evaluate(()=>{M.z=13;const c=wp(14.0,100.8,13);M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(2000);P=await px();
 t('T8 ออฟไลน์ซูม 13 (ข้อมูลถึงซูม 12): ยังแสดงสีจากแผ่นแม่',P.r>50,P);
 await c.setOffline(false);mode='ok';await p.reload();await p.waitForTimeout(1500);
-// ปุ่ม 📥 ดาวน์โหลด TAWS ในชั้นข้อมูล: เปิดหน้าดาวน์โหลดเลือกเฉพาะข้อมูลความสูง ซูม 8–12 ตามเส้นทาง Active (b2)
+// ปุ่มเดียว 📥 ดาวน์โหลดแผนที่/TAWS ในชั้นข้อมูล (b3): เลือกชนิดแผนที่ที่ใช้อยู่ + ข้อมูลความสูง ตามเส้นทาง Active และไม่มีปุ่มแผนที่ออฟไลน์ซ้ำในชั้นข้อมูล
 await p.evaluate(()=>document.getElementById('twdl').click());await p.waitForSelector('#omd:not([hidden])');
-const dl=await p.evaluate(()=>({ly:[...document.querySelectorAll('#omd [data-ly]')].filter(c=>c.checked).map(c=>c.dataset.ly),z0:document.getElementById('omz0').value,z1:document.getElementById('omz1').value,src:document.querySelector('#omd input[name=omsrc]:checked').value,nm:document.getElementById('omname').value}));
-t('T9 ปุ่ม 📥 ดาวน์โหลด TAWS: เลือกเฉพาะข้อมูลความสูง ซูม 8–12 ตามเส้นทาง Active',dl.ly.join()==='terrain'&&dl.z0==='8'&&dl.z1==='12'&&dl.src==='rt'&&/TAWS/.test(dl.nm),JSON.stringify(dl));
+const dl=await p.evaluate(()=>({ly:[...document.querySelectorAll('#omd [data-ly]')].filter(c=>c.checked).map(c=>c.dataset.ly).sort(),src:document.querySelector('#omd input[name=omsrc]:checked').value,txt:document.getElementById('twdl').textContent,dup:!!document.getElementById('offb2'),cur:LAY.k}));
+t('T9 ปุ่ม 📥 ดาวน์โหลดแผนที่/TAWS: เลือกแผนที่ที่ใช้อยู่ + ข้อมูลความสูง ตามเส้นทาง Active',dl.ly.join()===[dl.cur,'terrain'].sort().join()&&dl.src==='rt'&&/ดาวน์โหลดแผนที่\/TAWS/.test(dl.txt),JSON.stringify(dl));
+t('T9 ชั้นข้อมูลเหลือปุ่มดาวน์โหลดปุ่มเดียว (ไม่มี 📥 แผนที่ออฟไลน์ ซ้ำ)',!dl.dup);
 await p.click('#omx');await p.evaluate(()=>{document.getElementById('omname').value=''});
 // หน้าดาวน์โหลดออฟไลน์มีตัวเลือกข้อมูลความสูง และจำกัดซูม 12
 await p.click('#offb');await p.waitForSelector('#omd:not([hidden])');
