@@ -1,14 +1,14 @@
 /* Service worker ของ Tpad Helicopter Planner
  * ทุกครั้งที่ออกเวอร์ชันใหม่ ต้องแก้ VERSION ให้ตรงกับเลขเวอร์ชันของ index.html (และตั้ง BUILD กลับเป็น b1) ถ้าแก้ไฟล์แอปโดยใช้เลขเดิม ให้เพิ่ม BUILD (ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่รู้ว่ามีของใหม่)
  * หลักการ: เก็บไฟล์ของแอปไว้ในเครื่อง เปิดจากเครื่องก่อนเสมอ (ใช้ออฟไลน์ได้)
- * คำขอข้ามโดเมน: แคชเฉพาะ "ภาพแผนที่ (tile)" จากโดเมนที่กำหนดใน isTile() เท่านั้น
+ * คำขอข้ามโดเมน: แคชเฉพาะ "ภาพแผนที่ (tile)" และข้อมูลความสูง AWS Terrain Tiles (v4.5.0) จากโดเมนที่กำหนดใน isTile() เท่านั้น
  *   (Apps Script, METAR, ADS-B, ฟอนต์, เรดาร์ฝน ห้ามแคช ปล่อยให้เบราว์เซอร์จัดการเอง)
  * แคชแผนที่แยกจากแคชของแอป (ชื่อไม่ขึ้นต้นด้วย tpad-) เพื่อไม่ถูกลบเมื่ออัปเดตเวอร์ชัน
  * เวอร์ชันใหม่จะรอ (ไม่สลับเอง) จนกว่าผู้ใช้กด "อัปเดตตอนนี้" ในแอป
  */
-const VERSION = '4.4.1';
+const VERSION = '4.5.0';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b2';
+const BUILD = 'b1';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
 const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
@@ -67,7 +67,9 @@ self.addEventListener('fetch', (e) => {
 /* ---------- แคชภาพแผนที่ (tile) ---------- */
 const TILEHOST = /(^|\.)(tile\.opentopomap\.org|tile-cyclosm\.openstreetmap\.fr|tile\.openstreetmap\.org|tile\.openstreetmap\.fr)$/;
 function isTile(u) {
-  return TILEHOST.test(u.hostname) || (u.hostname === 'server.arcgisonline.com' && u.pathname.indexOf('/MapServer/tile/') > 0);
+  return TILEHOST.test(u.hostname) || (u.hostname === 'server.arcgisonline.com' && u.pathname.indexOf('/MapServer/tile/') > 0) ||
+    // v4.5.0: ข้อมูลความสูงภูมิประเทศ AWS Terrain Tiles (TAWS/กราฟความสูง) ผู้ใช้อนุญาตแล้ว
+    (u.hostname === 's3.amazonaws.com' && u.pathname.indexOf('/elevation-tiles-prod/') === 0) || u.hostname === 'elevation-tiles-prod.s3.amazonaws.com';
 }
 // คีย์แคช: ตัดโดเมนย่อย a/b/c และพารามิเตอร์ _r ออก (ต้องตรงกับฟังก์ชัน tkey ในหน้าแอป)
 function tkey(u) {
