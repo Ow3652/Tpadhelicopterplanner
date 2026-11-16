@@ -36,6 +36,7 @@
 - โมดูล SIM (IIFE ท้ายไฟล์): โหมด R (ตามเส้นทาง) / H (คง HDG), ลูปปรับตามความแรงเครื่อง `SIMQ`, อัตราเลี้ยวคงที่ 3 องศา/วินาที
 - การหน่วงการวาด (throttle) ของแผนที่ HSI FMS ปรับตามเครื่อง โดยมีค่าต่ำสุดสำหรับอุปกรณ์สัมผัส เพื่อไม่ให้ iPad ค้าง อย่าลดค่านี้โดยไม่ทดสอบ
 - ภูมิประเทศ (v4.5.0, `<script id="terrain">`): ข้อมูลความสูง AWS Terrain Tiles (Terrarium) `TERR_URL` ถอดค่าใน `TR` (`trRes`/`trVal`/`trElev` ถอยใช้แผ่นแม่ได้ 6 ระดับ ใช้ถึงซูม `TEZ=12`) ชั้น TAWS `twsDraw` (canvas `#tws` ใน `#rot` วาดกว้างกว่าจอด้านละ 192 px แล้วเลื่อนตามการแพน) ค่าตั้ง `TW` (localStorage `heliTaws`: แดง ≥ ความสูงบิน−100 ft, เหลือง ≥ ความสูงบิน−แถบเหลือง) กราฟความสูง `#mprof` (`prfSample`/`prfDraw`) เป็นข้อมูลประกอบการวางแผนเท่านั้น ต้องคงข้อความเตือน "ไม่รวมสิ่งกีดขวาง" ไว้
+- ข้อมูลความสูงของเราเอง (v4.5.0 b5): รีโป https://github.com/Ow3652/Tpadterrain (public) สร้างแผ่น Terrarium จาก Copernicus DEM GLO-30 ด้วย GitHub Actions (`build_tiles.py`, `download.sh`, workflow "Build terrain tiles" รันด้วยมือ เผยแพร่ตรงขึ้น Pages ไม่เก็บแผ่นใน git เพดานหน้าเว็บ 1 GB สคริปต์หยุดเองถ้าเกิน 950 MB ให้เพิ่ม `thr`) แอปใช้ `TOWN` + `coverage.json` (กรอบ/ซูม/`z12parents`) ในกรอบประเทศไทยใช้ของเรา นอกกรอบ/ไม่มี coverage ใช้ AWS แผ่นของเราที่ 404 = ทะเล โหลดด้วย fetch เพื่อแยก 404 กับออฟไลน์ (ห้ามเปลี่ยนเป็น `<img>`)
 - ฐานข้อมูล VOR ฝังในโค้ด (`DB.VOR`) ที่มาจาก Google Sheet อ้างอิง AllCoordinateRTP (ID อยู่ในโค้ดแอปที่ตัวแปร `SHID` แท็บ VOR gid 624375845) ปุ่ม "ตรวจกับ Google Sheet" ในแอปแก้เฉพาะ localStorage ของผู้ใช้ ไม่ได้แก้โค้ด
 
 ## การทดสอบ

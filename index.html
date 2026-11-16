@@ -608,7 +608,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 <div class="pm" style="margin-top:6px;font-size:.75rem">พิมพ์ในช่องชื่อจุดเพื่อสร้างจากจุดอ้างอิง: <b>AAA/360/10</b> = ทิศ 360° ระยะ 10 NM จาก AAA · <b>AAA/360/BBB/090</b> = จุดตัดทิศ 360° จาก AAA กับทิศ 090° จาก BBB (AAA, BBB = ชื่อหรือรหัสจุดในฐานข้อมูล · ทิศจริง True) · หรือพิมพ์ชื่อ/รหัสจุดในฐานข้อมูลอย่างเดียว เช่น vtbs (ตัวเล็กได้) ระบบตรวจจับรูปแบบเอง ไม่ต้องกรอกพิกัด</div>
 <div class="bar" style="margin:8px 0 0"><button class="b p" id="pdok">ตกลง</button><button class="b" id="pdno">ยกเลิก</button></div></div></div>
 <div id="msar" class="pnl"><div class="ph"><b>รูปแบบ SAR</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="msarx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="msarb"></div></div>
-<div id="mprof" class="pnl"><div class="ph"><b>⛰ ความสูงภูมิประเทศตามเส้นทาง Active</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="pfx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="pfbx"><div class="pfo"><label>ความสูงบิน <input type="number" id="twalt3" min="0" max="25000" step="100" inputmode="numeric"> ft</label><label><input type="checkbox" id="twgps3">ใช้ความสูง GPS</label></div><div id="pfs"></div><canvas id="pfc"></canvas><div id="pft"></div><div id="pfl"></div><small class="twm2">แดง = ภูมิประเทศสูงกว่าหรือต่ำกว่าความสูงบินไม่ถึง 100 ft · เหลือง = ต่ำกว่าไม่เกินแถบเหลืองที่ตั้งไว้ · ข้อมูลความสูง <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles</a> (Mapzen/Tilezen) เป็นความสูงพื้นดินโดยประมาณ ไม่รวมสิ่งกีดขวาง (เสา ตึก ต้นไม้) คลาดเคลื่อนได้หลายสิบเมตร ใช้ประกอบการวางแผนเท่านั้น ไม่ใช้แทนแผนที่การบิน</small></div></div>
+<div id="mprof" class="pnl"><div class="ph"><b>⛰ ความสูงภูมิประเทศตามเส้นทาง Active</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="pfx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="pfbx"><div class="pfo"><label>ความสูงบิน <input type="number" id="twalt3" min="0" max="25000" step="100" inputmode="numeric"> ft</label><label><input type="checkbox" id="twgps3">ใช้ความสูง GPS</label></div><div id="pfs"></div><canvas id="pfc"></canvas><div id="pft"></div><div id="pfl"></div><small class="twm2">แดง = ภูมิประเทศสูงกว่าหรือต่ำกว่าความสูงบินไม่ถึง 100 ft · เหลือง = ต่ำกว่าไม่เกินแถบเหลืองที่ตั้งไว้ · ข้อมูลความสูง: ในประเทศไทย <a href="https://ow3652.github.io/Tpadterrain/" target="_blank" rel="noopener">Copernicus DEM GLO-30</a> (แบบจำลองพื้นผิว รวมต้นไม้/สิ่งก่อสร้างบางส่วน ย่อขนาดด้วยค่าสูงสุด) นอกพื้นที่ใช้ <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles</a> (Mapzen/Tilezen) เป็นความสูงโดยประมาณ ไม่รวมเสา/สายไฟ คลาดเคลื่อนได้หลายสิบเมตร ใช้ประกอบการวางแผนเท่านั้น ไม่ใช้แทนแผนที่การบิน<br>produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved</small></div></div>
 <div id="msum" class="pnl"><div class="ph"><b>สรุปเส้นทาง Active</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="msx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="msb"></div></div>
 <div id="mac" class="pnl"><div class="ph"><b>ข้อมูลอากาศยาน</b><button class="pc" aria-label="ย่อ/ขยาย">▾</button></div><div class="pb">
 <div class="mr"><span>แบบเฮลิคอปเตอร์</span><select id="mheli" aria-label="แบบเฮลิคอปเตอร์" style="max-width:150px;padding:3px;font-size:12px"></select></div>
@@ -4160,15 +4160,39 @@ init()})();
    แคชออฟไลน์ผ่าน sw.js (isTile) และดาวน์โหลดตามพื้นที่ได้ในหน้าจอ 📥 แผนที่ออฟไลน์ */
 const TERR_URL="https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",FT=3.28084,TEZ=12;
 const TR={t:new Map(),pend:new Set(),qs:new Set(),bad:new Map(),ver:0,max:260,err:"",tm:0,cv:null};
+/* v4.5.0 b5: แหล่งข้อมูลความสูง 2 แหล่ง — ในกรอบประเทศไทยใช้ Copernicus DEM GLO-30 ที่สร้างเอง (รีโป Tpadterrain บน GitHub Pages ตาม coverage.json)
+   นอกกรอบ/ยังไม่มีข้อมูลของเราใช้ AWS Terrain Tiles · แผ่นของเราที่ไม่มี (404) ที่ซูม ≤ zfull = ทะเล (0 ม.) · ซูม 12 มีเฉพาะเขตภูเขา (z12parents) นอกนั้นใช้แผ่นแม่ซูม 11
+   โหลดด้วย fetch เพื่อแยก "ไม่มีแผ่น (404)" ออกจาก "ไม่มีเน็ต" (ออฟไลน์ต้องไม่ถูกตีความว่าเป็นทะเล) */
+const TOWN={base:"https://ow3652.github.io/Tpadterrain/",st:"loading",cov:null,p12:null,rg:{}};
+const TR0=new Int16Array(65536);
 function trUrl(z,x,y){return TERR_URL.replace("{z}",z).replace("{x}",x).replace("{y}",y)}
+function trCovSet(c){TOWN.cov=c;TOWN.p12=new Set((c.z12parents||[]).map(a=>a[0]+"/"+a[1]));TOWN.rg={}}
+(function(){let fin=false;const done=c=>{const was=TOWN.st;
+if(c&&c.v===1&&Array.isArray(c.bbox)){trCovSet(c);TOWN.st="ok";try{localStorage.setItem("heliTerrCov",JSON.stringify(c))}catch(e){}}
+else if(!fin){let o=null;try{o=JSON.parse(localStorage.getItem("heliTerrCov")||"null")}catch(e){}if(o&&o.v===1&&Array.isArray(o.bbox)){trCovSet(o);TOWN.st="ok"}else TOWN.st="none"}
+else return;fin=true;if(was==="none"&&TOWN.st==="ok"){TR.t.clear();TR.bad.clear()}trPump();trChanged()};
+const f=u=>fetch(u,{mode:"cors",credentials:"omit"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
+f(TOWN.base+"coverage.json?_r="+Date.now()).catch(()=>f(TOWN.base+"coverage.json")).then(done,()=>done(null));
+setTimeout(()=>{if(TOWN.st==="loading")done(null)},8000)})();
+function trOwnIn(z,x,y){const c=TOWN.cov;if(TOWN.st!=="ok"||!c||z<c.zmin||z>c.zmax)return false;let r=TOWN.rg[z];
+if(!r){const b=c.bbox,a=wp(b[2],b[1],z),d=wp(b[0],b[3],z);r=TOWN.rg[z]=[Math.floor(a[0]/256),Math.floor(d[0]/256),Math.floor(a[1]/256),Math.floor(d[1]/256)]}
+return x>=r[0]&&x<=r[1]&&y>=r[2]&&y<=r[3]}
+/* แหล่งของแผ่น z/x/y: {u,own} หรือ null = ไม่มีแผ่นนี้ (ใช้แผ่นแม่) */
+function trSrc(z,x,y){if(trOwnIn(z,x,y)){const c=TOWN.cov,zf=c.zfull||11;if(z>zf){const d=z-zf;if(d>1||!TOWN.p12.has((x>>d)+"/"+(y>>d)))return null}
+return{u:TOWN.base+"terrarium/"+z+"/"+x+"/"+y+".png",own:true}}return{u:trUrl(z,x,y),own:false}}
+function trDlUrl(z,x,y){if(z>TEZ)return null;const s=trSrc(z,x,y);return s?s.u:null}
+function trDlOwn(u){return u.indexOf(TOWN.base)===0}
 function trReq(z,x,y){const k=z+"/"+x+"/"+y;if(TR.t.has(k)||TR.pend.has(k)||TR.qs.has(k))return;const b=TR.bad.get(k);if(b&&Date.now()-b<(navigator.onLine===false?15000:60000))return;
 TR.qs.add(k);if(TR.qs.size>300)TR.qs.delete(TR.qs.values().next().value);trPump()}
-function trPump(){while(TR.pend.size<6&&TR.qs.size){const k=TR.qs.values().next().value;TR.qs.delete(k);if(TR.t.has(k))continue;TR.pend.add(k);
-const p=k.split("/"),im=new Image();im.crossOrigin="anonymous";
-im.onload=()=>{TR.pend.delete(k);try{if(!TR.cv){TR.cv=document.createElement("canvas");TR.cv.width=TR.cv.height=256}const g=TR.cv.getContext("2d",{willReadFrequently:true});g.clearRect(0,0,256,256);g.drawImage(im,0,0,256,256);
+function trDecode(k,bm){if(!TR.cv){TR.cv=document.createElement("canvas");TR.cv.width=TR.cv.height=256}const g=TR.cv.getContext("2d",{willReadFrequently:true});g.clearRect(0,0,256,256);g.drawImage(bm,0,0,256,256);
 const d=g.getImageData(0,0,256,256).data,a=new Int16Array(65536);for(let i=0,j=0;i<65536;i++,j+=4){const v=d[j]*256+d[j+1]+d[j+2]/256-32768;a[i]=v<-1000?-1000:Math.round(v)}
-TR.t.set(k,a);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);TR.err=""}catch(e){TR.bad.set(k,Date.now());TR.err="cors"}trChanged();trPump()};
-im.onerror=()=>{TR.pend.delete(k);TR.bad.set(k,Date.now());trChanged();trPump()};im.src=trUrl(p[0],p[1],p[2])}}
+TR.t.set(k,a);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);TR.err=""}
+function trImg(b){if(window.createImageBitmap)return createImageBitmap(b);return new Promise((ok,no)=>{const u=URL.createObjectURL(b),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);ok(im)};im.onerror=e=>{URL.revokeObjectURL(u);no(e)};im.src=u})}
+function trPump(){if(TOWN.st==="loading")return;while(TR.pend.size<6&&TR.qs.size){const k=TR.qs.values().next().value;TR.qs.delete(k);if(TR.t.has(k))continue;
+const p=k.split("/").map(Number),src=trSrc(p[0],p[1],p[2]);if(!src){TR.bad.set(k,Date.now());continue}TR.pend.add(k);
+fetch(src.u,{mode:"cors",credentials:"omit"}).then(async r=>{if(r.status===404&&src.own){TR.t.set(k,TR0);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);return}
+if(!r.ok)throw new Error("http "+r.status);const bm=await trImg(await r.blob());try{trDecode(k,bm)}catch(e){TR.err="cors";throw e}})
+.catch(()=>{TR.bad.set(k,Date.now())}).finally(()=>{TR.pend.delete(k);trChanged();trPump()})}}
 /* หาแผ่นข้อมูลของช่อง (tx,ty) ที่ซูม ez ถ้ายังไม่มี ใช้แผ่นแม่ที่ซูมต่ำกว่า (สูงสุด 6 ระดับ) ที่โหลดไว้แล้ว */
 function trRes(ez,tx,ty,req){const n0=2**ez;if(ty<0||ty>=n0)return null;let pb=false;
 for(let d=0;d<=6&&ez-d>=0;d++){const z=ez-d,n=2**z,f=2**d,ax=Math.floor(tx/f),ay=Math.floor(ty/f),wx=((ax%n)+n)%n,k=z+"/"+wx+"/"+ay,a=TR.t.get(k);
@@ -4376,7 +4400,9 @@ function tr(b,z){var n=Math.pow(2,z),a=wp(b[2],b[1],z),d=wp(b[0],b[3],z);
  return[Math.max(0,Math.floor(a[0]/256)),Math.min(n-1,Math.floor(d[0]/256)),Math.max(0,Math.floor(a[1]/256)),Math.min(n-1,Math.floor(d[1]/256))]}
 function cnt(b,z0,z1,ks){var t=0;ks.forEach(function(k){var L=lay(k);if(!L)return;for(var z=z0;z<=zc(L,z1);z++){var r=tr(b,z);t+=(r[1]-r[0]+1)*(r[3]-r[2]+1)*L.u.length}});return t}
 function est(b,z0,z1,ks){var t=0;ks.forEach(function(k){var L=lay(k),kb=KB[k]||[25];if(!L)return;L.u.forEach(function(u,i){var c=cnt(b,z0,z1,[k])/L.u.length;t+=c*(kb[i]||kb[0])*1024})});return t}
-function list(a){var o=[];a.layers.forEach(function(k){var L=lay(k);if(!L)return;L.u.forEach(function(u){for(var z=a.zmin;z<=zc(L,a.zmax);z++){var r=tr(a.bbox,z);for(var x=r[0];x<=r[1];x++)for(var y=r[2];y<=r[3];y++){var url=u.replace("{s}","a").replace("{z}",z).replace("{x}",x).replace("{y}",y);o.push({url:url,key:tkey(url)})}}})});return o}
+function list(a){var o=[];a.layers.forEach(function(k){var L=lay(k);if(!L)return;
+ if(k==="terrain"&&typeof trDlUrl==="function"){for(var z=a.zmin;z<=zc(L,a.zmax);z++){var r=tr(a.bbox,z);for(var x=r[0];x<=r[1];x++)for(var y=r[2];y<=r[3];y++){var u=trDlUrl(z,x,y);if(u)o.push({url:u,key:tkey(u),own:trDlOwn(u)})}}return}
+ L.u.forEach(function(u){for(var z=a.zmin;z<=zc(L,a.zmax);z++){var r=tr(a.bbox,z);for(var x=r[0];x<=r[1];x++)for(var y=r[2];y<=r[3];y++){var url=u.replace("{s}","a").replace("{z}",z).replace("{x}",x).replace("{y}",y);o.push({url:url,key:tkey(url)})}}})});return o}
 function viewBox(){var W=mp.clientWidth,H=mp.clientHeight,rz=typeof RZ!=="undefined"&&RZ,hw=W/2,hh=H/2;if(rz){hw=hh=Math.hypot(W,H)/2}
  var a=ll(M.cx-hw,M.cy-hh,M.z),d=ll(M.cx+hw,M.cy+hh,M.z);return[Math.min(a[0],d[0]),Math.min(a[1],d[1]),Math.max(a[0],d[0]),Math.max(a[1],d[1])]}
 function radBox(nm){var c=ll(M.cx,M.cy,M.z),dl=nm/60,dn=nm/(60*Math.max(.2,Math.cos(c[0]*Math.PI/180)));return[c[0]-dl,c[1]-dn,c[0]+dl,c[1]+dn]}
@@ -4467,7 +4493,8 @@ async function run(a){if(ST.busy)return;ST.busy=true;ST.abort={v:false};var ac=S
  function prog(force){var t=Date.now();if(!force&&t-last<250)return;last=t;q("ompb").style.width=(done/ks.length*100).toFixed(1)+"%";q("omst").textContent="ดาวน์โหลด “"+a.name+"” "+done.toLocaleString("en-US")+" / "+ks.length.toLocaleString("en-US")+" แผ่น · "+mb(bytes)+(fail?" · ล้มเหลว "+fail:"")}
  async function worker(){while(i<ks.length&&!ac.v){var t=ks[i++];
   try{var h=await c.match(t.key);if(h){bytes+=+h.headers.get("x-sz")||0;done++;prog();continue}
-   var r=null;for(var k=0;k<2&&!ac.v;k++){try{r=await fetch(t.url,{mode:"cors",credentials:"omit"});if(r.ok)break;r=null}catch(e){r=null}}
+   var r=null,st=0;for(var k=0;k<2&&!ac.v;k++){try{r=await fetch(t.url,{mode:"cors",credentials:"omit"});if(r.ok)break;st=r.status;r=null;if(st===404&&t.own)break}catch(e){r=null}}
+   if(!r&&st===404&&t.own){done++;prog();continue}/* ข้อมูลความสูงของเราไม่มีแผ่นนี้ = ทะเล ไม่ต้องเก็บ */
    if(r){bytes+=await tput(CR,t.key,r);done++}else{fail++;if(fail>=20&&fail>done){msg="ผู้ให้บริการไม่ตอบ/ปฏิเสธ หรือไม่มีอินเทอร์เน็ต — หยุดดาวน์โหลด";ac.v=true}}
   }catch(e){fail++;if(e&&e.name==="QuotaExceededError"){msg="พื้นที่เก็บข้อมูลเต็ม — หยุดดาวน์โหลด (ลบแผนที่เก่าหรือลดขนาด)";ac.v=true}}
   prog()}}

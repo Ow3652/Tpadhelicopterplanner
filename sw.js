@@ -8,7 +8,7 @@
  */
 const VERSION = '4.5.0';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b4';
+const BUILD = 'b5';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
 const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
@@ -41,10 +41,9 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) {
-    if (isTile(url)) e.respondWith(tileFetch(e, url));
-    return;
-  }
+  // ภาพแผนที่/ข้อมูลความสูง: ตรวจก่อน เพราะ Tpadterrain อาจอยู่โดเมนเดียวกับแอป (ow3652.github.io) แต่นอกขอบเขตของ service worker
+  if (isTile(url)) { e.respondWith(tileFetch(e, url)); return; }
+  if (url.origin !== self.location.origin) return;
   const scope = new URL(self.registration.scope);
   if (!url.pathname.startsWith(scope.pathname)) return;
   const isNav = req.mode === 'navigate';
@@ -69,7 +68,9 @@ const TILEHOST = /(^|\.)(tile\.opentopomap\.org|tile-cyclosm\.openstreetmap\.fr|
 function isTile(u) {
   return TILEHOST.test(u.hostname) || (u.hostname === 'server.arcgisonline.com' && u.pathname.indexOf('/MapServer/tile/') > 0) ||
     // v4.5.0: ข้อมูลความสูงภูมิประเทศ AWS Terrain Tiles (TAWS/กราฟความสูง) ผู้ใช้อนุญาตแล้ว
-    (u.hostname === 's3.amazonaws.com' && u.pathname.indexOf('/elevation-tiles-prod/') === 0) || u.hostname === 'elevation-tiles-prod.s3.amazonaws.com';
+    (u.hostname === 's3.amazonaws.com' && u.pathname.indexOf('/elevation-tiles-prod/') === 0) || u.hostname === 'elevation-tiles-prod.s3.amazonaws.com' ||
+    // v4.5.0 b5: ข้อมูลความสูง Copernicus DEM ที่สร้างเอง (รีโป Tpadterrain บน GitHub Pages)
+    (u.hostname === 'ow3652.github.io' && u.pathname.indexOf('/Tpadterrain/') === 0);
 }
 // คีย์แคช: ตัดโดเมนย่อย a/b/c และพารามิเตอร์ _r ออก (ต้องตรงกับฟังก์ชัน tkey ในหน้าแอป)
 function tkey(u) {

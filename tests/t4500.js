@@ -1,5 +1,6 @@
 // ทดสอบภูมิประเทศ v4.5.0: ชั้น TAWS + กราฟความสูงตามเส้นทาง + ข้อมูลความสูงออฟไลน์ (Playwright/Chromium จำลอง ไม่ใช่ iPad จริง)
-// ไม่ได้ต่อ AWS จริง: ข้อมูลความสูงเป็น "ภูเขาจำลอง" รูปกรวยสูง 1,500 ม. (≈4,921 ft) ที่ 14.00N 100.80E รัศมี 0.25° ส่งผ่าน context.route
+// v4.5.0 b5: ในกรอบประเทศไทยใช้ข้อมูลของเราเอง (Tpadterrain + coverage.json) นอกกรอบใช้ AWS — ทั้งสองแหล่งจำลองด้วย context.route
+// ไม่ได้ต่อ AWS/GitHub จริง: ข้อมูลความสูงเป็น "ภูเขาจำลอง" รูปกรวยสูง 1,500 ม. (≈4,921 ft) ที่ 14.00N 100.80E รัศมี 0.25° ส่งผ่าน context.route
 // รัน: node tests/t4500.js  (ใช้ไฟล์แอปล่าสุดและ pwa/ ในโฟลเดอร์โปรเจกต์ เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8770 เอง)
 process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS='1';
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');const zlib=require('zlib');
@@ -23,6 +24,10 @@ function tilePng(z,x,y){const k=z+'/'+x+'/'+y;if(cacheP.has(k))return cacheP.get
  for(let j=0;j<256;j++){raw[j*769]=0;for(let i=0;i<256;i++){const[la,lo]=ll(x*256+i+.5,y*256+j+.5,z);const v=elevAt(la,lo)+32768,R=Math.floor(v/256),G=Math.floor(v)%256,B=Math.floor((v-Math.floor(v))*256),o=j*769+1+i*3;raw[o]=R;raw[o+1]=G;raw[o+2]=B}}
  const h=Buffer.alloc(13);h.writeUInt32BE(256,0);h.writeUInt32BE(256,4);h[8]=8;h[9]=2;h[10]=0;h[11]=0;h[12]=0;
  const png=Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),chunk('IHDR',h),chunk('IDAT',zlib.deflateSync(raw)),chunk('IEND',Buffer.alloc(0))]);cacheP.set(k,png);return png}
+const tileMax=(z,x,y)=>{let m=0;for(let j=0;j<=16;j++)for(let i=0;i<=16;i++){const[la,lo]=ll(x*256+i*16,y*256+j*16,z);m=Math.max(m,elevAt(la,lo))}return m};
+const T11=(la,lo)=>{const n=2**11,x=Math.floor((lo+180)/360*n),r=la*Math.PI/180,y=Math.floor((1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n);return[x,y]};
+const P12=[];{const[a0,b0]=T11(MT.la+.4,MT.lo-.4),[a1,b1]=T11(MT.la-.4,MT.lo+.4);for(let x=a0;x<=a1;x++)for(let y=b0;y<=b1;y++)if(tileMax(11,x,y)>=300)P12.push([x,y])}
+const COV={v:1,source:'test',bbox:[5.5,97.2,20.6,105.8],zmin:5,zfull:11,zmax:12,z12parents:P12};
 const TPNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==','base64');
 (async()=>{
 await new Promise(r=>srv.listen(8770,r));const U='http://localhost:8770/';
@@ -31,6 +36,12 @@ t('T0 sw.js VERSION == เวอร์ชันแอป ('+ver+')',swv===ver,sw
 t('T0 sw.js isTile รวมโดเมนข้อมูลความสูง AWS',/elevation-tiles-prod/.test(fs.readFileSync(path.join(SITE,'sw.js'),'utf8')));
 const b=await chromium.launch();
 const c=await b.newContext({viewport:{width:1280,height:800}});let mode='ok';const hits=[];
+const own=[];let covMode='ok';
+await c.route(/ow3652\.github\.io\/Tpadterrain\//,r=>{const u=r.request().url();if(mode==='fail')return r.abort();
+ if(/coverage\.json/.test(u))return covMode==='ok'?r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(COV)}):r.fulfill({status:404,body:'nf'});
+ own.push(u);const m=u.match(/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);if(!m)return r.fulfill({status:404,body:''});const z=+m[1],x=+m[2],y=+m[3];
+ if(z>12||tileMax(z,x,y)<=0)return r.fulfill({status:404,headers:{'access-control-allow-origin':'*'},body:'nf'});
+ r.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:tilePng(z,x,y)})});
 await c.route(/elevation-tiles-prod/,r=>{const u=r.request().url();hits.push(u);if(mode==='fail')return r.abort();const m=u.match(/terrarium\/(\d+)\/(\d+)\/(\d+)\.png/);
  if(!m)return r.fulfill({status:404,body:''});r.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:tilePng(+m[1],+m[2],+m[3])})});
 await c.route(/tile\.opentopomap|tile-cyclosm|tile\.openstreetmap|arcgisonline/,r=>mode==='fail'?r.abort():r.fulfill({status:200,contentType:'image/png',headers:{'access-control-allow-origin':'*'},body:TPNG}));
@@ -51,6 +62,10 @@ t('T2 ชั้นสีแสดงบนจอจริง (มองเห็
 t('T2 ตำแหน่งไกลจากภูเขาไม่มีสี (พื้นราบ 0 ม.)',await p.evaluate(()=>{const cv=document.getElementById('tws');return cv.getContext('2d').getImageData(0,0,3,3).data[3]===0}));
 const e0=await p.evaluate(()=>[trElev(14.0,100.8,10,false),trElev(14.0,100.925,10,false),trElev(14.0,100.45,10,false)]);
 t('T2 ถอดค่าความสูง: ยอด ≈1,500 ม. / กลางเนิน ≈750 ม. / ไกลออกไป (100.45E) 0',Math.abs(e0[0]-1500)<25&&Math.abs(e0[1]-750)<40&&e0[2]!==null&&Math.abs(e0[2])<1,e0);
+t('T2 ในประเทศไทยใช้ข้อมูลของเราเอง (Tpadterrain) ไม่เรียก AWS',own.length>0&&hits.length===0,own.length+' / AWS '+hits.length);
+t('T2 โหลด coverage.json แล้ว (สถานะ ok, z12parents '+P12.length+')',await p.evaluate(()=>TOWN.st==='ok'&&TOWN.p12.size>0));
+const z12=await p.evaluate(()=>{const a=trSrc(12,0,0),c=TOWN.cov.z12parents[0],b=trSrc(12,c[0]*2,c[1]*2),o=trSrc(11,3200,1700);return{flat:a===null||!a.own,mt:!!(b&&b.own),out:o&&!o.own}});
+t('T2 ซูม 12 ขอเฉพาะเขตภูเขา (นอกนั้นใช้แผ่นแม่) และนอกกรอบใช้ AWS',z12.mt&&z12.out,JSON.stringify(z12));
 t('T2 คำอธิบายสีแสดงความสูงอ้างอิง (กล่องกราฟยังปิด)',await p.evaluate(()=>{const l=document.getElementById('twl');return !l.hidden&&/1,500 ft/.test(l.textContent)&&/ไม่รวมสิ่งกีดขวาง/.test(l.textContent)}));
 // ความสูงบิน 6,000 ft: ยอด 4,921 ft → ไม่มีแดง มีเหลือง (แถบ 1,000 ft: 5,000–5,900) หรือไม่มีเลย
 await p.fill('#twalt','5500');await p.press('#twalt','Tab');await p.waitForTimeout(600);P=await px();
@@ -87,14 +102,24 @@ await p.evaluate(()=>twSet({alt:1500}));
 await p.click('#pfx');await p.waitForTimeout(200);
 t('T7 ปิดกล่องกราฟด้วย ✕',await p.evaluate(()=>!document.getElementById('mprof').classList.contains('on')&&!TW.pf));
 // ออฟไลน์: ใช้ข้อมูลความสูงจากแคชอัตโนมัติ
-const tc=await p.evaluate(async()=>(await (await caches.open('tiles-auto')).keys()).filter(r=>/elevation-tiles-prod/.test(r.url)).length);
+const tc=await p.evaluate(async()=>(await (await caches.open('tiles-auto')).keys()).filter(r=>/elevation-tiles-prod|Tpadterrain/.test(r.url)).length);
 t('T8 ข้อมูลความสูงถูกเก็บในแคชอัตโนมัติ (tiles-auto)',tc>0,tc);
 mode='fail';await c.setOffline(true);await p.reload();await p.waitForTimeout(1500);
 await p.evaluate(()=>{const c=wp(14.0,100.8,10);M.z=10;M.cx=c[0];M.cy=c[1];M.touched=true;drawMap(false)});await p.waitForTimeout(2500);P=await px();
 t('T8 ออฟไลน์: TAWS ยังแสดงจากแคช (อ่านค่าได้ ไม่ติด CORS)',P.r>50,P);
 await p.evaluate(()=>{M.z=13;const c=wp(14.0,100.8,13);M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(2000);P=await px();
 t('T8 ออฟไลน์ซูม 13 (ข้อมูลถึงซูม 12): ยังแสดงสีจากแผ่นแม่',P.r>50,P);
+// ออฟไลน์ + ยังไม่เคยโหลดบริเวณนี้ (ในกรอบ): ต้องไม่ถือว่าเป็นทะเล (ค่า null) และแจ้งว่าไม่มีข้อมูล
+await p.evaluate(()=>{const c=wp(18.5,99.5,10);M.z=10;M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(2500);
+const offU=await p.evaluate(()=>({e:trElev(18.5,99.5,10,false),miss:TWS.miss,lg:document.getElementById('twl').textContent}));
+t('T8 ออฟไลน์ในบริเวณที่ไม่เคยโหลด: ไม่ตีความเป็นทะเล และแจ้งไม่มีข้อมูล',offU.e===null&&offU.miss>0.5&&/ไม่มีข้อมูลความสูง/.test(offU.lg),JSON.stringify({e:offU.e,miss:offU.miss}));
 await c.setOffline(false);mode='ok';await p.reload();await p.waitForTimeout(1500);
+// ทะเลในกรอบ (ไม่มีแผ่น 404) = 0 ม. ไม่ใช่ข้อมูลขาด / นอกกรอบใช้ AWS
+await p.evaluate(()=>{const c=wp(9.0,97.6,10);M.z=10;M.cx=c[0];M.cy=c[1];M.touched=true;drawMap(false)});await p.waitForTimeout(2500);
+const sea=await p.evaluate(()=>({e:trElev(9.0,97.6,10,false),miss:TWS.miss}));
+t('T8 ทะเลในกรอบ: ไม่มีแผ่น (404) = 0 ม. และไม่นับเป็นข้อมูลขาด',sea.e===0&&sea.miss<0.05,JSON.stringify(sea));
+const h1=hits.length;await p.evaluate(()=>{const c=wp(23.0,100.8,10);M.cx=c[0];M.cy=c[1];drawMap(false)});await p.waitForTimeout(2500);
+t('T8 นอกกรอบประเทศไทย (23N): ใช้ AWS Terrain Tiles',hits.length>h1&&await p.evaluate(()=>trElev(23.0,100.8,10,false)!==null),hits.length-h1);
 // ปุ่มเดียว 📥 ดาวน์โหลดแผนที่/TAWS ในชั้นข้อมูล (b3): เลือกชนิดแผนที่ที่ใช้อยู่ + ข้อมูลความสูง ตามเส้นทาง Active และไม่มีปุ่มแผนที่ออฟไลน์ซ้ำในชั้นข้อมูล
 await p.evaluate(()=>document.getElementById('twdl').click());await p.waitForSelector('#omd:not([hidden])');
 const dl=await p.evaluate(()=>({ly:[...document.querySelectorAll('#omd [data-ly]')].filter(c=>c.checked).map(c=>c.dataset.ly).sort(),src:document.querySelector('#omd input[name=omsrc]:checked').value,txt:document.getElementById('twdl').textContent,dup:!!document.getElementById('offb2'),cur:LAY.k}));
@@ -111,7 +136,7 @@ const n1=await p.evaluate(()=>+document.getElementById('omest').dataset.n);
 await p.selectOption('#omz1','12');await p.waitForTimeout(300);const n2=await p.evaluate(()=>+document.getElementById('omest').dataset.n);
 t('T9 ข้อมูลความสูงนับถึงซูม 12 เท่านั้น (เลือกถึง 14 = เลือกถึง 12)',n1>0&&n1===n2,n1+' vs '+n2);
 const h0=hits.length;await p.fill('#omname','ภูเขาทดสอบ');await p.click('#omgo');await p.waitForFunction(()=>/เสร็จแล้ว/.test(document.getElementById('omst').textContent),null,{timeout:30000}).catch(()=>{});
-const ta=await p.evaluate(async()=>(await (await caches.open('tiles-area')).keys()).filter(r=>/elevation-tiles-prod/.test(r.url)).length);
+const ta=await p.evaluate(async()=>(await (await caches.open('tiles-area')).keys()).filter(r=>/elevation-tiles-prod|Tpadterrain/.test(r.url)).length);
 t('T9 ดาวน์โหลดข้อมูลความสูงลงแคชพื้นที่ (tiles-area)',ta>0&&ta<=n1,ta+' / '+n1);
 await p.click('#omx');
 // แผนที่เต็มจอบน iPad จำลอง: ปุ่มใหม่สูง 40px ไม่มี error
@@ -119,6 +144,8 @@ const c2=await b.newContext({...devices['iPad Pro 11 landscape']});await c2.rout
 const p2=await c2.newPage();p2.on('pageerror',e=>errs.push('iPad: '+e.message));await p2.goto(U);await p2.waitForTimeout(1500);await p2.click('#fs');await p2.waitForTimeout(400);if(await p2.isVisible('#uis'))await p2.click('#uis');await p2.waitForTimeout(400);
 const hh=await p2.evaluate(()=>['fit','twb','pfb'].map(id=>document.getElementById(id).getBoundingClientRect().height));
 t('T10 iPad เต็มจอ: ปุ่ม TAWS/กราฟความสูงสูงเท่าแถวบน',hh.every(h=>Math.abs(h-hh[0])<=2),hh.join(','));
+await p2.waitForFunction(()=>TOWN.st!=='loading',null,{timeout:12000}).catch(()=>{});
+t('T10 ไม่มี coverage.json (ยังไม่สร้างข้อมูล/เปิดครั้งแรกตอนออฟไลน์): ใช้ AWS แทน ไม่ค้าง',await p2.evaluate(()=>TOWN.st==='none'&&trSrc(11,1597,940).own===false));
 await p2.click('#fpb');await p2.waitForTimeout(500);
 const row=await p2.evaluate(()=>['twon2','twalt2','twgps'].map(id=>{const e=document.getElementById(id),l=e.closest('label')||e;const r=l.getBoundingClientRect();return{t:Math.round(r.top),b:Math.round(r.bottom),l:Math.round(r.left),r:Math.round(r.right),fp:document.getElementById('fp').getBoundingClientRect().right}}));
 t('T10 ชั้นข้อมูล: TAWS / ความสูงบิน / ใช้ความสูง GPS อยู่แถวเดียวกัน (b2)',Math.max(...row.map(x=>x.b))-Math.min(...row.map(x=>x.b))<=10&&row[0].r<=row[1].l&&row[1].r<=row[2].l&&row[2].r<=row[2].fp,JSON.stringify(row.map(x=>[x.l,x.b])));
