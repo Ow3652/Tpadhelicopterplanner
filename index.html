@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.4.0</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.4.1</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -485,7 +485,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.4.0</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.4.1</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -1657,6 +1657,14 @@ var IS=1;
 const TERR={};var RFS=0;
 function mapRefresh(){RFS=Date.now();for(const k in TERR)delete TERR[k];try{for(const[,im]of M.cache)im.remove();M.cache.clear()}catch(e){}try{for(const[,im]of WX.img)im.remove();WX.img.clear()}catch(e){}drawMap(false);toast("รีเฟรชแผนที่แล้ว — กำลังโหลดภาพแผนที่ใหม่")}
 function tileErr(L){TERR[L.k]=(TERR[L.k]||0)+1;if(TERR[L.k]===10&&LAY.k===L.k)toast(navigator.onLine===false?"ออฟไลน์: ไม่มีแผนที่ “"+L.n+"” ที่เก็บไว้สำหรับบริเวณนี้ (โหลดล่วงหน้าได้ที่ 📥 แผนที่ออฟไลน์)":"โหลดไทล์แผนที่ “"+L.n+"” ไม่ได้ (ไม่มีอินเทอร์เน็ต หรือเซิร์ฟเวอร์ปฏิเสธ)"+" ลองเปลี่ยนชนิดแผนที่")}
+/* v4.4.1: ขยายภาพแผนที่แม่ — ถ้าโหลดแผ่นที่ระดับซูมนี้ไม่ได้ (ออฟไลน์/ไม่มีในแคช/เกินซูมสูงสุดของแผนที่) ให้ใช้แผ่นระดับซูมต่ำกว่า (ถอยได้สูงสุด OZMAX ระดับ) ขยายแล้วตัดเฉพาะส่วนของแผ่นนี้ */
+const OZMAX=6;
+function tileSrc(u,z,x,y){return u.replace("{s}","abc"[(x+y)%3]).replace("{z}",z).replace("{x}",x).replace("{y}",y)+(RFS?(u.indexOf("?")<0?"?":"&")+"_r="+RFS:"")}
+function tileOz(im,L){const d=im._d+1;if(d>OZMAX||im._z-d<0){tileErr(L);return}
+const f=2**d,S=TS*f,sx=(im._x%f)*TS,sy=(im._y%f)*TS,l=parseFloat(im.style.left)||0,t=parseFloat(im.style.top)||0;
+im.style.left=(l+im._sx-sx)+"px";im.style.top=(t+im._sy-sy)+"px";im._d=d;im._sx=sx;im._sy=sy;
+im.style.width=im.style.height=S+"px";im.style.clipPath="inset("+sy+"px "+(S-sx-TS)+"px "+(S-sy-TS)+"px "+sx+"px)";
+im.src=tileSrc(im._u,im._z-d,Math.floor(im._x/f),Math.floor(im._y/f))}
 function setLayer(k,keep){LAY=LAYERS.find(l=>l.k===k)||LAYERS[0];$("at").innerHTML=LAY.at;
 for(const[,im]of M.cache)im.remove();M.cache.clear();
 try{if(!keep)localStorage.setItem("heliLayer",LAY.k)}catch(e){}blkUi();drawMap(false)}
@@ -1680,8 +1688,8 @@ for(let tx=Math.floor((ox-RMX)/TS);tx<=Math.floor((ox+W+RMX)/TS);tx++){
 const wx=((tx%n)+n)%n;
 LAY.u.forEach((u,ui)=>{const k=LAY.k+ui+"/"+z+"/"+wx+"/"+ty+"/"+tx;want.add(k);
 let im=M.cache.get(k);
-if(!im){im=new Image();im.alt="";im.draggable=false;im.className="tile";{const L=LAY;im.onerror=()=>tileErr(L)}im.style.zIndex=ui;im.src=u.replace("{s}","abc"[(wx+ty)%3]).replace("{z}",z).replace("{x}",wx).replace("{y}",ty)+(RFS?(u.indexOf("?")<0?"?":"&")+"_r="+RFS:"");tl.appendChild(im);M.cache.set(k,im)}
-im.style.left=(tx*TS-ox)+"px";im.style.top=(ty*TS-oy)+"px"})}}
+if(!im){im=new Image();im.alt="";im.draggable=false;im.className="tile";{const L=LAY;im.onerror=()=>tileOz(im,L)}im.style.zIndex=ui;im._u=u;im._z=z;im._x=wx;im._y=ty;im._d=0;im._sx=0;im._sy=0;im.src=tileSrc(u,z,wx,ty);tl.appendChild(im);M.cache.set(k,im)}
+im.style.left=(tx*TS-ox-im._sx)+"px";im.style.top=(ty*TS-oy-im._sy)+"px"})}}
 for(const[k,im]of M.cache)if(!want.has(k)){im.remove();M.cache.delete(k)}
 {const wb=$("wx");if(RMX||RMY){wb.style.inset="auto";wb.style.left=-RMX+"px";wb.style.top=-RMY+"px";wb.style.width=(W+2*RMX)+"px";wb.style.height=(H+2*RMY)+"px"}else{wb.style.inset="";wb.style.left=wb.style.top=wb.style.width=wb.style.height=""}}
 wxDraw(W+2*RMX,H+2*RMY,ox-RMX,oy-RMY,z);
@@ -2531,7 +2539,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.4.0 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.4.1 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4141,7 +4149,7 @@ function init(){build();}
 init()})();
 </script>
 <script id="pwa">
-/* PWA (v4.4.0; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.4.1; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;

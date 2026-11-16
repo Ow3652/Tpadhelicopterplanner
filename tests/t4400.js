@@ -1,4 +1,4 @@
-// ทดสอบแผนที่ออฟไลน์ v4.4.0 (Playwright/Chromium จำลอง ไม่ใช่ iPad จริง และไม่ได้ต่อเซิร์ฟเวอร์แผนที่จริง: ภาพแผนที่เป็นภาพจำลอง)
+// ทดสอบแผนที่ออฟไลน์ v4.4.0 (ปรับ T6 ใน v4.4.1: ขยายภาพแผนที่แม่) (Playwright/Chromium จำลอง ไม่ใช่ iPad จริง และไม่ได้ต่อเซิร์ฟเวอร์แผนที่จริง: ภาพแผนที่เป็นภาพจำลอง)
 // รัน: node tests/t4400.js  (ใช้ไฟล์แอปล่าสุดและ pwa/ ในโฟลเดอร์โปรเจกต์)
 process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS='1';/* ให้ context.route ดักคำขอจาก service worker ได้ */
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
@@ -74,8 +74,11 @@ await p.click('#omx');
 await p.evaluate(()=>caches.delete('tiles-auto'));
 const nz10=await p.evaluate(async()=>(await (await caches.open('tiles-area')).keys()).filter(r=>/\/10\//.test(r.url)).length);
 mode='fail';await c.setOffline(true);await p.reload();await p.waitForTimeout(2500);
-const ld2=await p.evaluate(()=>[...document.querySelectorAll('#tl img.tile')].filter(i=>i.complete&&i.naturalWidth>0).length);
-t('T6 ออฟไลน์: แสดงภาพจากพื้นที่ที่ดาวน์โหลดไว้ (เฉพาะแผ่นในพื้นที่)',ld2>=1&&ld2<=nz10,ld2+' / z10 ในแคช '+nz10);
+const ld2=await p.evaluate(()=>[...document.querySelectorAll('#tl img.tile')].filter(i=>i.complete&&i.naturalWidth>0&&!i._d).length);
+t('T6 ออฟไลน์: แสดงภาพจากพื้นที่ที่ดาวน์โหลดไว้ (แผ่นระดับซูมจริงเฉพาะในพื้นที่)',ld2>=1&&ld2<=nz10,ld2+' / z10 ในแคช '+nz10);
+/* v4.4.1: แผ่นนอกพื้นที่ที่ดาวน์โหลดไว้ ใช้แผ่นแม่ระดับซูมต่ำกว่าขยายแทน (ถ้ามีในแคช) */
+const oz2=await p.evaluate(()=>[...document.querySelectorAll('#tl img.tile')].filter(i=>i._d>0).every(i=>i._d<=6));
+t('T6 แผ่นนอกพื้นที่: ถอยใช้แผ่นแม่ไม่เกิน 6 ระดับ (v4.4.1)',oz2);
 await c.setOffline(false);mode='ok';await p.reload();await p.waitForTimeout(1200);
 // ลบพื้นที่
 await p.click('#offb');await p.waitForSelector('#omd:not([hidden])');await p.click('[data-ox="0"]');await p.waitForTimeout(1200);
