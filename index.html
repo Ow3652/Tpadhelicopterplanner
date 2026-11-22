@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.3</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.4</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -487,7 +487,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.3</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.4</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -2015,8 +2015,11 @@ function fpSync(){$("fpb").classList.toggle("on",!$("fp").hidden)}
 var AUTON="";
 function defName(){const v=calcData.valid;if(v.length<2)return"";const nm=(p,i)=>((p.name||"").trim()||(i?"WP"+(i+1):"WP1"));return nm(v[0],0)+" - "+nm(v[v.length-1],v.length-1)}
 function autoName(){try{const d=defName(),r=$("rname");if(!r)return;if(d&&(!r.value.trim()||r.value===AUTON)){r.value=d;AUTON=d}else if(!d&&r.value===AUTON&&AUTON){r.value="";AUTON=""}}catch(e){}}
-function svOpen(){if(calcData.valid.length<2){$("save").click();return}$("svn").value=$("rname").value.trim()||defName();$("svd").hidden=false;setTimeout(()=>{$("svn").focus();$("svn").select()},0)}
-function svDo(){const n=$("svn").value.trim();if(!n){$("svn").focus();return}$("rname").value=n;$("svd").hidden=true;$("save").click();calc()}
+/* v4.7.4: กด "บันทึกเส้นทาง" (เช่น หลังสร้างเส้นทางใหม่จากแผง จุดพิกัดในเส้นทาง) ให้ใส่ชื่อก่อนบันทึกเสมอ */
+var SVGO=false;function svGo(){SVGO=true;try{$("save").click()}finally{SVGO=false}}
+$("save").addEventListener("click",e=>{if(SVGO)return;e.stopImmediatePropagation();e.preventDefault();svOpen()},true);
+function svOpen(){if(calcData.valid.length<2){svGo();return}$("svn").value=$("rname").value.trim()||defName();$("svd").hidden=false;setTimeout(()=>{$("svn").focus();$("svn").select()},0)}
+function svDo(){const n=$("svn").value.trim();if(!n){$("svn").focus();return}$("rname").value=n;$("svd").hidden=true;svGo();calc()}
 $("svok").onclick=svDo;$("svno").onclick=()=>{$("svd").hidden=true};
 $("svn").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();svDo()}else if(e.key==="Escape")$("svd").hidden=true});
 $("svd").addEventListener("pointerdown",e=>e.stopPropagation());$("svd").addEventListener("wheel",e=>e.stopPropagation());
@@ -2544,7 +2547,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.3 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.4 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4403,7 +4406,7 @@ flSync();FL.tm=setInterval(()=>{try{flTick()}catch(e){}},1000);
 try{if(window.speechSynthesis)speechSynthesis.getVoices()}catch(e){}})();
 </script>
 <script id="pwa">
-/* PWA (v4.7.3; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.7.4; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
@@ -4653,6 +4656,13 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 #map.fly #twl{bottom:calc(var(--flyb,72px) + 26px)}
 #map.fly #mprof{bottom:calc(var(--flyb,72px) + 28px)}
 #map.fly #simbox{top:calc(var(--flyt,66px) + 8px)}
+/* v4.7.4: กันขอบ Dynamic Island/แถบโฮม (iPhone) และหน้าจอกะทัดรัดสำหรับจอแคบ (iPhone แนวตั้ง) */
+#flyT{padding-top:env(safe-area-inset-top,0px)}#flyB{padding-bottom:env(safe-area-inset-bottom,0px)}#flyR{top:calc(8px + env(safe-area-inset-top,0px))}
+#map.fly #svd{z-index:50}
+@media (max-width:600px){#flyT button{height:56px;font-size:11px;gap:2px}#flyT button .i{font-size:20px}#flyT button.io .i{font-size:24px}#flyT [data-fk="nav"] .i{font-size:18px!important}#flyT [data-fk="me"] .i{font-size:22px}
+#flyB{grid-template-columns:repeat(3,minmax(0,1fr))}#flyB>div{padding:3px 6px 4px;border-bottom:1px solid #333}#flyB small{font-size:11px}#flyB b{font-size:22px}#flyB .fw b{font-size:19px;line-height:1.16}
+#flyZ{right:8px;gap:10px;bottom:calc(var(--flyb,100px) + 30px)}#flyZ button{width:58px;height:58px;font-size:32px}#flyZ button.zr .i{font-size:18px}#flyZ button.zr .l{font-size:10px}
+#flyRec{height:38px;font-size:14px;padding:0 10px}.flyo .fog button{min-height:80px;font-size:17px}.flyo .foh{font-size:16px}.flyo .fiv{font-size:12px;gap:4px}.flyo .fiv button{min-width:44px;font-size:13px}}
 /* v4.7.3 */#flyT button.io .i{font-size:30px}#flyT [data-fk="nav"] .i{font-size:24px!important}#flyT [data-fk="me"] .i{color:#fff;font-size:28px}
 .flyo.flyw{left:50%;right:auto;transform:translateX(-50%);top:calc(var(--flyt,66px) + 10px);bottom:auto;width:min(540px,94%);max-height:calc(100% - var(--flyt,66px) - var(--flyb,72px) - 30px);border:1px solid #666;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.55)}.flyo.flyw .foh{border-radius:14px 14px 0 0}
 /* v4.7.2 */#flyZ button.zr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff}#flyZ button.zr .i{font-size:22px;line-height:1}#flyZ button.zr .l{font:600 11px/1 system-ui,sans-serif;color:#ccc}#flyZ button.zr.on{background:#0d47a1;border-color:#64b5f6}
@@ -4665,7 +4675,7 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 </style>
 <script id="flymode">
-/* ===== v4.7.0–4.7.3: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
+/* ===== v4.7.0–4.7.4: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
 (function(){
 const $f=id=>document.getElementById(id);
 const FT=1/0.3048,KT=1.943844;
@@ -4709,7 +4719,7 @@ addEventListener("pagehide",()=>tkSave(true));document.addEventListener("visibil
 function tkLoad(id){if(TK.cur&&TK.cur.id===id)return TK.cur.pts;const d=lsGet("heliTrk_"+id,null);return d&&d.pts||[]}
 function tkGpx(id){const x=tkIdx().find(q=>q.id===id)||(TK.cur&&TK.cur.id===id?{id,name:TK.cur.name}:null);if(!x)return null;const P=tkLoad(id);
  const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
- let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.3" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
+ let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.4" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
  P.forEach(p=>{g+='<trkpt lat="'+p[1]+'" lon="'+p[2]+'">'+(p[3]!=null?"<ele>"+p[3]+"</ele>":"")+"<time>"+new Date(id+p[0]*1000).toISOString()+"</time></trkpt>\n"});
  return g+"</trkseg></trk>\n</gpx>\n"}
 window.tkGpx=tkGpx;
@@ -4844,7 +4854,9 @@ addEventListener("resize",()=>{if(isFly())setTimeout(()=>{setVars();try{dock();l
 /* v4.7.1: ปุ่มในแถวปุ่มแสดงเฉพาะตอนเต็มจอ (หน้าจอปกติไม่เพิ่มความกว้างแถว) */{const fb=$f("fpb");if(fb){const b=document.createElement("button");b.className="b s";b.id="flyon3";b.type="button";b.title="โหมดบิน: ปุ่มใหญ่สำหรับใช้ขณะบิน";b.textContent="✈ โหมดบิน";fb.parentNode.insertBefore(b,fb);b.onclick=()=>flyOn()}}
 /* อยู่ในเมนู Flight INST. ▾ ด้วย */{const sb=$f("simbtn");if(sb){const b=document.createElement("button");b.className="b s";b.id="flyon";b.type="button";b.title="โหมดบิน: ปุ่มใหญ่สำหรับใช้ขณะบิน (iPad)";b.textContent="✈ โหมดบิน";sb.after(b);b.onclick=()=>flyOn()}}
 {const ub=$f("uib"),us=$f("uis");if(ub&&us){const b=document.createElement("button");b.className="b s";b.id="flyon2";b.type="button";b.title="โหมดบิน: ปุ่มใหญ่สำหรับใช้ขณะบิน";b.textContent="✈ โหมดบิน";us.after(b);b.onclick=()=>flyOn()}}
-if(lsGet("heliFly",0)===1)setTimeout(()=>{try{flyOn()}catch(e){}},400);
+/* v4.7.4: หน้าแรก — iPad/iPhone เข้าโหมดบิน · PC เปิดแผนที่เต็มจอ (เครื่องทดสอบอัตโนมัติไม่ทำ เว้นแต่ใส่ ?start=auto) */
+{const AUTO=!navigator.webdriver||/[?&]start=auto\b/.test(location.search);let mob=false;try{mob=!!MOBDEV}catch(e){}
+ setTimeout(()=>{try{if(lsGet("heliFly",0)===1||(AUTO&&mob))flyOn();else if(AUTO&&!mp.classList.contains("full"))fsToggle()}catch(e){}},400)}
 })();
 </script>
 </body>

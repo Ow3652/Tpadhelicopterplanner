@@ -1,4 +1,4 @@
-// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.3) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
+// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.4) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
 // ตำแหน่งเครื่องจำลองผ่าน MLP · รัน: node tests/t4700.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8773 เอง ตั้ง SHOT=1 เพื่อบันทึกภาพไว้ใน /tmp)
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
 const ROOT=path.resolve(__dirname,'..');
@@ -94,6 +94,12 @@ t('T10 ไม้บรรทัด เปิด/ปิดได้ ไฟปุ�
 // แก้เส้นทาง
 await p.tap('#fbW');await W(300);const ed=await p.evaluate(()=>{const e=$('mpt');return!!e&&getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().top>=$('flyT').getBoundingClientRect().bottom-1&&$('fbW').classList.contains('on')});
 t('T11 v4.7.2 แตะช่อง NAV TO (ล่างซ้าย): เปิดแผงแก้เส้นทาง ใต้แถบปุ่มบน',ed);
+// v4.7.4: กดบันทึกเส้นทางในแผงแก้เส้นทาง → มีกล่องใส่ชื่อก่อนบันทึก
+const sv1=await p.evaluate(async()=>{const n0=store().length;const b=$('save');b.scrollIntoView({block:'center'});b.click();await new Promise(r=>setTimeout(r,200));const d=$('svd'),i=$('svn'),r=i.getBoundingClientRect(),top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{n0,n1:store().length,open:!d.hidden,val:i.value,onTop:top===i}});
+t('T11 d v4.7.4 กด "บันทึกเส้นทาง": ขึ้นกล่องใส่ชื่อก่อน (ชื่อตั้งต้นจากจุดแรก-จุดสุดท้าย) ยังไม่บันทึก กล่องอยู่บนสุด',sv1.open&&sv1.n1===sv1.n0&&/ - CCC$/.test(sv1.val)&&sv1.onTop,sv1);
+await p.evaluate(()=>$('svno').click());await W(100);
+const sv2=await p.evaluate(async()=>{const n0=store().length;$('save').click();await new Promise(r=>setTimeout(r,150));$('svn').value='เที่ยวบินทดสอบ 1';$('svok').click();await new Promise(r=>setTimeout(r,200));const a=store();return{closed:$('svd').hidden,n:a.length-n0,has:a.some(r=>r.name==='เที่ยวบินทดสอบ 1'),rname:$('rname').value}});
+t('T11 e v4.7.4 ใส่ชื่อแล้วกดบันทึก: บันทึกเส้นทางด้วยชื่อที่ใส่ · กดยกเลิกไม่บันทึก',sv2.closed&&sv2.n===1&&sv2.has&&sv2.rname==='เที่ยวบินทดสอบ 1',sv2);
 await p.tap('#fbW');await W(300);
 t('T11 b v4.7.2 แตะช่อง NAV TO อีกครั้ง: ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
 await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr1=await p.evaluate(()=>{const e=$('lbr');return{on:e.classList.contains('on'),vis:e.getClientRects().length>0,top:Math.round(e.getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}});
@@ -162,5 +168,17 @@ t('T18 ออกจากโหมดบิน: กลับหน้าจอ�
 await p.setViewportSize({width:1080,height:810});await p.evaluate(()=>flyOn());await W(400);
 const ls=await p.evaluate(()=>{const bt=[...document.querySelectorAll('#flyT button')].map(e=>e.getBoundingClientRect());return{n:bt.length,ok:bt.every(r=>r.height>=60&&r.right<=innerWidth+1)}});
 t('T19 iPad แนวนอน: ปุ่มโหมดบินครบ ไม่ล้นจอ',ls.n===12&&ls.ok,ls);
+// v4.7.4: หน้าแรก (ใช้ ?start=auto เพราะเครื่องทดสอบอัตโนมัติปิดพฤติกรรมนี้ไว้)
+const sc=async(opt)=>{const c=await b.newContext(opt);await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();await q.goto('http://localhost:8773/?start=auto');await q.waitForTimeout(1500);const o=await q.evaluate(()=>({full:mp.classList.contains('full'),fly:mp.classList.contains('fly')}));await c.close();return o};
+const sPC=await sc({viewport:{width:1366,height:800}}),sPad=await sc({viewport:{width:810,height:1080},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'}),sPh=await sc({viewport:{width:440,height:956},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'});
+t('T21 v4.7.4 เปิดแอป: PC = แผนที่เต็มจอ · iPad และ iPhone = โหมดบิน',sPC.full&&!sPC.fly&&sPad.fly&&sPh.fly,{sPC,sPad,sPh});
+// v4.7.4: iPhone 17 Pro Max แนวตั้ง (440×956) หน้าจอกะทัดรัด
+{const c=await b.newContext({viewport:{width:440,height:956},deviceScaleFactor:3,isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'});await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();await q.goto('http://localhost:8773/');await q.waitForTimeout(1200);
+ const ip=await q.evaluate(async()=>{MLP.on=true;MLP.la=13.98;MLP.lo=100.25;MLP.hd=60;MLP.sp=123/1.943844;MLP.t=Date.now();flyOn();await new Promise(r=>setTimeout(r,600));flyUi();const W=innerWidth;const cut=e=>e.scrollWidth>e.clientWidth+1;
+  const labs=[...document.querySelectorAll('#flyT .l')],vals=[...document.querySelectorAll('#flyB b')],bt=[...document.querySelectorAll('#flyT button')].map(e=>e.getBoundingClientRect());
+  const cols=new Set([...document.querySelectorAll('#flyB>div')].map(e=>Math.round(e.getBoundingClientRect().left))).size;
+  return{sw:document.documentElement.scrollWidth,W,labCut:labs.filter(cut).map(e=>e.textContent),valCut:vals.filter(cut).map(e=>e.textContent),btnH:Math.min(...bt.map(r=>r.height)),inside:bt.every(r=>r.right<=W+1),cols,zoom:[...document.querySelectorAll('#flyZ button')].every(e=>e.getBoundingClientRect().right<=W)}});
+ t('T22 v4.7.4 iPhone 17 Pro Max แนวตั้ง: ไม่ล้นจอ ชื่อปุ่ม/ตัวเลขไม่ถูกตัด ปุ่มสูง ≥ 52 px แถบตัวเลข 3 คอลัมน์',ip.sw<=ip.W&&!ip.labCut.length&&!ip.valCut.length&&ip.btnH>=52&&ip.inside&&ip.cols===3&&ip.zoom,ip);
+ if(process.env.SHOT)await q.screenshot({path:'/tmp/t4700_iphone.png'});await c.close()}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
