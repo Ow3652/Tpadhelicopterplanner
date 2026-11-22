@@ -1,4 +1,4 @@
-// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.1) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
+// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.2) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
 // ตำแหน่งเครื่องจำลองผ่าน MLP · รัน: node tests/t4700.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8773 เอง ตั้ง SHOT=1 เพื่อบันทึกภาพไว้ใน /tmp)
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
 const ROOT=path.resolve(__dirname,'..');
@@ -26,13 +26,14 @@ const u2=await p.evaluate(()=>{const b=$('flyon2');return b&&b.getClientRects().
 t('T1 เต็มจอที่ซ่อนเมนูอยู่: มีปุ่ม "✈ โหมดบิน" ในแถบเล็ก ☰ เมนู',u2>0,u2);
 await p.tap('#flyon2');await W(600);
 const EN=await p.evaluate(()=>[...document.querySelectorAll('#flyT button,#flyZ button,#flyR')].map(e=>e.textContent.trim()));
-t('T2 b v4.7.1 ชื่อปุ่มโหมดบินเป็นภาษาอังกฤษทั้งหมด (มี Rec Route ไม่มี REC Track)',EN.every(x=>!/[\u0E00-\u0E7F]/.test(x))&&EN.some(x=>/Rec Route/.test(x))&&!EN.some(x=>/REC Track/.test(x)),EN.join(' | '));
+t('T2 b ชื่อปุ่มโหมดบินเป็นภาษาอังกฤษ: Prev WP, Next WP, NAV, Coords, Rec Route (ไม่มี Edit route/Prev NAV ในแถบบน)',EN.every(x=>!/[\u0E00-\u0E7F]/.test(x))&&['Prev WP','Next WP','NAV / STBY','Coords','Rec Route'].every(k=>EN.some(x=>x.includes(k)))&&!EN.some(x=>/REC Track|Prev NAV|Next NAV/.test(x)),EN.join(' | '));
+t('T2 c v4.7.2 แถบบนไม่มี Edit route และ North up (North up อยู่เหนือปุ่มซูม)',await p.evaluate(()=>!document.querySelector('#flyT [data-fk="edit"]')&&!document.querySelector('#flyT [data-fk="rot"]')&&(()=>{const r=document.querySelector('#flyZ [data-fk="rot"]').getBoundingClientRect(),z=document.querySelector('#flyZ [data-fk="zi"]').getBoundingClientRect();return r.bottom<=z.top&&Math.abs(r.left-z.left)<2&&r.height>=64})()));
 const L=await p.evaluate(()=>{const r=e=>{const q=e.getBoundingClientRect();return{t:Math.round(q.top),b:Math.round(q.bottom),l:Math.round(q.left),r:Math.round(q.right),w:Math.round(q.width),h:Math.round(q.height)}};const mr=r(mp);
  const bt=[...document.querySelectorAll('#flyT button')].map(r),zb=[...document.querySelectorAll('#flyZ button')].map(r);
  return{fly:mp.classList.contains('fly'),mcHidden:getComputedStyle(document.querySelector('.mc')).display==='none',mc2Hidden:getComputedStyle(document.querySelector('.mc2')).display==='none',map:mr,T:r($('flyT')),B:r($('flyB')),bt,zb,at:r(document.querySelector('#map .at'))}});
 t('T2 เข้าโหมดบิน: แถบปุ่มปกติซ่อน แถบบน/ล่างโหมดบินแสดง',L.fly&&L.mcHidden&&L.mc2Hidden&&L.T.h>0&&L.B.h>0,{fly:L.fly,mc:L.mcHidden,mc2:L.mc2Hidden});
 t('T2 แถบบนมี 12 ปุ่ม แต่ละปุ่มสูง ≥ 60 px กว้าง ≥ 120 px (iPad แนวตั้ง)',L.bt.length===12&&L.bt.every(x=>x.h>=60&&x.w>=120),L.bt.map(x=>x.w+'x'+x.h).join(' '));
-t('T2 ปุ่มซูม +/− ใหญ่ ≥ 64×64 px อยู่ขวา เหนือแถบตัวเลข',L.zb.length===2&&L.zb.every(x=>x.w>=64&&x.h>=64&&x.b<=L.B.t-8&&L.map.r-x.r<=20),L.zb);
+t('T2 ปุ่ม North up / ซูม +/− ใหญ่ ≥ 64×64 px อยู่ขวา เหนือแถบตัวเลข',L.zb.length===3&&L.zb.every(x=>x.w>=64&&x.h>=64&&x.b<=L.B.t-8&&L.map.r-x.r<=20),L.zb);
 t('T2 แถบบนชิดขอบบน แถบตัวเลขชิดขอบล่างของแผนที่',Math.abs(L.T.t-L.map.t)<=1&&Math.abs(L.B.b-L.map.b)<=1,{T:L.T,B:L.B,map:L.map});
 t('T2 ข้อความลิขสิทธิ์แผนที่อยู่เหนือแถบตัวเลข (ไม่ถูกบัง)',L.at.b<=L.B.t+1,{at:L.at,B:L.B});
 // แตะปุ่มโหมดบินต้องไม่เลื่อนแผนที่หรือเปิดป๊อปอัปบนแผนที่
@@ -45,6 +46,10 @@ const h1=await p.evaluate(()=>({T:$('flyT').hidden,Z:$('flyZ').hidden,R:!$('flyR
 await p.tap('#flyR');await W(200);const h2=await p.evaluate(()=>!$('flyT').hidden&&!$('flyZ').hidden&&$('flyR').hidden);
 t('T4 ซ่อนเมนู: แถบบน/ซูมซ่อน เหลือปุ่ม ☰ (≥ 60 px) และแถบตัวเลข · แตะ ☰ แล้วกลับมา',h1.T&&h1.Z&&h1.R&&h1.B&&h1.rh>=60&&h2,h1);
 // ซูม
+// v4.7.2 Coords
+const co0=await p.evaluate(()=>CURON);await p.tap('#flyT [data-fk="coord"]');await W(200);const co1=await p.evaluate(()=>({on:CURON,lit:document.querySelector('#flyT [data-fk="coord"]').classList.contains('on'),cur:!$('cur').hidden,top:Math.round($('cur').getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}));
+await p.tap('#flyT [data-fk="coord"]');await W(200);const co2=await p.evaluate(()=>({on:CURON,lit:document.querySelector('#flyT [data-fk="coord"]').classList.contains('on')}));
+t('T4 b v4.7.2 Coords เปิด/ปิดกล่องพิกัด ไฟปุ่มตามสถานะ กล่องพิกัดอยู่ใต้แถบบน',co1.on!==co0&&co1.lit===co1.on&&co2.on===co0&&co2.lit===co0&&(!co1.on||(co1.cur&&co1.top>=co1.tb-1)),{co0,co1,co2});
 const z0=await p.evaluate(()=>M.z);await p.tap('#flyZ [data-fk="zi"]');await W(200);const z1=await p.evaluate(()=>M.z);await p.tap('#flyZ [data-fk="zo"]');await W(200);const z2=await p.evaluate(()=>M.z);
 t('T5 ปุ่มซูม + / − ทำงาน',z1>z0&&z2<z1,{z0,z1,z2});
 // Direct to
@@ -54,16 +59,23 @@ t('T6 D→ เปิดรายการจุดในเส้นทาง �
 await p.tap('#flyD .for:nth-of-type(2)');await W(300);
 const d2=await p.evaluate(()=>({n:DT&&DT.t&&DT.t.n,closed:$('flyD').hidden,strip:$('fbN').textContent,dis:$('fbD').textContent,brg:$('fbB').textContent}));
 t('T6 แตะจุด BBB: Direct to BBB และแถบตัวเลขแสดงจุด/ระยะ/ทิศ',d2.n==='BBB'&&d2.closed&&d2.strip==='BBB'&&/^\d/.test(d2.dis)&&/°$/.test(d2.brg),d2);
+t('T6 b v4.7.2 ปุ่ม Direct to ไม่ค้างไฟติดระหว่าง NAV',await p.evaluate(()=>!document.querySelector('#flyT [data-fk="dto"]').classList.contains('on')));
+const nv=await p.evaluate(()=>{const b=document.querySelector('#flyT [data-fk="nav"]');return{t:b.querySelector('.i').textContent,go:b.classList.contains('go')}});
+t('T6 c v4.7.2 ปุ่ม NAV แสดง NAV ไฟเขียวเมื่อกำลัง NAV',nv.t==='NAV'&&nv.go,nv);
 await p.tap('#flyT [data-fk="dto"]');await W(200);const d3=await p.evaluate(()=>[...document.querySelectorAll('#flyD .for')].map(e=>e.querySelector('.fn').textContent));await p.tap('#flyD [data-fx]');
 t('T6 ระหว่าง NAV รายการ D→ ยังมีจุดเดิมครบ (AAA BBB CCC)',d3.length===3&&/AAA/.test(d3[0])&&/CCC/.test(d3[2]),d3);
 // NAV ถัดไป / ก่อนหน้า
 await p.tap('#flyT [data-fk="next"]');await W(200);const n1=await p.evaluate(()=>DT&&DT.t.n);
 await p.tap('#flyT [data-fk="prev"]');await W(200);const n2=await p.evaluate(()=>DT&&DT.t.n);
-t('T7 NAV ถัดไป → CCC · NAV ก่อนหน้า → BBB',n1==='CCC'&&n2==='BBB',{n1,n2});
+t('T7 Next WP → CCC · Prev WP → BBB',n1==='CCC'&&n2==='BBB',{n1,n2});
+await p.tap('#flyT [data-fk="nav"]');await W(300);const s1=await p.evaluate(()=>({dt:!!DT,t:document.querySelector('#flyT [data-fk="nav"] .i').textContent}));
+await p.tap('#flyT [data-fk="nav"]');await W(300);const s2=await p.evaluate(()=>({dt:!!DT,n:DT&&DT.t.n,t:document.querySelector('#flyT [data-fk="nav"] .i').textContent}));
+t('T7 b v4.7.2 ปุ่ม NAV: แตะ = Standby (STBY) แตะอีก = กลับ NAV',!s1.dt&&s1.t==='STBY'&&s2.dt&&s2.t==='NAV',{s1,s2});
+if(!s2.dt||s2.n!=='BBB')await p.evaluate(()=>{const o=(DT&&DT.orig||[]).find(q=>q.name==='BBB');if(o)directTo("",o)});
 // Track up / North up
 await p.evaluate(()=>{MLP.sp=60;MLP.t=Date.now()});
-await p.tap('#flyT [data-fk="rot"]');await W(400);const r1=await p.evaluate(()=>({up:NAVON?NAVUP:TUP,lbl:document.querySelector('#flyT [data-fk="rot"] .i').textContent}));
-await p.tap('#flyT [data-fk="rot"]');await W(400);const r2=await p.evaluate(()=>({up:NAVON?NAVUP:TUP,lbl:document.querySelector('#flyT [data-fk="rot"] .i').textContent}));
+await p.tap('#flyZ [data-fk="rot"]');await W(400);const r1=await p.evaluate(()=>({up:NAVON?NAVUP:TUP,lbl:document.querySelector('#flyZ [data-fk="rot"] .i').textContent}));
+await p.tap('#flyZ [data-fk="rot"]');await W(400);const r2=await p.evaluate(()=>({up:NAVON?NAVUP:TUP,lbl:document.querySelector('#flyZ [data-fk="rot"] .i').textContent}));
 t('T8 Track up ↔ North up สลับได้ และป้ายปุ่มบอกสถานะ',r1.up!==r2.up&&/↑/.test(r1.lbl)&&/↑/.test(r2.lbl)&&r1.lbl!==r2.lbl,{r1,r2});
 // ชั้นข้อมูล
 await p.tap('#flyT [data-fk="lay"]');await W(400);
@@ -76,10 +88,10 @@ const rb=await p.evaluate(()=>{const e=$('rulb');if(!e||e.hidden||!e.getClientRe
 await p.tap('#flyT [data-fk="rul"]');await W(200);const ru2=await p.evaluate(()=>M.rul.on);
 t('T10 ไม้บรรทัด เปิด/ปิดได้ ไฟปุ่มติดตอนเปิด และแถบไม้บรรทัดไม่ถูกแถบตัวเลขบัง',ru.on&&ru.btn&&!ru2&&(!rb||rb.b<=rb.Bt),{ru,ru2,rb});
 // แก้เส้นทาง
-await p.tap('#flyT [data-fk="edit"]');await W(300);const ed=await p.evaluate(()=>{const e=$('mpt');return!!e&&getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().top>=$('flyT').getBoundingClientRect().bottom-1&&document.querySelector('#flyT [data-fk="edit"]').classList.contains('on')});
-t('T11 แก้เส้นทาง: เปิดแผง "จุดพิกัดในเส้นทาง" ใต้แถบปุ่มบน ไฟปุ่มติด',ed);
-await p.tap('#flyT [data-fk="edit"]');await W(300);
-t('T11 b v4.7.1 กด Edit route อีกครั้ง: ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
+await p.tap('#fbW');await W(300);const ed=await p.evaluate(()=>{const e=$('mpt');return!!e&&getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().top>=$('flyT').getBoundingClientRect().bottom-1&&$('fbW').classList.contains('on')});
+t('T11 v4.7.2 แตะช่อง NAV TO (ล่างซ้าย): เปิดแผงแก้เส้นทาง ใต้แถบปุ่มบน',ed);
+await p.tap('#fbW');await W(300);
+t('T11 b v4.7.2 แตะช่อง NAV TO อีกครั้ง: ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
 await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr1=await p.evaluate(()=>{const e=$('lbr');return{on:e.classList.contains('on'),vis:e.getClientRects().length>0,top:Math.round(e.getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}});
 await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr2=await p.evaluate(()=>$('lbr').classList.contains('on'));
 t('T11 c v4.7.1 Rec Route: เปิดกล่องเส้นทางที่บันทึกไว้ (ใต้แถบบน) กดอีกครั้งปิด',rr1.on&&rr1.vis&&rr1.top>=rr1.tb-1&&!rr2,{rr1,rr2});

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.1</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.2</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -487,7 +487,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.1</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.2</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -2544,7 +2544,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.1 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.2 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4403,7 +4403,7 @@ flSync();FL.tm=setInterval(()=>{try{flTick()}catch(e){}},1000);
 try{if(window.speechSynthesis)speechSynthesis.getVoices()}catch(e){}})();
 </script>
 <script id="pwa">
-/* PWA (v4.7.1; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.7.2; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
@@ -4653,13 +4653,17 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 #map.fly #twl{bottom:calc(var(--flyb,72px) + 26px)}
 #map.fly #mprof{bottom:calc(var(--flyb,72px) + 28px)}
 #map.fly #simbox{top:calc(var(--flyt,66px) + 8px)}
+/* v4.7.2 */#flyZ button.zr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff}#flyZ button.zr .i{font-size:22px;line-height:1}#flyZ button.zr .l{font:600 11px/1 system-ui,sans-serif;color:#ccc}#flyZ button.zr.on{background:#0d47a1;border-color:#64b5f6}
+#flyT button.go{background:#1b5e20;color:#fff}#flyT [data-fk="nav"] .i{font-size:20px}
+#flyB .fw{cursor:pointer}#flyB .fw:active,#flyB .fw.on{background:#0d47a1}#flyB .fe{float:right;color:#90caf9;font-size:12px}
+#map.fly #cur{top:var(--flyt,66px)}
 /* v4.7.1 */#flyon3{display:none}#map.full #flyon3{display:inline-block}
 #flyRec{position:absolute;left:10px;top:calc(var(--flyt,66px) + 10px);z-index:29;height:44px;padding:0 14px;border-radius:22px;border:2px solid #fff;background:#c62828;color:#fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .flyo .fiv{display:flex;align-items:center;gap:6px;font-size:14px;color:#ccc;margin-left:auto;margin-right:10px}.flyo .fiv button{width:auto;min-width:52px;height:48px;font-size:15px;padding:0 8px}.flyo .fiv button.on{background:#0d47a1;border-color:#64b5f6}
 body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 </style>
 <script id="flymode">
-/* ===== v4.7.0–4.7.1: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
+/* ===== v4.7.0–4.7.2: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
 (function(){
 const $f=id=>document.getElementById(id);
 const FT=1/0.3048,KT=1.943844;
@@ -4703,7 +4707,7 @@ addEventListener("pagehide",()=>tkSave(true));document.addEventListener("visibil
 function tkLoad(id){if(TK.cur&&TK.cur.id===id)return TK.cur.pts;const d=lsGet("heliTrk_"+id,null);return d&&d.pts||[]}
 function tkGpx(id){const x=tkIdx().find(q=>q.id===id)||(TK.cur&&TK.cur.id===id?{id,name:TK.cur.name}:null);if(!x)return null;const P=tkLoad(id);
  const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
- let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.1" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
+ let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.2" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
  P.forEach(p=>{g+='<trkpt lat="'+p[1]+'" lon="'+p[2]+'">'+(p[3]!=null?"<ele>"+p[3]+"</ele>":"")+"<time>"+new Date(id+p[0]*1000).toISOString()+"</time></trkpt>\n"});
  return g+"</trkseg></trk>\n</gpx>\n"}
 window.tkGpx=tkGpx;
@@ -4722,14 +4726,15 @@ function tkDrawLast(){if(TK.P)try{trkDraw(...TK.P)}catch(e){}}
 
 /* ---------- โหมดบิน ---------- */
 /* v4.7.1: ชื่อปุ่มภาษาอังกฤษ · ปุ่ม REC Track → Rec Route (เส้นทางที่บันทึกไว้) */
-const BT=[["prev","◀","Prev NAV"],["dto","D→","Direct to"],["next","▶","Next NAV"],["rot","N↑","North up"],["lay","☰","Layers"],["menu","▦","Menu"],
- ["edit","✎","Edit route"],["rul","📏","Ruler"],["me","◎","My position"],["rrt","🗂","Rec Route"],["taws","⛰","TAWS"],["hide","⇱","Hide menu"]];
+/* v4.7.2: + NAV, + Coords · North up ย้ายไปเหนือปุ่มซูม · Edit route ย้ายไปแตะช่อง NAV TO · Prev/Next WP */
+const BT=[["prev","◀","Prev WP"],["dto","D→","Direct to"],["next","▶","Next WP"],["nav","STBY","NAV / STBY"],["lay","☰","Layers"],["menu","▦","Menu"],
+ ["coord","⌖","Coords"],["rul","📏","Ruler"],["me","◎","My position"],["rrt","🗂","Rec Route"],["taws","⛰","TAWS"],["hide","⇱","Hide menu"]];
 const host=mp;
 const T=document.createElement("div");T.id="flyT";T.className="fly-ui";T.hidden=true;
 T.innerHTML=BT.map(b=>`<button type="button" data-fk="${b[0]}" aria-label="${b[2]}"><span class="i">${b[1]}</span><span class="l">${b[2]}</span></button>`).join("");
 const B=document.createElement("div");B.id="flyB";B.className="fly-ui";B.hidden=true;
-B.innerHTML=`<div class="fw"><small>NAV TO</small><b id="fbN">—</b></div><div><small>DIS NM</small><b id="fbD">-</b></div><div><small>BRG</small><b id="fbB">-</b></div><div><small>TRK</small><b id="fbT">-</b></div><div><small>GS kt</small><b id="fbG">-</b></div><div><small>ETE</small><b id="fbE">-</b></div>`;
-const Z=document.createElement("div");Z.id="flyZ";Z.className="fly-ui";Z.hidden=true;Z.innerHTML=`<button type="button" data-fk="zi" aria-label="ขยาย">+</button><button type="button" data-fk="zo" aria-label="ย่อ">−</button>`;
+B.innerHTML=`<div class="fw" id="fbW" role="button" tabindex="0" aria-label="NAV TO — tap to edit route" title="แตะเพื่อแก้เส้นทาง (Edit route)"><small>NAV TO <span class="fe">✎ Edit</span></small><b id="fbN">—</b></div><div><small>DIS NM</small><b id="fbD">-</b></div><div><small>BRG</small><b id="fbB">-</b></div><div><small>TRK</small><b id="fbT">-</b></div><div><small>GS kt</small><b id="fbG">-</b></div><div><small>ETE</small><b id="fbE">-</b></div>`;
+const Z=document.createElement("div");Z.id="flyZ";Z.className="fly-ui";Z.hidden=true;Z.innerHTML=`<button type="button" data-fk="rot" class="zr" aria-label="North up / Track up"><span class="i">N↑</span><span class="l">North up</span></button><button type="button" data-fk="zi" aria-label="Zoom in">+</button><button type="button" data-fk="zo" aria-label="Zoom out">−</button>`;
 const R=document.createElement("button");R.id="flyR";R.type="button";R.className="fly-ui";R.hidden=true;R.setAttribute("aria-label","Show flight menu");R.textContent="☰";
 const MN=document.createElement("div");MN.id="flyM";MN.className="fly-ui flyo";MN.hidden=true;
 const DL=document.createElement("div");DL.id="flyD";DL.className="fly-ui flyo";DL.hidden=true;
@@ -4747,12 +4752,12 @@ function flyHide(h){mp.classList.toggle("flyh",h);T.hidden=Z.hidden=h;R.hidden=!
 window.flyOn=flyOn;window.flyOff=flyOff;
 new MutationObserver(()=>{if(isFly()&&!mp.classList.contains("full"))flyOff()}).observe(mp,{attributes:true,attributeFilter:["class"]});
 function rotUp(){try{return NAVON?NAVUP:TUP}catch(e){return false}}
-function flyUi(){if(!isFly())return;const q=k=>T.querySelector(`[data-fk="${k}"]`);
+function flyUi(){if(!isFly())return;const q=k=>T.querySelector(`[data-fk="${k}"]`)||Z.querySelector(`[data-fk="${k}"]`);
  const up=rotUp(),rb=q("rot");rb.querySelector(".i").textContent=up?(RMODE==="H"?"HDG↑":"TRK↑"):"N↑";rb.querySelector(".l").textContent=up?(RMODE==="H"?"Heading up":"Track up"):"North up";rb.classList.toggle("on",up);
- RB.hidden=!TK.on;q("rrt").classList.toggle("on",!!($f("lbr")&&$f("lbr").classList.contains("on")));q("edit").classList.toggle("on",!!M.mpt);
+ RB.hidden=!TK.on;q("rrt").classList.toggle("on",!!($f("lbr")&&$f("lbr").classList.contains("on")));$f("fbW").classList.toggle("on",!!M.mpt);{const nb=q("nav");nb.querySelector(".i").textContent=DT?"NAV":"STBY";nb.classList.toggle("go",!!DT)}q("coord").classList.toggle("on",!!CURON);
  q("rul").classList.toggle("on",!!(M.rul&&M.rul.on));q("taws").classList.toggle("on",!!TW.on);
  const fp=$f("fp");q("lay").classList.toggle("on",!!(fp&&!fp.hidden));
- let L={b:[],k:-1};try{L=navList()}catch(e){}q("prev").disabled=!(L.k>0);q("next").disabled=!(L.k>=0&&L.k<L.b.length-1);q("dto").classList.toggle("on",!!DT);
+ let L={b:[],k:-1};try{L=navList()}catch(e){}q("prev").disabled=!(L.k>0);q("next").disabled=!(L.k>=0&&L.k<L.b.length-1);
  /* แถบตัวเลข */
  const s=dtPos(),gs=MLP.sp!=null&&MLP.on?MLP.sp*KT:null,tr=navTR();let n="—",d="-",br="-",ete="-";
  if(DT&&s){const l=leg(s,DT.t);n=DT.t.n||"จุด";d=l.d.toFixed(l.d<10?1:0);br=bt(l.brg);if(gs!=null&&gs>=3){const sec=Math.round(l.d/gs*3600);ete=sec>=3600?Math.floor(sec/3600)+":"+p2(Math.floor(sec%3600/60))+" ชม.":p2(Math.floor(sec/60))+":"+p2(sec%60)}}
@@ -4781,12 +4786,14 @@ function menuRender(){const t=[["rec",TK.on?"■ Stop track":"● Record track",
  if(MN.innerHTML!==h)MN.innerHTML=h}
 function HSIc(){try{return HSION?"on":""}catch(e){return""}}
 function act(k){switch(k){
- case"prev":case"next":{let L={b:[],k:-1};try{L=navList()}catch(e){}if(!DT){toast("ยังไม่ได้ NAV — กด D→ เพื่อเลือกจุด");break}navStep(k==="next"?1:-1,true);break}
+ case"prev":case"next":{let L={b:[],k:-1};try{L=navList()}catch(e){}if(!DT){toast("ยังไม่ได้ NAV — กด NAV หรือ D→ เพื่อเลือกจุด");break}navStep(k==="next"?1:-1,true);break}
  case"dto":closeO(DL);if(!DL.hidden){DL.hidden=true;break}dtoRender();DL.hidden=false;break;
  case"rot":$f("rzn").click();break;
  case"lay":closeO();$f("fpb").click();setTimeout(()=>{try{lbTop()}catch(e){}},0);break;
  case"menu":closeO(MN);MN.hidden=!MN.hidden;if(!MN.hidden)menuRender();break;
  case"edit":closeO();try{mptShow(!M.mpt)}catch(e){}break;
+ case"nav":closeO();$f("navgo").click();break;
+ case"coord":{const c=$f("fcur");if(c){c.checked=!CURON;c.dispatchEvent(new Event("change",{bubbles:true}))}try{curUpd()}catch(e){}break}
  case"rrt":{closeO();const lb=$f("lbr");if(lb&&lb.classList.contains("on")){const x=lb.querySelector("[data-lbx]");if(x)x.click();else lb.classList.remove("on")}else try{menuAct("rt-list")}catch(e){}break}
  case"rul":closeO();$f("rl").click();break;
  case"me":if(!MLP.on){if(SIM&&SIM.on){gpsCenter();break}$f("mlbtn").click()}else gpsCenter();break;
@@ -4797,6 +4804,7 @@ function act(k){switch(k){
 T.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b&&!b.disabled)act(b.dataset.fk)});
 Z.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b)act(b.dataset.fk)});
 R.addEventListener("click",()=>flyHide(false));
+B.addEventListener("click",e=>{if(e.target.closest("#fbW"))act("edit")});
 RB.addEventListener("click",()=>{closeO(KL);tkRender();KL.hidden=false});
 DL.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){DL.hidden=true;return}const r=e.target.closest("[data-dv]");if(!r)return;if(!needPos())return;const o=(DL._it||[])[+r.dataset.dv];if(!o)return;try{if(o.ov)directTo("",o.ov);else directTo("R:"+o.vi)}catch(x){}DL.hidden=true;setTimeout(flyUi,0)});
 KL.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){KL.hidden=true;return}let b;
