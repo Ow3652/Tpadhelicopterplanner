@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.5</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.6</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -68,6 +68,7 @@ tfoot td{font-weight:600;border-bottom:0}
 #map{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;position:relative;height:380px;overflow:hidden;background:#cfd8dc;border:1px solid var(--line);border-radius:4px;touch-action:none;cursor:grab}
 #rot{position:absolute;inset:0;transform-origin:50% 50%;transform:rotate(var(--rz,0deg))}
 #tl{position:absolute;inset:0}
+#tlb{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0;pointer-events:none}#tlb[hidden]{display:none}
 #ov{overflow:visible}
 #map.full #zi,#map.full #zo{min-width:42px;height:40px;font-size:1.4rem;line-height:1;padding-top:0;padding-bottom:0}
 #sb,#mb{display:none}
@@ -488,7 +489,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.5</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.6</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -571,7 +572,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 <div>
 <div class="card" id="cm"><h2>แผนที่เส้นทาง</h2>
 <div id="map" aria-label="แผนที่ OpenTopoMap"><div id="rot"><div id="tl"></div><canvas id="tws" aria-hidden="true"></canvas><svg id="flv" aria-hidden="true"></svg><svg id="trkv" aria-hidden="true"></svg><div id="twm" hidden></div><div id="wx"></div><svg id="ov"></svg></div><div id="pop" class="pop" hidden></div><div id="twl" hidden></div><div id="flb" class="flb" hidden role="alert" aria-live="assertive" title="แตะเพื่อย่อเป็นไอคอน TERRAIN"></div><button type="button" id="flic" class="flic" hidden aria-label="แสดงคำเตือนภูมิประเทศ (FLTA)" title="แตะเพื่อแสดงคำเตือนเต็ม">TERRAIN</button>
-<div id="uib" hidden><button class="b s" id="uis" type="button" aria-label="แสดงเมนูกลับ">☰ เมนู</button><button class="b s" id="uiu" type="button" aria-label="ย้อนกลับ" disabled></button><button class="b s" id="uir" type="button" aria-label="ทำซ้ำ" disabled></button><button class="b s" id="uix" type="button" aria-label="ออกจากเต็มจอ">✕</button></div><div class="mc"><div class="mr"><button class="b s" id="zi" aria-label="ขยาย">+</button><button class="b s" id="zo" aria-label="ย่อ">−</button><button class="b s" id="fit">พอดีเส้นทาง</button><button class="b s" id="rl" aria-label="ไม้บรรทัดวัดระยะ">ไม้บรรทัด</button><button class="b s" id="mlbtn" type="button" aria-pressed="false" title="แสดงตำแหน่งของเครื่องนี้บนแผนที่ (ใช้ GPS)">📍 ตำแหน่งฉัน</button><div class="dd" id="fidd"><button class="b s ddb" id="fib" type="button" title="เครื่องวัดการบิน">Flight INST. ▾</button><div class="ddm" hidden><button class="b s" id="navbtn" type="button" aria-pressed="false" title="แสดง/ซ่อนเครื่องวัด RMI">RMI</button><button class="b s" id="hsibtn" type="button" aria-pressed="false" title="แสดง/ซ่อนเครื่องวัด HSI (ต้นแบบ)">HSI</button><button class="b s" id="nlbtn" type="button" aria-pressed="false" title="แสดง/ซ่อนตาราง FMS">FMS</button><button class="b s" id="simbtn" type="button" aria-pressed="false" title="จำลองการบิน (SIM)">SIM</button></div></div><button class="b s navst sb" id="navgo" type="button" title="NAV: แตะเพื่อเข้า Standby · STBY: แตะเพื่อ NAV ไปยังจุดแรกของเส้นทาง Active (หรือกลับไปจุดเดิม)">STBY</button><button class="b s" id="rzl" type="button" title="หมุนแผนที่ทวนเข็ม 1° (กดค้างเพื่อหมุนต่อเนื่อง)" aria-label="หมุนแผนที่ทวนเข็มนาฬิกา 1 องศา">↺</button><button class="b s" id="rzn" type="button" title="กลับเป็นทิศเหนืออยู่ด้านบน (North up)" aria-label="กลับเป็น North up">N↑ 360°</button><button class="b s" id="rzr" type="button" title="หมุนแผนที่ตามเข็ม 1° (กดค้างเพื่อหมุนต่อเนื่อง)" aria-label="หมุนแผนที่ตามเข็มนาฬิกา 1 องศา">↻</button><button class="b s" id="fs" aria-label="เต็มจอ">⛶ เต็มจอ</button></div><div class="mr"><button class="b s" id="fpb">ชั้นข้อมูล</button><button class="b s" id="rfm" type="button" title="โหลดภาพแผนที่ใหม่ (ไม่ต้องรีโหลดหน้า)">⟳ รีเฟรชแผนที่</button><button class="b s" id="sfb" aria-label="แสดง/ซ่อนรูปแบบ SAR">ค้นหา (SAR)</button><button class="b s" id="mb" aria-label="แสดง/ซ่อนข้อมูลอากาศยาน">ข้อมูลอากาศยาน</button><button class="b s" id="sb" aria-label="แสดง/ซ่อนสรุปเส้นทาง Active">สรุปเส้นทาง Active</button><button class="b s" id="twb" type="button" title="ระบายสีภูมิประเทศเทียบกับความสูงบิน (TAWS) ตั้งค่าได้ในชั้นข้อมูล">⛰ TAWS</button><button class="b s" id="pfb" type="button" title="กราฟความสูงภูมิประเทศตามเส้นทาง Active">📈 กราฟความสูง</button><button class="b s" id="hun" disabled title="ย้อนกลับ (Undo)" aria-label="ย้อนกลับ"><span class="tx">ย้อนกลับ</span><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button class="b s" id="hre" disabled title="ทำซ้ำ (Redo)" aria-label="ทำซ้ำ"><span class="tx">ทำซ้ำ</span><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button><button class="b s" id="hui" type="button" title="ซ่อนปุ่ม/เมนูทั้งหมดบนหน้าจอ (มีปุ่ม ☰ เรียกกลับ)">ซ่อนเมนู</button></div></div>
+<div id="uib" hidden><button class="b s" id="uis" type="button" aria-label="แสดงเมนูกลับ">☰ เมนู</button><button class="b s" id="uiu" type="button" aria-label="ย้อนกลับ" disabled></button><button class="b s" id="uir" type="button" aria-label="ทำซ้ำ" disabled></button><button class="b s" id="uix" type="button" aria-label="ออกจากเต็มจอ">✕</button></div><div class="mc"><div class="mr"><button class="b s" id="zi" aria-label="ขยาย">+</button><button class="b s" id="zo" aria-label="ย่อ">−</button><button class="b s" id="fit">พอดีเส้นทาง</button><button class="b s" id="rl" aria-label="ไม้บรรทัดวัดระยะ">ไม้บรรทัด</button><button class="b s" id="mlbtn" type="button" aria-pressed="false" title="แสดงตำแหน่งของเครื่องนี้บนแผนที่ (ใช้ GPS)">📍 ตำแหน่งฉัน</button><div class="dd" id="fidd"><button class="b s ddb" id="fib" type="button" title="เครื่องวัดการบิน">Flight INST. ▾</button><div class="ddm" hidden><button class="b s" id="navbtn" type="button" aria-pressed="false" title="แสดง/ซ่อนเครื่องวัด RMI">RMI</button><button class="b s" id="hsibtn" type="button" aria-pressed="false" title="แสดง/ซ่อนเครื่องวัด HSI (ต้นแบบ)">HSI</button><button class="b s" id="nlbtn" type="button" aria-pressed="false" title="แสดง/ซ่อนตาราง FMS">FMS</button><button class="b s" id="simbtn" type="button" aria-pressed="false" title="จำลองการบิน (SIM)">SIM</button></div></div><button class="b s navst sb" id="navgo" type="button" title="NAV: แตะเพื่อเข้า Standby · STBY: แตะเพื่อ NAV ไปยังจุดแรกของเส้นทาง Active (หรือกลับไปจุดเดิม)">STBY</button><button class="b s" id="rzl" type="button" title="หมุนแผนที่ทวนเข็ม 1° (กดค้างเพื่อหมุนต่อเนื่อง)" aria-label="หมุนแผนที่ทวนเข็มนาฬิกา 1 องศา">↺</button><button class="b s" id="rzn" type="button" title="กลับเป็นทิศเหนืออยู่ด้านบน (North up)" aria-label="กลับเป็น North up">N↑ 360°</button><button class="b s" id="rzr" type="button" title="หมุนแผนที่ตามเข็ม 1° (กดค้างเพื่อหมุนต่อเนื่อง)" aria-label="หมุนแผนที่ตามเข็มนาฬิกา 1 องศา">↻</button><button class="b s" id="fs" aria-label="เต็มจอ">⛶ เต็มจอ</button></div><div class="mr"><button class="b s" id="fpb">ชั้นข้อมูล</button><button class="b s" id="rfm" type="button" title="โหลดภาพแผนที่ใหม่ (ไม่ต้องรีโหลดหน้า)">⟳ รีเฟรชแผนที่</button><button class="b s" id="sfb" aria-label="แสดง/ซ่อนรูปแบบ SAR">ค้นหา (SAR)</button><button class="b s" id="mb" aria-label="แสดง/ซ่อนข้อมูลอากาศยาน">ข้อมูลอากาศยาน</button><button class="b s" id="sb" aria-label="แสดง/ซ่อน Summary">Summary</button><button class="b s" id="twb" type="button" title="ระบายสีภูมิประเทศเทียบกับความสูงบิน (TAWS) ตั้งค่าได้ในชั้นข้อมูล">⛰ TAWS</button><button class="b s" id="pfb" type="button" title="กราฟความสูงภูมิประเทศตามเส้นทาง Active">📈 กราฟความสูง</button><button class="b s" id="hun" disabled title="ย้อนกลับ (Undo)" aria-label="ย้อนกลับ"><span class="tx">ย้อนกลับ</span><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button class="b s" id="hre" disabled title="ทำซ้ำ (Redo)" aria-label="ทำซ้ำ"><span class="tx">ทำซ้ำ</span><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button><button class="b s" id="hui" type="button" title="ซ่อนปุ่ม/เมนูทั้งหมดบนหน้าจอ (มีปุ่ม ☰ เรียกกลับ)">ซ่อนเมนู</button></div></div>
 <div class="mc2"><div class="dd"><button class="b s ddb" type="button">จุดในเส้นทาง ▾</button><div class="ddm" hidden><button class="b s" id="fad" type="button">เพิ่มจุด</button><button class="b s" id="fsq" type="button">ค้นหาจุด</button></div></div>
 <div class="dd"><button class="b s ddb" type="button">เส้นทาง ▾</button><div class="ddm" hidden><button class="b s" data-g="rt-new" type="button">สร้างใหม่</button><button class="b s" data-g="rt-pts" type="button">จุดพิกัดในเส้นทาง</button><button class="b s" data-g="rt-list" type="button">รายการ</button></div></div>
 <div class="dd"><button class="b s ddb" type="button">เส้นทางค้นหา ▾</button><div class="ddm" hidden><button class="b s" data-g="sr-new" type="button">สร้างใหม่</button><button class="b s" data-g="sr-list" type="button">รายการ</button></div></div>
@@ -610,7 +611,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 <div class="bar" style="margin:8px 0 0"><button class="b p" id="pdok">ตกลง</button><button class="b" id="pdno">ยกเลิก</button></div></div></div>
 <div id="msar" class="pnl"><div class="ph"><b>รูปแบบ SAR</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="msarx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="msarb"></div></div>
 <div id="mprof" class="pnl"><div class="ph"><b>⛰ ความสูงภูมิประเทศตามเส้นทาง Active</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="pfx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="pfbx"><div class="pfo"><label>ความสูงบิน <input type="number" id="twalt3" min="0" max="25000" step="100" inputmode="numeric"> ft</label><label><input type="checkbox" id="twgps3">ใช้ความสูง GPS</label></div><div id="pfs"></div><canvas id="pfc"></canvas><div id="pft"></div><div id="pfl"></div><small class="twm2">แดง = ภูมิประเทศสูงกว่าหรือต่ำกว่าความสูงบินไม่ถึง 100 ft · เหลือง = ต่ำกว่าไม่เกินแถบเหลืองที่ตั้งไว้ · ข้อมูลความสูง: ในประเทศไทย <a href="https://ow3652.github.io/Tpadterrain/" target="_blank" rel="noopener">Copernicus DEM GLO-30</a> (แบบจำลองพื้นผิว รวมต้นไม้/สิ่งก่อสร้างบางส่วน ย่อขนาดด้วยค่าสูงสุด) นอกพื้นที่ใช้ <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles</a> (Mapzen/Tilezen) เป็นความสูงโดยประมาณ ไม่รวมเสา/สายไฟ คลาดเคลื่อนได้หลายสิบเมตร ใช้ประกอบการวางแผนเท่านั้น ไม่ใช้แทนแผนที่การบิน<br>produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved</small></div></div>
-<div id="msum" class="pnl"><div class="ph"><b>สรุปเส้นทาง Active</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="msx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="msb"></div></div>
+<div id="msum" class="pnl"><div class="ph"><b>Summary</b><span><button class="pc" aria-label="ย่อ/ขยาย">▾</button> <button class="mx" id="msx" aria-label="ซ่อน">✕</button></span></div><div class="pb" id="msb"></div></div>
 <div id="mac" class="pnl"><div class="ph"><b>ข้อมูลอากาศยาน</b><button class="pc" aria-label="ย่อ/ขยาย">▾</button></div><div class="pb">
 <div class="mr"><span>แบบเฮลิคอปเตอร์</span><select id="mheli" aria-label="แบบเฮลิคอปเตอร์" style="max-width:150px;padding:3px;font-size:12px"></select></div>
 <div class="mr"><span>Fuel flow (<span class="lu">lbs</span>/hr)</span><span class="st"><button data-t="ff" data-d="-10" aria-label="ลด">−</button><input id="mff" type="number" min="0" step="any"><button data-t="ff" data-d="10" aria-label="เพิ่ม">+</button></span></div>
@@ -627,7 +628,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </div>
 <div id="csw">
 <div class="card" id="cs">
-<h2>สรุปเส้นทาง Active</h2>
+<h2>Summary</h2>
 <div id="res-out"></div>
 </div>
 <div class="card" id="fcard" style="margin-top:18px">
@@ -1804,10 +1805,10 @@ else if($("clk2").checked||$("clk3").checked){M.pop={c:"N",la:ll[0],lo:ll[1],min
 const PT=new Map();let PINCH=null;
 function ptc(){const a=[...PT.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),r=mp.getBoundingClientRect();return{d,x:(a[0].x+a[1].x)/2-r.left,y:(a[0].y+a[1].y)/2-r.top,ry:(a[0].ry+a[1].ry)/2,ang:Math.atan2(a[1].ry-a[0].ry,a[1].rx-a[0].rx)*180/Math.PI}}
 ["gesturestart","gesturechange","gestureend"].forEach(t=>mp.addEventListener(t,e=>e.preventDefault()));
-mp.addEventListener("pointerup",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);PINCH=null}},true);
-mp.addEventListener("pointercancel",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);PINCH=null}},true);
+mp.addEventListener("pointerup",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);if(PINCH&&PINCH.mode==="zoom")pzEnd(PINCH);PINCH=null}},true);
+mp.addEventListener("pointercancel",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);if(PINCH&&PINCH.mode==="zoom")pzEnd(PINCH);PINCH=null}},true);
 mp.addEventListener("pointerdown",e0=>{const e=RE(e0);if(e.button!==0)return;if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();try{getSelection().removeAllRanges()}catch(x){}if(e.pointerType==="touch"){if(PT.size>=2)PT.clear();PT.set(e.pointerId,{x:e.clientX,y:e.clientY,rx:e0.clientX,ry:e0.clientY});
-if(PT.size===2){dr=null;if(M.drag){M.drag=null}PINCH=ptc();PINCH.la=PINCH.ang;PINCH.acc=0;PINCH.mode=null;try{mp.setPointerCapture(e.pointerId)}catch(x){}drawMap(false);return}}
+if(PT.size===2){dr=null;if(M.drag){M.drag=null}PINCH=ptc();PINCH.la=PINCH.ang;PINCH.acc=0;PINCH.mode=null;PINCH.d0=PINCH.d;PINCH.c0=pzRaw();PINCH.e0={x:PINCH.x,y:PINCH.y};try{mp.setPointerCapture(e.pointerId)}catch(x){}drawMap(false);return}}
 const rl=M.rul.on,mvm=M.mvi!=null,pe=rl?null:e.target.closest("[data-poi]"),lg=rl||mvm?null:e.target.closest("[data-leg]"),rg=rl||mvm?null:e.target.closest("[data-rp]");const ru=rl&&!crossMode()?e.target.closest("[data-rul]"):null;
 let mvd=false;if(mvm&&!rl){const r0=mp.getBoundingClientRect(),W0=mp.clientWidth,H0=mp.clientHeight,pv=calcData.valid[M.mvi];if(pv){const q=wp(pv.la,pv.lo,M.z);mvd=Math.hypot(q[0]-(M.cx-W0/2)-(e.clientX-r0.left),q[1]-(M.cy-H0/2)-(e.clientY-r0.top))<30}}
 dr={mvd,x:e.clientX,y:e.clientY,cx:M.cx,cy:M.cy,poi:pe?pe.dataset.poi:null,leg:lg?+lg.dataset.leg:null,rp:rg?+rg.dataset.rp:null,sd:(rl||mvm)?null:((e.target.closest("[data-sd]")||{dataset:{}}).dataset.sd||null),ru:ru?+ru.dataset.rul:null,mv:0};
@@ -1838,10 +1839,10 @@ mp.addEventListener("pointermove",e0=>{const e=RE(e0);if(PT.has(e.pointerId)){PT
 if(PINCH&&PT.size===2){const c=ptc();M.touched=true;PINCH.x=c.x;PINCH.y=c.y;
 /* สองนิ้ว: บิด (twist) เกิน 12° = หมุนแผนที่ · ถ้านิ้วห่าง/เข้าหากันก่อน = ซูม · ล็อกท่าไว้จนกว่าจะยกนิ้ว */
 let da=c.ang-PINCH.la;da=((da%360)+540)%360-180;PINCH.la=c.ang;
-if(!PINCH.mode){PINCH.acc+=da;const rr=c.d/PINCH.d;if(Math.abs(PINCH.acc)>=12)PINCH.mode="rot";else if(rr>=1.15||rr<=1/1.15)PINCH.mode="zoom"}
+if(!PINCH.mode){PINCH.acc+=da;const rr=c.d/PINCH.d;if(Math.abs(PINCH.acc)>=12)PINCH.mode="rot";else if(rr>=1.08||rr<=1/1.08)PINCH.mode="zoom"}
 if(PINCH.mode==="rot"){if(da)setRot(RZ+da,true);return}
 if(PINCH.mode!=="zoom")return;
-const r=c.d/PINCH.d;if(r>=1.4){zoom(1,c.x,c.y);PINCH.d=c.d}else if(r<=1/1.4){zoom(-1,c.x,c.y);PINCH.d=c.d}else drawMap(false);return}}
+pzMove(PINCH,c);return}}
 if(!dr){if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm")){if(M.hov||M.rul.cur){M.hov=null;M.rul.cur=null;drawMap(false)}return}
 const r=mp.getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};if(M.rul.on){if(!M.rul.fin)M.rul.cur=p}else return;
 if(!M.hr){M.hr=1;requestAnimationFrame(()=>{M.hr=0;drawMap(false)})}return}
@@ -1892,7 +1893,26 @@ if(!m&&R.ctx){const c=R.ctx;R.ctx=null;R.syn=1;try{c.t.dispatchEvent(new MouseEv
 setTimeout(()=>{if(RRD===R)RRD=null},500)},true);
 /* ระบบบางตัวส่ง contextmenu ตอนกดเมาส์ขวา ไม่ใช่ตอนปล่อย: เลื่อนไปทำหลังปล่อยเมื่อไม่ได้ลาก */
 mp.addEventListener("contextmenu",e=>{if(!RRD||RRD.syn)return;if(RRD.mv){e.preventDefault();e.stopImmediatePropagation();return}if(!RRD.up){e.preventDefault();e.stopImmediatePropagation();RRD.ctx={t:e.target,x:e.clientX,y:e.clientY}}},true);
-function zoom(d,mx,my){const z=Math.min(17,Math.max(2,M.z+d));if(z===M.z)return;const f=2**(z-M.z),W=mp.clientWidth,H=mp.clientHeight;M.cx=(M.cx-W/2+mx)*f-mx+W/2;M.cy=(M.cy-H/2+my)*f-my+H/2;M.z=z;M.touched=true;drawMap(false)}
+/* v4.7.6: ซูมสองนิ้วแบบต่อเนื่อง (ลื่นแบบ MotionX) — ระหว่างถ่าง/หุบใช้ CSS transform ย่อ/ขยาย #rot ทั้งชั้น (GPU ไม่วาดใหม่)
+   ยกนิ้ว → ขยับเข้าระดับซูมเต็มที่ใกล้สุด (แอนิเมชันสั้น) แล้ววาดจริง · ภาพเดิมค้างไว้ใต้ (#tlb) จนภาพระดับใหม่โหลดครบ ไม่กะพริบขาว */
+function pzRaw(){const a=[...PT.values()],r=mp.getBoundingClientRect();return{x:(a[0].rx+a[1].rx)/2-r.left,y:(a[0].ry+a[1].ry)/2-r.top}}
+function pzTf(P,s){const W=mp.clientWidth,H=mp.clientHeight,Ox=W/2,Oy=H/2;return`translate(${(P.c1.x-Ox+s*(Ox-P.c0.x)).toFixed(2)}px,${(P.c1.y-Oy+s*(Oy-P.c0.y)).toFixed(2)}px) scale(${s.toFixed(4)}) rotate(var(--rz,0deg))`}
+function pzMove(P,c){const rot=$("rot");if(!P.c0){P.d0=c.d;P.c0=pzRaw();P.e0={x:c.x,y:c.y}}
+ const s=Math.min(2**(17.45-M.z),Math.max(2**(1.55-M.z),c.d/P.d0));P.s=s;P.c1=pzRaw();P.e1={x:c.x,y:c.y};
+ rot.style.transition="none";rot.style.willChange="transform";rot.style.transform=pzTf(P,s)}
+function pzEnd(P){const rot=$("rot");if(!P.c0||!P.s){rot.style.transform="";rot.style.willChange="";return}
+ const dz=Math.max(2,Math.min(17,M.z+Math.round(Math.log2(P.s))))-M.z,f=2**dz;
+ const done=()=>{if(P.dn)return;P.dn=1;rot.style.transition="";rot.style.transform="";rot.style.willChange="";zoomAt(dz,P.e0.x,P.e0.y,P.e1.x,P.e1.y)};
+ if(Math.abs(P.s-f)<0.01){done();return}
+ rot.style.transition="transform .16s ease-out";rot.style.transform=pzTf(P,f);setTimeout(done,175)}
+function zBack(f,ax,ay,bx,by){try{const tl=$("tl");let bk=$("tlb");if(!bk){bk=document.createElement("div");bk.id="tlb";bk.setAttribute("aria-hidden","true");tl.parentNode.insertBefore(bk,tl)}
+ const fr=document.createDocumentFragment();for(const im of tl.children)if(im.complete&&im.naturalWidth){const c=im.cloneNode(false);c.onerror=null;fr.appendChild(c)}
+ bk.innerHTML="";bk.appendChild(fr);bk.style.transform=`translate(${bx-f*ax}px,${by-f*ay}px) scale(${f})`;bk.hidden=false;clearTimeout(zBack.t);const t0=Date.now();
+ const chk=()=>{if(Date.now()-t0>4000||[...tl.children].every(i=>i.complete)){bk.hidden=true;bk.innerHTML=""}else zBack.t=setTimeout(chk,120)};zBack.t=setTimeout(chk,150)}catch(e){}}
+/* ซูมให้จุด (ax,ay) บนจอไปอยู่ที่ (bx,by) หลังซูม d ระดับ (พิกัดในกรอบแผนที่ที่ไม่หมุน) */
+function zoomAt(d,ax,ay,bx,by){const z=Math.min(17,Math.max(2,M.z+d)),f=2**(z-M.z),W=mp.clientWidth,H=mp.clientHeight;if(z!==M.z)zBack(f,ax,ay,bx,by);
+ M.cx=(M.cx-W/2+ax)*f-bx+W/2;M.cy=(M.cy-H/2+ay)*f-by+H/2;M.z=z;M.touched=true;drawMap(false)}
+function zoom(d,mx,my){const z=Math.min(17,Math.max(2,M.z+d));if(z===M.z)return;zoomAt(z-M.z,mx,my,mx,my)}
 mp.addEventListener("wheel",e0=>{const e=RE(e0);e.preventDefault();const t=Date.now();if(t-M.zt<180)return;M.zt=t;const r=mp.getBoundingClientRect();zoom(e.deltaY<0?1:-1,e.clientX-r.left,e.clientY-r.top)},{passive:false});
 $("zi").onclick=()=>zoom(1,mp.clientWidth/2,mp.clientHeight/2);
 $("zo").onclick=()=>zoom(-1,mp.clientWidth/2,mp.clientHeight/2);
@@ -2388,7 +2408,7 @@ $("kyd").addEventListener("pointerdown",e=>e.stopPropagation());$("kyd").addEven
 setTimeout(()=>{kyBtn()},150);
 /* สรุปเส้นทางบนแผนที่เต็มจอ */
 function msumRender(){macSync();try{if(SEL)selRender()}catch(x){}const el=$("msb");if(!el)return;const{valid,legs}=calcData;
-const hd='<div class="mh"><b>สรุปเส้นทาง Active</b><button class="mx" id="msx" aria-label="ซ่อน">✕</button></div>';
+const hd='<div class="mh"><b>Summary</b><button class="mx" id="msx" aria-label="ซ่อน">✕</button></div>';
 if(valid.length<2){el.innerHTML='<div style="color:var(--mute)">กรอกพิกัดอย่างน้อย 2 จุด</div>';return}
 const gs=parseFloat($("gs").value),ff=parseFloat($("ff").value),u=$("unit").value,res=parseFloat($("res").value)||0,tof=parseFloat($("tof").value);
 const tot=legs.reduce((a,l)=>a+l.d,0),hr=gs>0?tot/gs:NaN,okF=ff>0&&isFinite(hr);
@@ -2439,7 +2459,8 @@ function tbTouch(){try{return matchMedia("(hover: none) and (pointer: coarse) an
 function topY(){try{if(mp.classList.contains("fly"))return Math.max(8,Math.round(tbBottom())+8);if(mp.classList.contains("full")&&tbTouch())return Math.max(108,Math.round(tbBottom())+8);return 108}catch(e){return 108}}
 function dock(){if(!mp.classList.contains("full"))return;try{lbTop()}catch(e){}let y=topY();{const m2=document.querySelector(".mc2");if(mp.clientWidth<=620&&m2)y=Math.max(y,m2.getBoundingClientRect().bottom-mp.getBoundingClientRect().top+8)}
 ["mac","msum"].forEach(id=>{const el=$(id),p=PNL[id];if(getComputedStyle(el).display==="none")return;if(p&&p.x!=null)return;
-el.style.left="auto";el.style.right="8px";el.style.bottom="auto";el.style.top=y+"px";y+=el.offsetHeight+8});{const el=$("mpt");if(el&&getComputedStyle(el).display!=="none"){const p=PNL.mpt;
+/* v4.7.6: โหมดบิน — กล่องหลบคอลัมน์ปุ่มขวา (Undo/Redo/North/ซูม) */let rx=8;try{const fz=$("flyZ");if(mp.classList.contains("fly")&&fz&&!fz.hidden)rx=fz.offsetWidth+16}catch(e){}
+el.style.left="auto";el.style.right=rx+"px";el.style.bottom="auto";el.style.top=y+"px";y+=el.offsetHeight+8});{const el=$("mpt");if(el&&getComputedStyle(el).display!=="none"){const p=PNL.mpt;
 if(!(p&&p.x!=null)){const fp=$("fp"),W=mp.clientWidth,fv=fp&&!fp.hidden&&getComputedStyle(fp).display!=="none",mr=mp.getBoundingClientRect(),fr=fv?fp.getBoundingClientRect():null;
 let x=fv?fr.right-mr.left+8:8,y=fv?fr.top-mr.top:topY();if(W<=620){const m2=document.querySelector(".mc2");x=8;y=Math.max(y,m2?m2.getBoundingClientRect().bottom-mr.top+8:y);el.style.zIndex=7}if(x+el.offsetWidth>W-8){x=Math.max(8,W-el.offsetWidth-8)}
 el.style.left=x+"px";el.style.top=y+"px";el.style.right="auto";el.style.bottom="auto"}
@@ -2552,7 +2573,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.5 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.6 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -3856,7 +3877,7 @@ var RMODE="";function rotVal(){return RMODE==="H"?navHD():RMODE==="T"?navTR():nu
 var TUP=false,NAVUP=true,NAVACT=false,NAVGS0=null,NAVRZ0=0;
 function navTrk(){return navHdgSrc()[0]}
 function navSumRows(){if(!NAVON)return"";const gs=MLP.sp!=null?Math.round(MLP.sp*1.943844)+" kt":"-",tr=navTR(),hd=navHD();return`<div><small>GS (GPS)</small><b>${gs}</b></div><div><small>TRK (GPS)</small><b>${tr!=null?bt(tr):"-"}</b></div><div><small>HDG (เข็มทิศ)</small><b>${hd!=null?bt(hd):"-"}</b></div>`}
-function navApply(on){const ph=document.querySelector("#msum .ph b");if(ph)ph.textContent=on?"สรุปเส้นทาง NAV":"สรุปเส้นทาง Active";
+function navApply(on){const ph=document.querySelector("#msum .ph b");if(ph)ph.textContent=on?"Summary (NAV)":"Summary";
 if(on){NAVGS0=$("gs").value;NAVRZ0=RZ;NAVUP=!!TUP;$("gs").readOnly=true;if($("mgs"))$("mgs").readOnly=true;const t=rotVal();if(NAVUP&&t!=null)setRot(360-t,true);else setRot(RZ,true)}
 else{if(NAVGS0!=null){$("gs").value=NAVGS0;NAVGS0=null}$("gs").readOnly=false;if($("mgs"))$("mgs").readOnly=false;setRot(NAVRZ0,true);try{calc()}catch(e){}}}
 function navFix(){let ch=false;
@@ -4411,7 +4432,7 @@ flSync();FL.tm=setInterval(()=>{try{flTick()}catch(e){}},1000);
 try{if(window.speechSynthesis)speechSynthesis.getVoices()}catch(e){}})();
 </script>
 <script id="pwa">
-/* PWA (v4.7.5; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.7.6; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
@@ -4658,7 +4679,7 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 #map.fly #wxb{bottom:calc(var(--flyb,72px) + 30px)}
 #map.fly #acst{bottom:calc(var(--flyb,72px) + 22px)}
 #map.fly #acd{bottom:calc(var(--flyb,72px) + 56px)}
-#map.fly #twl{bottom:calc(var(--flyb,72px) + 26px)}
+#map.fly #twl{bottom:calc(var(--flyb,72px) + 46px);max-width:calc(100% - 100px)}
 #map.fly #mprof{bottom:calc(var(--flyb,72px) + 28px)}
 #map.fly #simbox{top:calc(var(--flyt,66px) + 8px)}
 /* v4.7.5: ชื่อผู้ใช้มุมล่างซ้าย · กล่องชั้นข้อมูลไม่เกินจอ · ช่องกรอกตัวใหญ่พอไม่ให้ iOS ซูมเอง */
@@ -4692,9 +4713,21 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 @media (max-width:600px){#flyZ .zh{gap:6px}#flyZ button.zu svg{width:26px;height:26px}}
 /* v4.7.5 b4: มือถือ (จอ ≤ 600 px) โหมดบิน — กล่องไม้บรรทัดชิดล่างจอ เหนือแถบตัวเลข/ป้ายชื่อผู้ใช้ ซ้ายของปุ่มซูม ไม่บังกากบาทกลางจอ */
 @media (max-width:600px){#map.fly #rulb{left:6px!important;right:76px;bottom:calc(var(--flyb,100px) + 42px)!important;top:auto!important;transform:none!important;max-width:none;box-sizing:border-box;padding:4px 6px;gap:4px}#map.fly #rulb #rlh{font-size:11px;line-height:1.3;flex-basis:100%;order:9;color:var(--mute)}#map.fly #rulb .b{height:36px;font-size:.9rem}#map.fly #rulb select{height:36px}#map.fly #rulb input[type=color]{height:36px!important;width:38px!important}}
+/* v4.7.6: ปุ่ม North up เหลือสัญลักษณ์ · TAWS บรรทัดเดียวในโหมดบิน · กล่อง Summary/Aircraft ใหญ่ขึ้นในโหมดบิน · แตะ ETE สลับ ETA */
+#flyZ [data-fk="rot"] .l{display:none}#flyZ [data-fk="rot"] .i{font-size:26px}
+#map.fly #twl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}#map.fly #twl .twn{display:none}#map.fly #twl .tws{display:inline;margin-left:8px}
+#flyB .fe2{cursor:pointer}#flyB .fe2:active{background:#0d47a1}#flyB .fe2 small:after{content:" ⇄";color:#90caf9}
+#map.fly #mac,#map.fly #msum{width:340px;max-width:calc(100% - 16px);font-size:16px;padding:8px 12px}
+#map.fly #mac .ph b,#map.fly #msum .ph b,#map.fly #msum .mh b{font-size:18px}
+#map.fly #mac .pc,#map.fly #msum .pc,#map.fly #msum .mx{min-width:44px;min-height:44px;font-size:22px}
+#map.fly #mac .mr{margin:8px 0}#map.fly #mac select{font-size:16px;height:44px}
+#map.fly #mac .st{gap:6px}#map.fly #mac .st button{width:44px;height:44px;font-size:24px;border-radius:8px}
+#map.fly #mac .st input,#map.fly #mac input{font-size:18px;height:44px;width:90px;box-sizing:border-box}
+#map.fly #msum small{font-size:13px}#map.fly #msum b{font-size:18px}#map.fly #msum .mg{gap:6px 16px}
+@media (max-width:600px){#map.fly #mac,#map.fly #msum{width:min(340px,calc(100% - 92px))}#map.fly #mac .st button{width:40px;height:40px}#map.fly #mac .st input,#map.fly #mac input{width:72px}}
 </style>
 <script id="flymode">
-/* ===== v4.7.0–4.7.5: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
+/* ===== v4.7.0–4.7.6: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
 (function(){
 const $f=id=>document.getElementById(id);
 const FT=1/0.3048,KT=1.943844;
@@ -4702,6 +4735,7 @@ const isFly=()=>mp.classList.contains("fly");
 function p2(x){return String(x).padStart(2,"0")}
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+let FLYETA=!!lsGet("heliEta",false);
 
 /* ---------- บันทึก Track ---------- */
 const TK=window.TK={on:false,cur:null,man:false,lastT:0,saveT:0,slow0:0,warned:false,
@@ -4766,7 +4800,7 @@ const host=mp;
 const T=document.createElement("div");T.id="flyT";T.className="fly-ui";T.hidden=true;
 T.innerHTML=BT.map(b=>`<button type="button" data-fk="${b[0]}" aria-label="${BTA[b[0]]||b[2]}" class="${b[2]?"":"io"}"><span class="i">${b[1]}</span>${b[2]?`<span class="l">${b[2]}</span>`:""}</button>`).join("");
 const B=document.createElement("div");B.id="flyB";B.className="fly-ui";B.hidden=true;
-B.innerHTML=`<div class="fw" id="fbW" role="button" tabindex="0" aria-label="NAV TO — tap to edit route" title="แตะเพื่อแก้เส้นทาง (Edit route)"><small>NAV TO <span class="fe">✎ Edit</span></small><b id="fbN">—</b></div><div><small>DIS NM</small><b id="fbD">-</b></div><div><small>BRG</small><b id="fbB">-</b></div><div><small>TRK</small><b id="fbT">-</b></div><div><small>GS kt</small><b id="fbG">-</b></div><div><small>ETE</small><b id="fbE">-</b></div>`;
+B.innerHTML=`<div class="fw" id="fbW" role="button" tabindex="0" aria-label="NAV TO — tap to edit route" title="แตะเพื่อแก้เส้นทาง (Edit route)"><small>NAV TO <span class="fe">✎ Edit</span></small><b id="fbN">—</b></div><div><small>DIS NM</small><b id="fbD">-</b></div><div><small>BRG</small><b id="fbB">-</b></div><div><small id="fbTl">TRK</small><b id="fbT">-</b></div><div><small>GS kt</small><b id="fbG">-</b></div><div class="fe2" id="fbEw" role="button" tabindex="0" aria-label="ETE / ETA — tap to switch" title="แตะเพื่อสลับ ETE / ETA"><small id="fbEl">ETE</small><b id="fbE">-</b></div>`;
 const Z=document.createElement("div");Z.id="flyZ";Z.className="fly-ui";Z.hidden=true;Z.innerHTML=`<div class="zh"><button type="button" data-fk="un" class="zu" aria-label="Undo" title="Undo"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button type="button" data-fk="re" class="zu" aria-label="Redo" title="Redo"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button></div><button type="button" data-fk="rot" class="zr" aria-label="North up / Track up"><span class="i">N↑</span><span class="l">North up</span></button><button type="button" data-fk="zi" aria-label="Zoom in">+</button><button type="button" data-fk="zo" aria-label="Zoom out">−</button>`;
 const R=document.createElement("button");R.id="flyR";R.type="button";R.className="fly-ui";R.hidden=true;R.setAttribute("aria-label","Show flight menu");R.textContent="☰";
 const MN=document.createElement("div");MN.id="flyM";MN.className="fly-ui flyo";MN.hidden=true;
@@ -4793,10 +4827,10 @@ function flyUi(){if(!isFly())return;const q=k=>T.querySelector(`[data-fk="${k}"]
  const fp=$f("fp");q("lay").classList.toggle("on",!!(fp&&!fp.hidden));
  let L={b:[],k:-1};try{L=navList()}catch(e){}q("prev").disabled=!(L.k>0);q("next").disabled=!(L.k>=0&&L.k<L.b.length-1);
  /* แถบตัวเลข */
- const s=dtPos(),gs=MLP.sp!=null&&MLP.on?MLP.sp*KT:null,tr=navTR();let n="—",d="-",br="-",ete="-";
- if(DT&&s){const l=leg(s,DT.t);n=DT.t.n||"จุด";d=l.d.toFixed(l.d<10?1:0);br=bt(l.brg);if(gs!=null&&gs>=3){const sec=Math.round(l.d/gs*3600);ete=sec>=3600?Math.floor(sec/3600)+":"+p2(Math.floor(sec%3600/60))+" ชม.":p2(Math.floor(sec/60))+":"+p2(sec%60)}}
+ const s=dtPos(),gs=MLP.sp!=null&&MLP.on?MLP.sp*KT:null,tr=navTR();let n="—",d="-",br="-",ete="-",sec=null;
+ if(DT&&s){const l=leg(s,DT.t);n=DT.t.n||"จุด";d=l.d.toFixed(l.d<10?1:0);br=bt(l.brg);if(gs!=null&&gs>=3){sec=Math.round(l.d/gs*3600);ete=sec>=3600?Math.floor(sec/3600)+":"+p2(Math.floor(sec%3600/60))+" ชม.":p2(Math.floor(sec/60))+":"+p2(sec%60)}}
  else if(!DT)n="STBY";
- $f("fbN").textContent=n;$f("fbD").textContent=d;$f("fbB").textContent=br;$f("fbT").textContent=tr!=null?bt(tr):"-";$f("fbG").textContent=gs!=null?Math.round(gs):"-";$f("fbE").textContent=ete;
+ $f("fbN").textContent=n;$f("fbD").textContent=d;$f("fbB").textContent=br;/* v4.7.6: HDG up → ช่อง TRK แสดง HDG · แตะ ETE สลับ ETA (เวลาถึงตามนาฬิกาเครื่อง) */const hm=rotUp()&&RMODE==="H",hv=hm?navHD():tr;$f("fbTl").textContent=hm?"HDG":"TRK";$f("fbT").textContent=hv!=null?bt(hv):"-";$f("fbEl").textContent=FLYETA?"ETA":"ETE";if(FLYETA)ete=sec!=null?(()=>{const t=new Date(Date.now()+sec*1000);return p2(t.getHours())+":"+p2(t.getMinutes())})():"-";$f("fbG").textContent=gs!=null?Math.round(gs):"-";$f("fbE").textContent=ete;
  if(!MN.hidden)menuRender();if(!GP.hidden)gpsRender()}
 window.flyUi=flyUi;setInterval(()=>{try{flyUi()}catch(e){}},1000);
 function needPos(){if(dtAvail())return true;toast("ต้องเปิดตำแหน่งฉัน (GPS) หรือ SIM ก่อน");return false}
@@ -4851,7 +4885,7 @@ Z.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b)act(b.
 /* v4.7.5 b3: ปุ่ม Undo/Redo เหนือ North up — สถานะตามปุ่มย้อนกลับ/ทำซ้ำเดิม (#hun/#hre) */
 {const hs=()=>{const u=Z.querySelector('[data-fk="un"]'),r=Z.querySelector('[data-fk="re"]');if(u)u.disabled=!!$f("hun").disabled;if(r)r.disabled=!!$f("hre").disabled};hs();const mo=new MutationObserver(hs);["hun","hre"].forEach(i=>{const e=$f(i);if(e)mo.observe(e,{attributes:true,attributeFilter:["disabled"]})})}
 R.addEventListener("click",()=>flyHide(false));
-B.addEventListener("click",e=>{if(e.target.closest("#fbW"))act("edit")});
+B.addEventListener("click",e=>{if(e.target.closest("#fbW"))act("edit");else if(e.target.closest("#fbEw")){FLYETA=!FLYETA;lsSet("heliEta",FLYETA);flyUi()}});
 RB.addEventListener("click",()=>{closeO(KL);tkRender();KL.hidden=false});
 DL.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){DL.hidden=true;return}const r=e.target.closest("[data-dv]");if(!r)return;if(!needPos())return;const o=(DL._it||[])[+r.dataset.dv];if(!o)return;try{if(o.ov)directTo("",o.ov);else directTo("R:"+o.vi)}catch(x){}DL.hidden=true;setTimeout(flyUi,0)});
 KL.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){KL.hidden=true;return}let b;

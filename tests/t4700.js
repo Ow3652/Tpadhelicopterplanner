@@ -1,4 +1,4 @@
-// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.5) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
+// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.6) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
 // ตำแหน่งเครื่องจำลองผ่าน MLP · รัน: node tests/t4700.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8773 เอง ตั้ง SHOT=1 เพื่อบันทึกภาพไว้ใน /tmp)
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
 const ROOT=path.resolve(__dirname,'..');
@@ -223,5 +223,31 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  r.enU=!U.disabled;U.click();await W(300);r.undone=!pts.some(p=>p.name==="UNDOX");r.enR=!R.disabled;R.click();await W(300);r.redone=pts.some(p=>p.name==="UNDOX");
  U.click();await W(200);r.n=pts.length===n0;return r});
  t('T26 v4.7.5 b3 โหมดบิน: ปุ่ม Undo/Redo เหนือ North up เรียงแนวตั้ง Undo บน Redo ล่าง (≥ 56 px) ใช้ย้อนกลับ/ทำซ้ำการแก้เส้นทางได้ สถานะเปิด/ปิดตามประวัติ',u.vis&&u.pos&&u.enU&&u.undone&&u.enR&&u.redone,u)}
+// v4.7.6: North up สัญลักษณ์อย่างเดียว · HDG up → HDG · แตะ ETE ↔ ETA · Summary · กล่อง Summary/Aircraft ใหญ่ · TAWS บรรทัดเดียว · ซูมสองนิ้วต่อเนื่อง
+{const W=n=>p.waitForTimeout(n);
+ const a=await p.evaluate(()=>{const b=document.querySelector('#flyZ [data-fk="rot"]'),l=b.querySelector('.l'),i=b.querySelector('.i');return{lh:getComputedStyle(l).display==='none',iv:i.getBoundingClientRect().width>0}});
+ t('T27 v4.7.6 โหมดบิน: ปุ่ม North up แสดงเฉพาะสัญลักษณ์ ไม่มีคำอธิบาย',a.lh&&a.iv,a);
+ await p.evaluate(()=>{window.__s={TUP,RMODE,CPON,ch:MLP.ch};TUP=true;RMODE="H";CPON=true;MLP.ch=123});await W(1300);
+ const h1=await p.evaluate(()=>({l:$('fbTl').textContent,v:$('fbT').textContent}));
+ await p.evaluate(()=>{TUP=__s.TUP;RMODE=__s.RMODE;CPON=__s.CPON;MLP.ch=__s.ch});await W(1300);const h2=await p.evaluate(()=>$('fbTl').textContent);
+ t('T27 b HDG up: ช่องล่าง TRK เปลี่ยนเป็น HDG (ค่าหัวเครื่อง) · กลับเป็น TRK เมื่อเลิก',h1.l==='HDG'&&/123/.test(h1.v)&&h2==='TRK',{h1,h2});
+ await p.tap('#fbEw');await W(300);const e1=await p.evaluate(()=>({l:$('fbEl').textContent,ls:localStorage.getItem('heliEta')}));await p.tap('#fbEw');await W(300);const e2=await p.evaluate(()=>$('fbEl').textContent);
+ t('T27 c แตะ ETE สลับเป็น ETA (จำในเครื่อง) · แตะอีกครั้งกลับ ETE',e1.l==='ETA'&&e1.ls==='true'&&e2==='ETE',{e1,e2});
+ const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
+ t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
+ await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
+ const bx=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),m=g($('mac')),s=g($('msum')),st=g(document.querySelector('#mac .st button'));return{mw:Math.round(m.width),sw:Math.round(s.width),bw:Math.round(st.width),bh:Math.round(st.height),fs:parseFloat(getComputedStyle($('mac')).fontSize)}});
+ t('T27 e โหมดบิน: กล่อง Aircraft/Summary ใหญ่ขึ้น (≥ 330 px, ตัวอักษร 16 px) ปุ่ม +/− ≥ 44 px',bx.mw>=330&&bx.sw>=330&&bx.bw>=44&&bx.bh>=44&&bx.fs>=16,bx);
+ await p.evaluate(()=>{if(M.mac)$('mb').click();if(M.sum)$('sb').click()});
+ await p.evaluate(()=>{if(!TW.on)document.querySelector('#flyT [data-fk="taws"]').click()});await W(700);
+ const tw=await p.evaluate(()=>{const l=$('twl'),n=l.querySelector('.twn');return{vis:!l.hidden,h:Math.round(l.getBoundingClientRect().height),twn:n?getComputedStyle(n).display:'none',ref:/TAWS/.test(l.textContent)}});
+ await p.evaluate(()=>{if(TW.on)document.querySelector('#flyT [data-fk="taws"]').click()});
+ t('T27 f โหมดบิน: กล่อง TAWS เหลือบรรทัดเดียว (ตัดบรรทัดคำอธิบาย)',tw.vis&&tw.ref&&tw.twn==='none'&&tw.h<=34,tw);
+ const cdp=await ctx.newCDPSession(p);const TE=(type,q)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:q.map((x,i)=>({x:x[0],y:x[1],id:i}))});
+ const pin=async(d0,d1)=>{await p.evaluate(()=>{window.__dm=0;if(!window.__dmw){window.__dmw=1;const o=window.drawMap;window.drawMap=function(){window.__dm++;return o.apply(this,arguments)}}});const z0=await p.evaluate(()=>M.z);
+  await TE('touchStart',[[400-d0/2,550],[400+d0/2,550]]);let mid=null;for(let i=1;i<=12;i++){const d=d0+(d1-d0)*i/12;await TE('touchMove',[[400-d/2,550],[400+d/2,550]]);if(i===6)mid=await p.evaluate(()=>$('rot').style.transform)}
+  const dm=await p.evaluate(()=>__dm);await TE('touchEnd',[]);await W(450);return{z0,z1:await p.evaluate(()=>M.z),mid,dm,tf:await p.evaluate(()=>$('rot').style.transform)}};
+ const pi=await pin(200,360),po=await pin(400,180);
+ t('T27 g ซูมสองนิ้วต่อเนื่อง: ระหว่างถ่าง/หุบ ย่อ/ขยายทั้งชั้นด้วย transform (ไม่วาดใหม่ทุกครั้งที่ขยับ) ยกนิ้วแล้วเข้าระดับซูมใกล้สุด (×1.8 → +1, ×0.45 → −1)',/scale\(1\.[2-9]/.test(pi.mid||'')&&pi.dm<=3&&pi.z1===pi.z0+1&&!pi.tf&&/scale\(0\.[5-9]/.test(po.mid||'')&&po.z1===po.z0-1&&!po.tf,{pi,po})}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
