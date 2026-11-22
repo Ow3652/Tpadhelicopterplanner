@@ -1,4 +1,4 @@
-// ทดสอบโหมดบิน + บันทึก Track (v4.7.0) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
+// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.1) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
 // ตำแหน่งเครื่องจำลองผ่าน MLP · รัน: node tests/t4700.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8773 เอง ตั้ง SHOT=1 เพื่อบันทึกภาพไว้ใน /tmp)
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
 const ROOT=path.resolve(__dirname,'..');
@@ -18,10 +18,15 @@ await p.evaluate(()=>{try{localStorage.removeItem('heliFly');Object.keys(localSt
  $("fmt").value="dd";pts.length=0;pts.push({name:"AAA",lat:"14.0",lon:"100.3"},{name:"BBB",lat:"14.1",lon:"100.6"},{name:"CCC",lat:"14.3",lon:"100.9"});drawPts();calc();render();
  MLP.on=true;MLP.la=13.98;MLP.lo=100.25;MLP.hd=60;MLP.sp=10;MLP.alt=300;MLP.t=Date.now();});
 t('T1 มีปุ่ม "✈ โหมดบิน" ในเมนู Flight INST. ▾',await p.evaluate(()=>!!document.querySelector('#fidd .ddm #flyon')));
+t('T1 b v4.7.1 หน้าจอปกติ: ไม่มีปุ่มโหมดบินในแถวปุ่ม (ไม่ให้แถวตกบรรทัด)',await p.evaluate(()=>!$('flyon3').getClientRects().length));
 await p.evaluate(()=>{if(!mp.classList.contains('full'))fsToggle()});await W(300);
+const f3=await p.evaluate(async()=>{$('uis').click();await new Promise(r=>setTimeout(r,200));const b=$('flyon3'),v=b.getClientRects().length>0;$('hui').click();await new Promise(r=>setTimeout(r,200));return v});
+t('T1 b v4.7.1 เต็มจอแบบแสดงเมนูทั้งหมด: มีปุ่ม "✈ โหมดบิน" ในแถวปุ่ม',f3);
 const u2=await p.evaluate(()=>{const b=$('flyon2');return b&&b.getClientRects().length?Math.round(b.getBoundingClientRect().height):0});
 t('T1 เต็มจอที่ซ่อนเมนูอยู่: มีปุ่ม "✈ โหมดบิน" ในแถบเล็ก ☰ เมนู',u2>0,u2);
 await p.tap('#flyon2');await W(600);
+const EN=await p.evaluate(()=>[...document.querySelectorAll('#flyT button,#flyZ button,#flyR')].map(e=>e.textContent.trim()));
+t('T2 b v4.7.1 ชื่อปุ่มโหมดบินเป็นภาษาอังกฤษทั้งหมด (มี Rec Route ไม่มี REC Track)',EN.every(x=>!/[\u0E00-\u0E7F]/.test(x))&&EN.some(x=>/Rec Route/.test(x))&&!EN.some(x=>/REC Track/.test(x)),EN.join(' | '));
 const L=await p.evaluate(()=>{const r=e=>{const q=e.getBoundingClientRect();return{t:Math.round(q.top),b:Math.round(q.bottom),l:Math.round(q.left),r:Math.round(q.right),w:Math.round(q.width),h:Math.round(q.height)}};const mr=r(mp);
  const bt=[...document.querySelectorAll('#flyT button')].map(r),zb=[...document.querySelectorAll('#flyZ button')].map(r);
  return{fly:mp.classList.contains('fly'),mcHidden:getComputedStyle(document.querySelector('.mc')).display==='none',mc2Hidden:getComputedStyle(document.querySelector('.mc2')).display==='none',map:mr,T:r($('flyT')),B:r($('flyB')),bt,zb,at:r(document.querySelector('#map .at'))}});
@@ -71,17 +76,25 @@ const rb=await p.evaluate(()=>{const e=$('rulb');if(!e||e.hidden||!e.getClientRe
 await p.tap('#flyT [data-fk="rul"]');await W(200);const ru2=await p.evaluate(()=>M.rul.on);
 t('T10 ไม้บรรทัด เปิด/ปิดได้ ไฟปุ่มติดตอนเปิด และแถบไม้บรรทัดไม่ถูกแถบตัวเลขบัง',ru.on&&ru.btn&&!ru2&&(!rb||rb.b<=rb.Bt),{ru,ru2,rb});
 // แก้เส้นทาง
-await p.tap('#flyT [data-fk="edit"]');await W(300);const ed=await p.evaluate(()=>{const e=$('mpt');return!!e&&getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().top>=$('flyT').getBoundingClientRect().bottom-1});
-t('T11 แก้เส้นทาง: เปิดแผง "จุดพิกัดในเส้นทาง" ใต้แถบปุ่มบน',ed);
-await p.evaluate(()=>{try{mptShow(false)}catch(e){}});
+await p.tap('#flyT [data-fk="edit"]');await W(300);const ed=await p.evaluate(()=>{const e=$('mpt');return!!e&&getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().top>=$('flyT').getBoundingClientRect().bottom-1&&document.querySelector('#flyT [data-fk="edit"]').classList.contains('on')});
+t('T11 แก้เส้นทาง: เปิดแผง "จุดพิกัดในเส้นทาง" ใต้แถบปุ่มบน ไฟปุ่มติด',ed);
+await p.tap('#flyT [data-fk="edit"]');await W(300);
+t('T11 b v4.7.1 กด Edit route อีกครั้ง: ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
+await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr1=await p.evaluate(()=>{const e=$('lbr');return{on:e.classList.contains('on'),vis:e.getClientRects().length>0,top:Math.round(e.getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}});
+await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr2=await p.evaluate(()=>$('lbr').classList.contains('on'));
+t('T11 c v4.7.1 Rec Route: เปิดกล่องเส้นทางที่บันทึกไว้ (ใต้แถบบน) กดอีกครั้งปิด',rr1.on&&rr1.vis&&rr1.top>=rr1.tb-1&&!rr2,{rr1,rr2});
 // Menu กระเบื้อง
 await p.tap('#flyT [data-fk="menu"]');await W(200);
 const mn=await p.evaluate(()=>({open:!$('flyM').hidden,tiles:[...document.querySelectorAll('#flyM .fog button')].map(e=>({t:e.textContent.trim(),h:Math.round(e.getBoundingClientRect().height)}))}));
-t('T12 Menu เปิดกระเบื้องปุ่มใหญ่ (≥ 80 px) มีบันทึก Track, GPX, interval, HSI, FMS, SIM, FLTA, ออกจากโหมดบิน',mn.open&&mn.tiles.length>=10&&mn.tiles.every(x=>x.h>=80)&&['Track ที่บันทึก','เก็บจุดทุก','HSI','FMS','SIM','FLTA','ออกจากโหมดบิน'].every(k=>mn.tiles.some(x=>x.t.includes(k))),mn.tiles.map(x=>x.t+'('+x.h+')').join(' | '));
-// interval 1/5/10/30
-const ivs=[];for(let i=0;i<4;i++){await p.tap('#flyM [data-fm="iv"]');await W(60);ivs.push(await p.evaluate(()=>TK.cfg.iv))}
-t('T13 ช่วงเก็บจุดวนได้ 10 → 30 → 1 → 5 วินาที และบันทึกค่า',JSON.stringify(ivs)==='[10,30,1,5]'&&await p.evaluate(()=>JSON.parse(localStorage.getItem('heliTrkCfg')).iv===5),ivs);
-await p.tap('#flyM [data-fx]');
+t('T12 Menu กระเบื้องปุ่มใหญ่ (≥ 80 px) ภาษาอังกฤษ: Record track, Tracks/GPX, Aircraft, HSI, FMS, SIM, FLTA, Exit · ไม่มีปุ่มเก็บจุดทุก…',mn.open&&mn.tiles.length>=10&&mn.tiles.every(x=>x.h>=80&&!/[\u0E00-\u0E7F]/.test(x.t))&&['track','Tracks / GPX','Aircraft','HSI','FMS','SIM','FLTA','Exit flight mode'].every(k=>mn.tiles.some(x=>x.t.includes(k)))&&!mn.tiles.some(x=>/Interval|เก็บจุด/.test(x.t)),mn.tiles.map(x=>x.t+'('+x.h+')').join(' | '));
+// v4.7.1: Aircraft
+const ac0=await p.evaluate(()=>M.mac);await p.tap('#flyM [data-fm="ac"]');await W(200);const ac1=await p.evaluate(()=>({mac:M.mac,on:document.querySelector('#flyM [data-fm="ac"]').classList.contains('on')}));
+await p.tap('#flyM [data-fm="ac"]');await W(200);const ac2=await p.evaluate(()=>M.mac);
+t('T13 v4.7.1 Menu → Aircraft เปิด/ปิดกล่องข้อมูลอากาศยาน',ac1.mac!==ac0&&ac1.on===ac1.mac&&ac2===ac0,{ac0,ac1,ac2});
+// interval อยู่ในหน้า Tracks
+await p.tap('#flyM [data-fm="trk"]');await W(200);const ivs=[];for(const v of [10,30,1,5]){await p.tap(`#flyK [data-ki="${v}"]`);await W(60);ivs.push(await p.evaluate(()=>[TK.cfg.iv,document.querySelector('#flyK [data-ki].on').dataset.ki]))}
+t('T13 b v4.7.1 ช่วงเก็บจุด 1/5/10/30 วินาที เลือกได้ในหน้า Tracks และบันทึกค่า',JSON.stringify(ivs)==='[[10,"10"],[30,"30"],[1,"1"],[5,"5"]]'&&await p.evaluate(()=>JSON.parse(localStorage.getItem('heliTrkCfg')).iv===5),ivs);
+await p.tap('#flyK [data-fx]');
 // บันทึก Track อัตโนมัติ (เร็วเกิน 20 kt) ทุก 5 วินาที
 const tk=await p.evaluate(async()=>{const o={};TK.man=false;if(TK.on)tkStop();TK.man=false;MLP.sp=10;MLP.t=Date.now();tkTick();o.slow=TK.on;
  MLP.sp=100/1.943844;MLP.t=Date.now();tkTick();o.auto=TK.on;const id=TK.cur&&TK.cur.id;o.n0=TK.cur.pts.length;
@@ -89,18 +102,19 @@ const tk=await p.evaluate(async()=>{const o={};TK.man=false;if(TK.on)tkStop();TK
  MLP.la+=0.003;MLP.t=Date.now();tkTick();o.n2=TK.cur.pts.length;
  tkSave(true);o.idx=JSON.parse(localStorage.getItem('heliTrkIdx')||'[]').length;o.stored=(JSON.parse(localStorage.getItem('heliTrk_'+id)||'{}').pts||[]).length;o.cur=JSON.parse(localStorage.getItem('heliTrkCur'));o.id=id;
  drawMap(false);await new Promise(r=>setTimeout(r,100));const sv=$('trkv');o.poly=sv.querySelectorAll('polyline').length;o.under=!!(sv.compareDocumentPosition($('ov'))&Node.DOCUMENT_POSITION_FOLLOWING)&&sv.parentElement===$('ov').parentElement;
- o.btn=document.querySelector('#flyT [data-fk="rec"]').classList.contains('rec');return o});
-t('T14 ความเร็วต่ำกว่า 20 kt ยังไม่บันทึก · เกิน 20 kt เริ่มบันทึกอัตโนมัติ ปุ่ม REC สีแดง',!tk.slow&&tk.auto&&tk.btn,tk);
+ o.btn=!$('flyRec').hidden&&$('flyRec').getClientRects().length>0;return o});
+t('T14 ความเร็วต่ำกว่า 20 kt ยังไม่บันทึก · เกิน 20 kt เริ่มบันทึกอัตโนมัติ มีป้าย ● REC บนแผนที่',!tk.slow&&tk.auto&&tk.btn,tk);
 t('T14 เก็บจุดตามช่วง 5 วินาที (12 ครั้ง = 12 จุดเพิ่ม) และไม่เก็บถ้ายังไม่ครบช่วง',tk.n1===tk.n0+12&&tk.n2===tk.n1,tk);
 t('T14 เก็บลงเครื่อง (localStorage) และวาดเส้น Track ใต้สามเหลี่ยมเฮลิคอปเตอร์',tk.idx>=1&&tk.stored===tk.n1&&tk.cur===tk.id&&tk.poly>=2&&tk.under,tk);
 if(process.env.SHOT){await p.evaluate(()=>{gpsCenter()});await W(400);await p.screenshot({path:'/tmp/t4700_fly.png'})}
+await p.tap('#flyRec');await W(200);t('T14 b v4.7.1 แตะป้าย ● REC เปิดหน้า Tracks',await p.evaluate(()=>!$('flyK').hidden));await p.tap('#flyK [data-fx]');
 // รีโหลดแอประหว่างบันทึก → กลับมาโหมดบินและบันทึกต่อ Track เดิม
 await p.reload();await p.waitForTimeout(1600);
 const rl=await p.evaluate(()=>({fly:mp.classList.contains('fly'),on:TK.on,id:TK.cur&&TK.cur.id,n:TK.cur&&TK.cur.pts.length}));
 t('T15 ปิด/รีโหลดแอป: กลับเข้าโหมดบินเอง และบันทึก Track เดิมต่อ',rl.fly&&rl.on&&rl.id===tk.id&&rl.n===tk.n1,rl);
 // หยุดเอง → ไม่เริ่มใหม่อัตโนมัติจนกว่าจะช้าลง (ลงจอด)
-const st=await p.evaluate(()=>{MLP.on=true;MLP.la=14.05;MLP.lo=100.4;MLP.sp=100/1.943844;MLP.t=Date.now();tkTick();tkStop();const a=TK.on;MLP.t=Date.now();tkTick();return{a,b:TK.on,man:TK.man,cur:JSON.parse(localStorage.getItem('heliTrkCur'))}});
-t('T16 กดหยุดเอง: หยุดบันทึก และไม่เริ่มใหม่อัตโนมัติขณะยังบินอยู่',!st.a&&!st.b&&st.man&&st.cur===null,st);
+const st=await p.evaluate(async()=>{MLP.on=true;MLP.la=14.05;MLP.lo=100.4;MLP.sp=100/1.943844;MLP.t=Date.now();tkTick();tkStop();const a=TK.on;MLP.t=Date.now();tkTick();await new Promise(r=>setTimeout(r,1200));return{a,b:TK.on,man:TK.man,cur:JSON.parse(localStorage.getItem('heliTrkCur')),badge:$('flyRec').hidden}});
+t('T16 กดหยุดเอง: หยุดบันทึก ป้าย REC หาย และไม่เริ่มใหม่อัตโนมัติขณะยังบินอยู่',!st.a&&!st.b&&st.man&&st.cur===null&&st.badge,st);
 // รายการ Track + GPX + ลบแบบยืนยัน
 await p.tap('#flyT [data-fk="menu"]');await p.tap('#flyM [data-fm="trk"]');await W(200);
 const kl=await p.evaluate(()=>({open:!$('flyK').hidden,rows:document.querySelectorAll('#flyK .fok').length,first:document.querySelector('#flyK [data-kd]').dataset.kd,bh:Math.round(document.querySelector('#flyK [data-kg]').getBoundingClientRect().height)}));
@@ -111,7 +125,7 @@ const dl=p.waitForEvent('download',{timeout:3000}).catch(()=>null);await p.tap('
 t('T17 ปุ่ม GPX ดาวน์โหลดไฟล์ .gpx',!!d&&/\.gpx$/.test(d.suggestedFilename()),d&&d.suggestedFilename());
 await p.tap('#flyK [data-kd]');await W(100);const k1=await p.evaluate(()=>({rows:document.querySelectorAll('#flyK .fok').length,txt:document.querySelector('#flyK [data-kd]').textContent}));
 await p.tap('#flyK [data-kd]');await W(100);const k2=await p.evaluate(id=>({rows:document.querySelectorAll('#flyK .fok').length,ls:localStorage.getItem('heliTrk_'+id)}),tk.id);
-t('T17 ลบ Track ต้องแตะยืนยันครั้งที่สอง',k1.rows===kl.rows&&/ยืนยัน/.test(k1.txt)&&k2.rows===kl.rows-1&&k2.ls===null,{k1,k2});
+t('T17 ลบ Track ต้องแตะยืนยันครั้งที่สอง (Delete → Confirm?)',k1.rows===kl.rows&&/Confirm/.test(k1.txt)&&k2.rows===kl.rows-1&&k2.ls===null,{k1,k2});
 await p.tap('#flyK [data-fx]');
 // ออกจากโหมดบิน
 await p.tap('#flyT [data-fk="menu"]');await p.tap('#flyM [data-fm="exit"]');await W(300);
