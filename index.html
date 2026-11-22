@@ -4687,9 +4687,11 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 /* v4.7.5 b2: หลายอุปกรณ์ — ข้อความบนแผนที่ในโหมดบินขอบหนาขึ้น อ่านง่ายบนแผนที่สีเข้ม · บรรทัดข้อมูลจอในเมนู */
 #map.fly .lt,#map.fly .ml,#map.fly .pl{stroke-width:3.2px}
 .flyo .fom.fdi{font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#888;padding:6px 14px 14px}
-/* v4.7.5 b3: Undo/Redo เหนือ North up */
-#flyZ{align-items:flex-end}#flyZ .zh{display:flex;gap:8px;justify-content:flex-end}#flyZ button.zu{color:#fff;display:flex;align-items:center;justify-content:center}#flyZ button.zu:disabled{color:#555;background:rgba(24,24,24,.6)}
+/* v4.7.5 b3–b4: Undo/Redo เหนือ North up (b4: เรียงแนวตั้ง Undo บน Redo ล่าง) */
+#flyZ{align-items:flex-end}#flyZ .zh{display:flex;flex-direction:column;gap:inherit;align-items:flex-end}#flyZ button.zu{color:#fff;display:flex;align-items:center;justify-content:center}#flyZ button.zu:disabled{color:#555;background:rgba(24,24,24,.6)}
 @media (max-width:600px){#flyZ .zh{gap:6px}#flyZ button.zu svg{width:26px;height:26px}}
+/* v4.7.5 b4: มือถือ (จอ ≤ 600 px) โหมดบิน — กล่องไม้บรรทัดชิดล่างจอ เหนือแถบตัวเลข/ป้ายชื่อผู้ใช้ ซ้ายของปุ่มซูม ไม่บังกากบาทกลางจอ */
+@media (max-width:600px){#map.fly #rulb{left:6px!important;right:76px;bottom:calc(var(--flyb,100px) + 42px)!important;top:auto!important;transform:none!important;max-width:none;box-sizing:border-box;padding:4px 6px;gap:4px}#map.fly #rulb #rlh{font-size:11px;line-height:1.3;flex-basis:100%;order:9;color:var(--mute)}#map.fly #rulb .b{height:36px;font-size:.9rem}#map.fly #rulb select{height:36px}#map.fly #rulb input[type=color]{height:36px!important;width:38px!important}}
 </style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.5: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */

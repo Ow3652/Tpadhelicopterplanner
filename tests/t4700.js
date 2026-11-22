@@ -211,13 +211,17 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  t('T25 v4.7.5 b3 Android 412 px: กล่องจุดพิกัดในเส้นทาง ชื่อ + ละติจูด + ลองจิจูดอยู่แถวเดียวกัน ไม่เกินกล่อง พิกัดไม่ถูกตัด',L.same&&L.inside&&L.fit&&L.w.every(x=>x>=80),L);
  const nm=q.locator('#mpt .pt').nth(1).locator('input.nm');await nm.click();await nm.fill('');await nm.pressSequentially('tpad');await q.waitForTimeout(300);
  const bf=await q.evaluate(()=>!$('sg').hidden&&$('sg').children.length>0);await nm.press('Enter');await q.waitForTimeout(400);const af=await q.evaluate(()=>$('sg').hidden);
- t('T25 b พิมพ์ชื่อจุดแล้วกด Enter: รายชื่อแนะนำปิดเอง',bf&&af,{bf,af});t('T25 c ไม่มี JavaScript error',!e3.length,e3);await c.close()}
+ t('T25 b พิมพ์ชื่อจุดแล้วกด Enter: รายชื่อแนะนำปิดเอง',bf&&af,{bf,af});
+ await q.evaluate(()=>{mptShow(false)});await q.tap('#flyT [data-fk="coord"]');await q.waitForTimeout(200);await q.tap('#flyT [data-fk="rul"]');await q.waitForTimeout(500);
+ const rb=await q.evaluate(()=>{const g=e=>e.getBoundingClientRect(),R=g($('rulb')),m=g(mp),B=g($('flyB')),Z=[...document.querySelectorAll('#flyZ button')].map(g),cy=m.top+m.height/2,cx=m.left+m.width/2;
+  return{vis:R.height>0,cross:cx>=R.left&&cx<=R.right&&cy>=R.top&&cy<=R.bottom,aboveB:R.bottom<=B.top,low:R.top>m.top+m.height*0.6,zOver:Z.some(z=>z.left<R.right&&z.right>R.left&&z.top<R.bottom&&z.bottom>R.top)}});
+ t('T25 d b4 Android โหมดบิน: กล่องไม้บรรทัดชิดล่างจอ เหนือแถบตัวเลข ไม่บังกากบาทกลางจอและปุ่มซูม',rb.vis&&!rb.cross&&rb.aboveB&&rb.low&&!rb.zOver,rb);t('T25 c ไม่มี JavaScript error',!e3.length,e3);await c.close()}
 // v4.7.5 b3: ปุ่ม Undo/Redo เหนือ North up ในโหมดบิน
 {const u=await p.evaluate(async()=>{const W=n=>new Promise(r=>setTimeout(r,n)),g=e=>e.getBoundingClientRect(),U=document.querySelector('#flyZ [data-fk="un"]'),R=document.querySelector('#flyZ [data-fk="re"]'),N=document.querySelector('#flyZ [data-fk="rot"]');
- if(!U||!R)return{ok:false};const a=g(U),b=g(R),n=g(N),r={pos:a.bottom<=n.top&&b.bottom<=n.top&&Math.abs(b.right-n.right)<2&&a.height>=56&&a.width>=56,vis:a.width>0};
+ if(!U||!R)return{ok:false};const a=g(U),b=g(R),n=g(N),r={pos:a.bottom<=b.top&&b.bottom<=n.top&&Math.abs(a.right-n.right)<2&&Math.abs(b.right-n.right)<2&&a.height>=56&&a.width>=56,vis:a.width>0};
  const before=pts.map(p=>p.name).join(),n0=pts.length;pts.push({name:"UNDOX",lat:"14.5",lon:"100.5"});drawPts();calc();render();try{hTrack()}catch(e){}await W(300);
  r.enU=!U.disabled;U.click();await W(300);r.undone=!pts.some(p=>p.name==="UNDOX");r.enR=!R.disabled;R.click();await W(300);r.redone=pts.some(p=>p.name==="UNDOX");
  U.click();await W(200);r.n=pts.length===n0;return r});
- t('T26 v4.7.5 b3 โหมดบิน: ปุ่ม Undo/Redo เหนือ North up (≥ 56 px) ใช้ย้อนกลับ/ทำซ้ำการแก้เส้นทางได้ สถานะเปิด/ปิดตามประวัติ',u.vis&&u.pos&&u.enU&&u.undone&&u.enR&&u.redone,u)}
+ t('T26 v4.7.5 b3 โหมดบิน: ปุ่ม Undo/Redo เหนือ North up เรียงแนวตั้ง Undo บน Redo ล่าง (≥ 56 px) ใช้ย้อนกลับ/ทำซ้ำการแก้เส้นทางได้ สถานะเปิด/ปิดตามประวัติ',u.vis&&u.pos&&u.enU&&u.undone&&u.enR&&u.redone,u)}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
