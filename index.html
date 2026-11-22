@@ -47,7 +47,7 @@ input.bad{border-color:var(--err)}
 .pt input{margin-top:0;font-variant-numeric:tabular-nums}
 .pt .acts{display:flex;gap:2px}
 .err{grid-column:2/-1;color:var(--err);font-size:.8rem;margin:-2px 0 4px}
-@media(max-width:560px){.pt{grid-template-columns:28px 1fr 1fr}.pt .nm{grid-column:2/-1}.pt .acts{grid-column:2/-1}}
+/* v4.7.5 b3: จอแคบ (มือถือ) ชื่อจุด + ละติจูด + ลองจิจูดอยู่แถวเดียวกัน ปุ่มเรียงแถวล่าง */@media(max-width:560px){.pt{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) minmax(0,1.08fr);gap:4px}.pt .n{width:22px;height:22px;font-size:.72rem}.pt input{padding-left:6px;padding-right:4px;min-width:0}.pt .acts{grid-column:2/-1}}
 button.b{font:inherit;font-weight:500;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:4px;padding:8px 14px;cursor:pointer}
 button.b.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 button.b.s{padding:6px 9px}
@@ -2070,6 +2070,9 @@ document.addEventListener("keydown",e=>{if($("sg").hidden||!SGL.length||e.target
 if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();e.stopPropagation();SGX=(SGX+(e.key==="ArrowDown"?1:-1)+SGL.length)%SGL.length;[...$("sg").children].forEach((c,i)=>c.classList.toggle("on",i===SGX))}
 else if(e.key==="Enter"&&SGX>=0){e.preventDefault();e.stopPropagation();sgPick(SGX)}
 else if(e.key==="Escape"){e.stopPropagation();sgHide()}},true);
+/* v4.7.5 b3: กด Enter ในช่องชื่อจุด (ไม่ได้เลือกจากรายการ) → ปิดรายชื่อแนะนำเอง · จอสัมผัสเก็บแป้นพิมพ์ด้วย */
+document.addEventListener("keydown",e=>{const t=e.target;if((e.key==="Enter"||e.keyCode===13)&&t&&t===SGI&&!$("sg").hidden&&SGX<0){sgHide();if(t.closest&&t.closest(".pt")&&matchMedia("(pointer:coarse)").matches)setTimeout(()=>{try{t.blur()}catch(x){}},0)}},true);
+document.addEventListener("change",e=>{if(e.target&&e.target===SGI&&!$("sg").hidden&&!SGBUSY)sgHide()},true);
 document.addEventListener("keydown",e=>{if(e.key==="Tab"&&!$("sg").hidden)sgHide()},true);
 addEventListener("scroll",e=>{const t=e.target;if(t===SGI||(t&&t.nodeType===1&&$("sg").contains(t)))return;sgHide()},true);
 /* ย้อนกลับ / ทำซ้ำ */
@@ -4684,6 +4687,9 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 /* v4.7.5 b2: หลายอุปกรณ์ — ข้อความบนแผนที่ในโหมดบินขอบหนาขึ้น อ่านง่ายบนแผนที่สีเข้ม · บรรทัดข้อมูลจอในเมนู */
 #map.fly .lt,#map.fly .ml,#map.fly .pl{stroke-width:3.2px}
 .flyo .fom.fdi{font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#888;padding:6px 14px 14px}
+/* v4.7.5 b3: Undo/Redo เหนือ North up */
+#flyZ{align-items:flex-end}#flyZ .zh{display:flex;gap:8px;justify-content:flex-end}#flyZ button.zu{color:#fff;display:flex;align-items:center;justify-content:center}#flyZ button.zu:disabled{color:#555;background:rgba(24,24,24,.6)}
+@media (max-width:600px){#flyZ .zh{gap:6px}#flyZ button.zu svg{width:26px;height:26px}}
 </style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.5: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
@@ -4759,7 +4765,7 @@ const T=document.createElement("div");T.id="flyT";T.className="fly-ui";T.hidden=
 T.innerHTML=BT.map(b=>`<button type="button" data-fk="${b[0]}" aria-label="${BTA[b[0]]||b[2]}" class="${b[2]?"":"io"}"><span class="i">${b[1]}</span>${b[2]?`<span class="l">${b[2]}</span>`:""}</button>`).join("");
 const B=document.createElement("div");B.id="flyB";B.className="fly-ui";B.hidden=true;
 B.innerHTML=`<div class="fw" id="fbW" role="button" tabindex="0" aria-label="NAV TO — tap to edit route" title="แตะเพื่อแก้เส้นทาง (Edit route)"><small>NAV TO <span class="fe">✎ Edit</span></small><b id="fbN">—</b></div><div><small>DIS NM</small><b id="fbD">-</b></div><div><small>BRG</small><b id="fbB">-</b></div><div><small>TRK</small><b id="fbT">-</b></div><div><small>GS kt</small><b id="fbG">-</b></div><div><small>ETE</small><b id="fbE">-</b></div>`;
-const Z=document.createElement("div");Z.id="flyZ";Z.className="fly-ui";Z.hidden=true;Z.innerHTML=`<button type="button" data-fk="rot" class="zr" aria-label="North up / Track up"><span class="i">N↑</span><span class="l">North up</span></button><button type="button" data-fk="zi" aria-label="Zoom in">+</button><button type="button" data-fk="zo" aria-label="Zoom out">−</button>`;
+const Z=document.createElement("div");Z.id="flyZ";Z.className="fly-ui";Z.hidden=true;Z.innerHTML=`<div class="zh"><button type="button" data-fk="un" class="zu" aria-label="Undo" title="Undo"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button type="button" data-fk="re" class="zu" aria-label="Redo" title="Redo"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button></div><button type="button" data-fk="rot" class="zr" aria-label="North up / Track up"><span class="i">N↑</span><span class="l">North up</span></button><button type="button" data-fk="zi" aria-label="Zoom in">+</button><button type="button" data-fk="zo" aria-label="Zoom out">−</button>`;
 const R=document.createElement("button");R.id="flyR";R.type="button";R.className="fly-ui";R.hidden=true;R.setAttribute("aria-label","Show flight menu");R.textContent="☰";
 const MN=document.createElement("div");MN.id="flyM";MN.className="fly-ui flyo";MN.hidden=true;
 const DL=document.createElement("div");DL.id="flyD";DL.className="fly-ui flyo";DL.hidden=true;
@@ -4836,10 +4842,12 @@ function act(k){switch(k){
  case"me":if(!MLP.on){if(SIM&&SIM.on){gpsCenter();break}$f("mlbtn").click()}else gpsCenter();break;
  case"taws":$f("twb").click();break;
  case"hide":flyHide(true);break;
- case"zi":$f("zi").click();break;case"zo":$f("zo").click();break}
+ case"un":$f("hun").click();break;case"re":$f("hre").click();break;case"zi":$f("zi").click();break;case"zo":$f("zo").click();break}
  setTimeout(flyUi,0)}
 T.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b&&!b.disabled)act(b.dataset.fk)});
 Z.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b)act(b.dataset.fk)});
+/* v4.7.5 b3: ปุ่ม Undo/Redo เหนือ North up — สถานะตามปุ่มย้อนกลับ/ทำซ้ำเดิม (#hun/#hre) */
+{const hs=()=>{const u=Z.querySelector('[data-fk="un"]'),r=Z.querySelector('[data-fk="re"]');if(u)u.disabled=!!$f("hun").disabled;if(r)r.disabled=!!$f("hre").disabled};hs();const mo=new MutationObserver(hs);["hun","hre"].forEach(i=>{const e=$f(i);if(e)mo.observe(e,{attributes:true,attributeFilter:["disabled"]})})}
 R.addEventListener("click",()=>flyHide(false));
 B.addEventListener("click",e=>{if(e.target.closest("#fbW"))act("edit")});
 RB.addEventListener("click",()=>{closeO(KL);tkRender();KL.hidden=false});

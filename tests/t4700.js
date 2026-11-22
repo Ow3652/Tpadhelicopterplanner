@@ -31,7 +31,7 @@ const ic=await p.evaluate(()=>{const g=k=>document.querySelector(`#flyT [data-fk
 t('T2 d v4.7.3 NAV แสดงแค่สถานะ · D→ เฉพาะสัญลักษณ์ · My position ไอคอนเครื่องบินสีขาว',ic.nav&&/^(NAV|STBY)$/.test(ic.navT)&&ic.dto&&ic.me,ic);
 t('T2 c v4.7.2 แถบบนไม่มี Edit route และ North up (North up อยู่เหนือปุ่มซูม)',await p.evaluate(()=>!document.querySelector('#flyT [data-fk="edit"]')&&!document.querySelector('#flyT [data-fk="rot"]')&&(()=>{const r=document.querySelector('#flyZ [data-fk="rot"]').getBoundingClientRect(),z=document.querySelector('#flyZ [data-fk="zi"]').getBoundingClientRect();return r.bottom<=z.top&&Math.abs(r.left-z.left)<2&&r.height>=64})()));
 const L=await p.evaluate(()=>{const r=e=>{const q=e.getBoundingClientRect();return{t:Math.round(q.top),b:Math.round(q.bottom),l:Math.round(q.left),r:Math.round(q.right),w:Math.round(q.width),h:Math.round(q.height)}};const mr=r(mp);
- const bt=[...document.querySelectorAll('#flyT button')].map(r),zb=[...document.querySelectorAll('#flyZ button')].map(r);
+ const bt=[...document.querySelectorAll('#flyT button')].map(r),zb=[...document.querySelectorAll('#flyZ > button')].map(r);
  return{fly:mp.classList.contains('fly'),mcHidden:getComputedStyle(document.querySelector('.mc')).display==='none',mc2Hidden:getComputedStyle(document.querySelector('.mc2')).display==='none',map:mr,T:r($('flyT')),B:r($('flyB')),bt,zb,at:r(document.querySelector('#map .at'))}});
 t('T2 เข้าโหมดบิน: แถบปุ่มปกติซ่อน แถบบน/ล่างโหมดบินแสดง',L.fly&&L.mcHidden&&L.mc2Hidden&&L.T.h>0&&L.B.h>0,{fly:L.fly,mc:L.mcHidden,mc2:L.mc2Hidden});
 t('T2 แถบบนมี 12 ปุ่ม แต่ละปุ่มสูง ≥ 60 px กว้าง ≥ 120 px (iPad แนวตั้ง)',L.bt.length===12&&L.bt.every(x=>x.h>=60&&x.w>=120),L.bt.map(x=>x.w+'x'+x.h).join(' '));
@@ -203,5 +203,21 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  t('T24 v4.7.5 b2 Android: ส่วนที่มองเห็นเล็กกว่าจอ (ซูม 1.08) → แผนที่/แถบบน/แถบล่างอยู่ในส่วนที่มองเห็น และกลับเต็มจอเมื่อเลิกซูม',fz.fly&&fz.z[0]===12&&fz.z[1]===30&&fz.z[2]===393&&fz.z[3]===850&&fz.z[4]<=393&&fz.z[5]<=850&&fz.back,fz);
  t('T24 b Menu → Screen fit 100→96% ย่อขอบขวา/ล่าง · วนกลับ 100% · จำในเครื่อง · บรรทัดข้อมูลจอ · meta color-scheme',/Screen fit: 100%/.test(fz.lab)&&fz.f96[0]===395&&fz.f96[1]===878&&/96%/.test(fz.f96[2])&&/100%/.test(fz.f100)&&fz.ls==='100'&&/Screen 412×915/.test(fz.info)&&/Samsung Internet/.test(fz.info)&&fz.cs==='light dark',fz);
  t('T24 c ไม่มี JavaScript error (Android)',!e2.length,e2);await c.close()}
+// v4.7.5 b3: มือถือ Android — กล่องจุดพิกัดในเส้นทาง ชื่อ/ละติจูด/ลองจิจูดแถวเดียวกัน · กด Enter ปิดรายชื่อแนะนำ
+{const c=await b.newContext({viewport:{width:412,height:915},deviceScaleFactor:2.625,isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (Linux; Android 15; SM-S731B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Mobile Safari/537.36'});await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();const e3=[];q.on('pageerror',e=>e3.push(e.message));await q.goto('http://localhost:8773/?start=auto');await q.waitForTimeout(1500);
+ const L=await q.evaluate(async()=>{try{kyClose()}catch(e){}$("fmt").value="ddmm";pts.length=0;pts.push({name:"MY POS",lat:"1400.00N",lon:"10036.27E"},{name:"Tpad",lat:"1352.00N",lon:"10038.07E"});drawPts();calc();render();mptShow(true);await new Promise(r=>setTimeout(r,300));
+  const row=document.querySelector('#mpt .pt'),I=[...row.querySelectorAll('input')],g=e=>e.getBoundingClientRect(),[n,a,o]=I.map(g),m=g($('mpt'));
+  return{same:Math.abs(n.top-a.top)<2&&Math.abs(a.top-o.top)<2,w:[n.width,a.width,o.width].map(Math.round),inside:o.right<=m.right+0.5,fit:I.slice(1).every(x=>x.scrollWidth<=x.clientWidth)}});
+ t('T25 v4.7.5 b3 Android 412 px: กล่องจุดพิกัดในเส้นทาง ชื่อ + ละติจูด + ลองจิจูดอยู่แถวเดียวกัน ไม่เกินกล่อง พิกัดไม่ถูกตัด',L.same&&L.inside&&L.fit&&L.w.every(x=>x>=80),L);
+ const nm=q.locator('#mpt .pt').nth(1).locator('input.nm');await nm.click();await nm.fill('');await nm.pressSequentially('tpad');await q.waitForTimeout(300);
+ const bf=await q.evaluate(()=>!$('sg').hidden&&$('sg').children.length>0);await nm.press('Enter');await q.waitForTimeout(400);const af=await q.evaluate(()=>$('sg').hidden);
+ t('T25 b พิมพ์ชื่อจุดแล้วกด Enter: รายชื่อแนะนำปิดเอง',bf&&af,{bf,af});t('T25 c ไม่มี JavaScript error',!e3.length,e3);await c.close()}
+// v4.7.5 b3: ปุ่ม Undo/Redo เหนือ North up ในโหมดบิน
+{const u=await p.evaluate(async()=>{const W=n=>new Promise(r=>setTimeout(r,n)),g=e=>e.getBoundingClientRect(),U=document.querySelector('#flyZ [data-fk="un"]'),R=document.querySelector('#flyZ [data-fk="re"]'),N=document.querySelector('#flyZ [data-fk="rot"]');
+ if(!U||!R)return{ok:false};const a=g(U),b=g(R),n=g(N),r={pos:a.bottom<=n.top&&b.bottom<=n.top&&Math.abs(b.right-n.right)<2&&a.height>=56&&a.width>=56,vis:a.width>0};
+ const before=pts.map(p=>p.name).join(),n0=pts.length;pts.push({name:"UNDOX",lat:"14.5",lon:"100.5"});drawPts();calc();render();try{hTrack()}catch(e){}await W(300);
+ r.enU=!U.disabled;U.click();await W(300);r.undone=!pts.some(p=>p.name==="UNDOX");r.enR=!R.disabled;R.click();await W(300);r.redone=pts.some(p=>p.name==="UNDOX");
+ U.click();await W(200);r.n=pts.length===n0;return r});
+ t('T26 v4.7.5 b3 โหมดบิน: ปุ่ม Undo/Redo เหนือ North up (≥ 56 px) ใช้ย้อนกลับ/ทำซ้ำการแก้เส้นทางได้ สถานะเปิด/ปิดตามประวัติ',u.vis&&u.pos&&u.enU&&u.undone&&u.enR&&u.redone,u)}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
