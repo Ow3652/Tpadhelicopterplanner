@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.6.2</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.0</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -487,7 +487,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.6.2</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.0</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -569,7 +569,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </div>
 <div>
 <div class="card" id="cm"><h2>แผนที่เส้นทาง</h2>
-<div id="map" aria-label="แผนที่ OpenTopoMap"><div id="rot"><div id="tl"></div><canvas id="tws" aria-hidden="true"></canvas><svg id="flv" aria-hidden="true"></svg><div id="twm" hidden></div><div id="wx"></div><svg id="ov"></svg></div><div id="pop" class="pop" hidden></div><div id="twl" hidden></div><div id="flb" class="flb" hidden role="alert" aria-live="assertive" title="แตะเพื่อย่อเป็นไอคอน TERRAIN"></div><button type="button" id="flic" class="flic" hidden aria-label="แสดงคำเตือนภูมิประเทศ (FLTA)" title="แตะเพื่อแสดงคำเตือนเต็ม">TERRAIN</button>
+<div id="map" aria-label="แผนที่ OpenTopoMap"><div id="rot"><div id="tl"></div><canvas id="tws" aria-hidden="true"></canvas><svg id="flv" aria-hidden="true"></svg><svg id="trkv" aria-hidden="true"></svg><div id="twm" hidden></div><div id="wx"></div><svg id="ov"></svg></div><div id="pop" class="pop" hidden></div><div id="twl" hidden></div><div id="flb" class="flb" hidden role="alert" aria-live="assertive" title="แตะเพื่อย่อเป็นไอคอน TERRAIN"></div><button type="button" id="flic" class="flic" hidden aria-label="แสดงคำเตือนภูมิประเทศ (FLTA)" title="แตะเพื่อแสดงคำเตือนเต็ม">TERRAIN</button>
 <div id="uib" hidden><button class="b s" id="uis" type="button" aria-label="แสดงเมนูกลับ">☰ เมนู</button><button class="b s" id="uiu" type="button" aria-label="ย้อนกลับ" disabled></button><button class="b s" id="uir" type="button" aria-label="ทำซ้ำ" disabled></button><button class="b s" id="uix" type="button" aria-label="ออกจากเต็มจอ">✕</button></div><div class="mc"><div class="mr"><button class="b s" id="zi" aria-label="ขยาย">+</button><button class="b s" id="zo" aria-label="ย่อ">−</button><button class="b s" id="fit">พอดีเส้นทาง</button><button class="b s" id="rl" aria-label="ไม้บรรทัดวัดระยะ">ไม้บรรทัด</button><button class="b s" id="mlbtn" type="button" aria-pressed="false" title="แสดงตำแหน่งของเครื่องนี้บนแผนที่ (ใช้ GPS)">📍 ตำแหน่งฉัน</button><div class="dd" id="fidd"><button class="b s ddb" id="fib" type="button" title="เครื่องวัดการบิน">Flight INST. ▾</button><div class="ddm" hidden><button class="b s" id="navbtn" type="button" aria-pressed="false" title="แสดง/ซ่อนเครื่องวัด RMI">RMI</button><button class="b s" id="hsibtn" type="button" aria-pressed="false" title="แสดง/ซ่อนเครื่องวัด HSI (ต้นแบบ)">HSI</button><button class="b s" id="nlbtn" type="button" aria-pressed="false" title="แสดง/ซ่อนตาราง FMS">FMS</button><button class="b s" id="simbtn" type="button" aria-pressed="false" title="จำลองการบิน (SIM)">SIM</button></div></div><button class="b s navst sb" id="navgo" type="button" title="NAV: แตะเพื่อเข้า Standby · STBY: แตะเพื่อ NAV ไปยังจุดแรกของเส้นทาง Active (หรือกลับไปจุดเดิม)">STBY</button><button class="b s" id="rzl" type="button" title="หมุนแผนที่ทวนเข็ม 1° (กดค้างเพื่อหมุนต่อเนื่อง)" aria-label="หมุนแผนที่ทวนเข็มนาฬิกา 1 องศา">↺</button><button class="b s" id="rzn" type="button" title="กลับเป็นทิศเหนืออยู่ด้านบน (North up)" aria-label="กลับเป็น North up">N↑ 360°</button><button class="b s" id="rzr" type="button" title="หมุนแผนที่ตามเข็ม 1° (กดค้างเพื่อหมุนต่อเนื่อง)" aria-label="หมุนแผนที่ตามเข็มนาฬิกา 1 องศา">↻</button><button class="b s" id="fs" aria-label="เต็มจอ">⛶ เต็มจอ</button></div><div class="mr"><button class="b s" id="fpb">ชั้นข้อมูล</button><button class="b s" id="rfm" type="button" title="โหลดภาพแผนที่ใหม่ (ไม่ต้องรีโหลดหน้า)">⟳ รีเฟรชแผนที่</button><button class="b s" id="sfb" aria-label="แสดง/ซ่อนรูปแบบ SAR">ค้นหา (SAR)</button><button class="b s" id="mb" aria-label="แสดง/ซ่อนข้อมูลอากาศยาน">ข้อมูลอากาศยาน</button><button class="b s" id="sb" aria-label="แสดง/ซ่อนสรุปเส้นทาง Active">สรุปเส้นทาง Active</button><button class="b s" id="twb" type="button" title="ระบายสีภูมิประเทศเทียบกับความสูงบิน (TAWS) ตั้งค่าได้ในชั้นข้อมูล">⛰ TAWS</button><button class="b s" id="pfb" type="button" title="กราฟความสูงภูมิประเทศตามเส้นทาง Active">📈 กราฟความสูง</button><button class="b s" id="hun" disabled title="ย้อนกลับ (Undo)" aria-label="ย้อนกลับ"><span class="tx">ย้อนกลับ</span><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button class="b s" id="hre" disabled title="ทำซ้ำ (Redo)" aria-label="ทำซ้ำ"><span class="tx">ทำซ้ำ</span><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button><button class="b s" id="hui" type="button" title="ซ่อนปุ่ม/เมนูทั้งหมดบนหน้าจอ (มีปุ่ม ☰ เรียกกลับ)">ซ่อนเมนู</button></div></div>
 <div class="mc2"><div class="dd"><button class="b s ddb" type="button">จุดในเส้นทาง ▾</button><div class="ddm" hidden><button class="b s" id="fad" type="button">เพิ่มจุด</button><button class="b s" id="fsq" type="button">ค้นหาจุด</button></div></div>
 <div class="dd"><button class="b s ddb" type="button">เส้นทาง ▾</button><div class="ddm" hidden><button class="b s" data-g="rt-new" type="button">สร้างใหม่</button><button class="b s" data-g="rt-pts" type="button">จุดพิกัดในเส้นทาง</button><button class="b s" data-g="rt-list" type="button">รายการ</button></div></div>
@@ -1794,7 +1794,7 @@ function rulUi(){try{const x=M.rul.on&&crossMode();$("rlm").hidden=!x;$("rld").h
 $("rlun").value=RU;$("rlun").onchange=()=>{RU=$("rlun").value;try{localStorage.setItem("heliRulUnit",RU)}catch(e){}drawMap(false)};
 $("rlc").onclick=()=>{M.rul.pts=[];M.rul.fin=false;drawMap(false)};$("rlu").onclick=()=>{M.rul.pts.pop();drawMap(false)};
 addEventListener("keydown",e=>{if(e.key==="Escape"&&M.rul.on){if(M.rul.pts.length){M.rul.pts=[];M.rul.fin=false}else rulOn(false);drawMap(false)}});
-mp.addEventListener("contextmenu",e=>{if(!M.rul.on||e.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();const n=M.rul.pts.length;if(n>0&&!M.rul.fin&&!crossMode()){M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>2){M.rul.pts.pop();M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>0){M.rul.pts=[];M.rul.cur=null;M.rul.fin=false;$("rlt").textContent=rulF(0);drawMap(false)}else rulOn(false)});
+mp.addEventListener("contextmenu",e=>{if(!M.rul.on||e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();const n=M.rul.pts.length;if(n>0&&!M.rul.fin&&!crossMode()){M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>2){M.rul.pts.pop();M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>0){M.rul.pts=[];M.rul.cur=null;M.rul.fin=false;$("rlt").textContent=rulF(0);drawMap(false)}else rulOn(false)});
 $("rulb").addEventListener("wheel",e=>e.stopPropagation());
 mp.addEventListener("pointerleave",()=>{M.hov=null;M.rul.cur=null;if(!dr)drawMap(false)});
 function addAt(cx,cy){const ll=xy2ll(cx,cy);
@@ -1805,7 +1805,7 @@ function ptc(){const a=[...PT.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y
 ["gesturestart","gesturechange","gestureend"].forEach(t=>mp.addEventListener(t,e=>e.preventDefault()));
 mp.addEventListener("pointerup",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);PINCH=null}},true);
 mp.addEventListener("pointercancel",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);PINCH=null}},true);
-mp.addEventListener("pointerdown",e0=>{const e=RE(e0);if(e.button!==0)return;if(e.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();try{getSelection().removeAllRanges()}catch(x){}if(e.pointerType==="touch"){if(PT.size>=2)PT.clear();PT.set(e.pointerId,{x:e.clientX,y:e.clientY,rx:e0.clientX,ry:e0.clientY});
+mp.addEventListener("pointerdown",e0=>{const e=RE(e0);if(e.button!==0)return;if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();try{getSelection().removeAllRanges()}catch(x){}if(e.pointerType==="touch"){if(PT.size>=2)PT.clear();PT.set(e.pointerId,{x:e.clientX,y:e.clientY,rx:e0.clientX,ry:e0.clientY});
 if(PT.size===2){dr=null;if(M.drag){M.drag=null}PINCH=ptc();PINCH.la=PINCH.ang;PINCH.acc=0;PINCH.mode=null;try{mp.setPointerCapture(e.pointerId)}catch(x){}drawMap(false);return}}
 const rl=M.rul.on,mvm=M.mvi!=null,pe=rl?null:e.target.closest("[data-poi]"),lg=rl||mvm?null:e.target.closest("[data-leg]"),rg=rl||mvm?null:e.target.closest("[data-rp]");const ru=rl&&!crossMode()?e.target.closest("[data-rul]"):null;
 let mvd=false;if(mvm&&!rl){const r0=mp.getBoundingClientRect(),W0=mp.clientWidth,H0=mp.clientHeight,pv=calcData.valid[M.mvi];if(pv){const q=wp(pv.la,pv.lo,M.z);mvd=Math.hypot(q[0]-(M.cx-W0/2)-(e.clientX-r0.left),q[1]-(M.cy-H0/2)-(e.clientY-r0.top))<30}}
@@ -1830,7 +1830,7 @@ if(M.pickS){const ll=xy2ll(cx,cy);sarSet(M.pickS,ll[0],ll[1]);sarPick(null);retu
 if($("clk").checked||$("clk2").checked||$("clk3").checked){M.lt=null;addAt(cx,cy)}else toast("เปิด “Double click สร้าง” (จุดในเส้นทาง / จุดร่วม / จุดของฉัน) ในกล่องชั้นข้อมูลก่อน แล้วแตะพิกัดนี้เพื่อใส่พิกัดตรงเครื่องหมายบวก")}
 function curUpd(){rulUi();try{const c=$("cur"),x=$("xh");if(!c||!x)return;if(crossMode()){const r=mp.getBoundingClientRect(),ll=xy2ll(r.left+mp.clientWidth/2,r.top+mp.clientHeight/2),fm=$("fmt").value;c.textContent=fc(ll[0],true,fm)+"  "+fc(ll[1],false,fm)+(typeof curElevTxt==="function"?curElevTxt(ll[0],ll[1]):"");c.hidden=false;x.hidden=false;c.classList.add("tap");mp.classList.add("curon")}else{c.classList.remove("tap");mp.classList.remove("curon");x.hidden=true;if(!CURON)c.hidden=true}}catch(e){}}
 var CURON=(()=>{try{return localStorage.getItem("heliCur")!=="0"}catch(e){return true}})();
-mp.addEventListener("pointermove",e0=>{const e=RE(e0);try{if(crossMode())return;const c=$("cur");if(!CURON||e.target.closest(".mc,.mc2,.pnl,.fp,#msum,#mac,#acd,#acst,#cmenu,#ctm,#gpb,#rulb,#wxb,.pop")){c.hidden=true}else{const ll=xy2ll(e.clientX,e.clientY),fm=$("fmt").value;window.CURLL=ll;c.textContent=fc(ll[0],true,fm)+"  "+fc(ll[1],false,fm)+(typeof curElevTxt==="function"?curElevTxt(ll[0],ll[1]):"");c.hidden=false}}catch(x){}});
+mp.addEventListener("pointermove",e0=>{const e=RE(e0);try{if(crossMode())return;const c=$("cur");if(!CURON||e.target.closest(".fly-ui,.mc,.mc2,.pnl,.fp,#msum,#mac,#acd,#acst,#cmenu,#ctm,#gpb,#rulb,#wxb,.pop")){c.hidden=true}else{const ll=xy2ll(e.clientX,e.clientY),fm=$("fmt").value;window.CURLL=ll;c.textContent=fc(ll[0],true,fm)+"  "+fc(ll[1],false,fm)+(typeof curElevTxt==="function"?curElevTxt(ll[0],ll[1]):"");c.hidden=false}}catch(x){}});
 mp.addEventListener("pointerleave",()=>{if(!crossMode())$("cur").hidden=true});
 ["pointerdown","pointerup","pointermove","dblclick","wheel"].forEach(t=>$("cur").addEventListener(t,e=>e.stopPropagation()));$("cur").addEventListener("click",e=>{e.stopPropagation();curTap()});
 mp.addEventListener("pointermove",e0=>{const e=RE(e0);if(PT.has(e.pointerId)){PT.set(e.pointerId,{x:e.clientX,y:e.clientY,rx:e0.clientX,ry:e0.clientY});
@@ -1841,7 +1841,7 @@ if(!PINCH.mode){PINCH.acc+=da;const rr=c.d/PINCH.d;if(Math.abs(PINCH.acc)>=12)PI
 if(PINCH.mode==="rot"){if(da)setRot(RZ+da,true);return}
 if(PINCH.mode!=="zoom")return;
 const r=c.d/PINCH.d;if(r>=1.4){zoom(1,c.x,c.y);PINCH.d=c.d}else if(r<=1/1.4){zoom(-1,c.x,c.y);PINCH.d=c.d}else drawMap(false);return}}
-if(!dr){if(e.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm")){if(M.hov||M.rul.cur){M.hov=null;M.rul.cur=null;drawMap(false)}return}
+if(!dr){if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm")){if(M.hov||M.rul.cur){M.hov=null;M.rul.cur=null;drawMap(false)}return}
 const r=mp.getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};if(M.rul.on){if(!M.rul.fin)M.rul.cur=p}else return;
 if(!M.hr){M.hr=1;requestAnimationFrame(()=>{M.hr=0;drawMap(false)})}return}
 if(dr.mvd){dr.mv=Math.max(dr.mv,Math.hypot(e.clientX-dr.x,e.clientY-dr.y));if(dr.mv>=3){const r=mp.getBoundingClientRect();M.mdrag={x:e.clientX-r.left,y:e.clientY-r.top};if(!M.hr){M.hr=1;requestAnimationFrame(()=>{M.hr=0;drawMap(false)})}}return}
@@ -1884,7 +1884,7 @@ const bind=(id,d)=>{const b=$(id);b.addEventListener("pointerdown",e=>{e.stopPro
 bind("rzl",-1);bind("rzr",1);$("rzn").addEventListener("click",()=>{try{if(navRzn())return}catch(e){}setRot(0)});$("rzn").addEventListener("dblclick",e=>{e.preventDefault();try{NAVUP=false;TUP=false;RMODE=""}catch(x){}setRot(0,true)});["rzl","rzr"].forEach(id=>$(id).addEventListener("pointerdown",()=>{try{if(NAVON&&NAVUP)NAVUP=false;if(TUP)TUP=false}catch(e){}},true))})();
 /* กดเมาส์ขวาค้างแล้วลากซ้าย/ขวา = หมุนแผนที่ (เฉพาะโหมดเต็มจอ) */
 var RRD=null;
-mp.addEventListener("pointerdown",e=>{if(e.button!==2||e.pointerType==="touch"||!mp.classList.contains("full"))return;if(e.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;RRD={x:e.clientX,z:RZ,mv:0,raf:0};try{mp.setPointerCapture(e.pointerId)}catch(x){}},true);
+mp.addEventListener("pointerdown",e=>{if(e.button!==2||e.pointerType==="touch"||!mp.classList.contains("full"))return;if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;RRD={x:e.clientX,z:RZ,mv:0,raf:0};try{mp.setPointerCapture(e.pointerId)}catch(x){}},true);
 mp.addEventListener("pointermove",e=>{if(!RRD)return;if(!(e.buttons&2)){RRD=null;return}const dx=e.clientX-RRD.x;if(!RRD.mv&&Math.abs(dx)<4)return;RRD.mv=1;RRD.dx=dx;if(!RRD.raf)RRD.raf=requestAnimationFrame(()=>{if(!RRD)return;RRD.raf=0;setRot(RRD.z+RRD.dx*0.5,true)})},true);
 mp.addEventListener("pointerup",e=>{if(!RRD||e.button!==2)return;const R=RRD,m=R.mv;if(R.raf)cancelAnimationFrame(R.raf);if(m){setRot(R.z+R.dx*0.5,true);setRot(RZ)}try{mp.releasePointerCapture(e.pointerId)}catch(x){}R.up=1;
 if(!m&&R.ctx){const c=R.ctx;R.ctx=null;R.syn=1;try{c.t.dispatchEvent(new MouseEvent("contextmenu",{bubbles:true,cancelable:true,clientX:c.x,clientY:c.y,button:2}))}catch(x){}}
@@ -2425,10 +2425,10 @@ function popPlace(){const pe=$("pop"),full=mp.classList.contains("full");let y=f
 if(full){const mr=mp.getBoundingClientRect();["mac","msum"].forEach(id=>{const el=$(id);if(getComputedStyle(el).display==="none")return;const r=el.getBoundingClientRect();if(mr.right-r.right<24&&r.top-mr.top<mp.clientHeight/2)y=Math.max(y,r.bottom-mr.top+8)})}
 pe.style.left="auto";pe.style.right="8px";pe.style.top=y+"px";pe.style.maxHeight="calc(100% - "+(y+8)+"px)";pe.style.width=full?"250px":""}
 function tbPort(){try{return matchMedia("(orientation: portrait) and (hover: none) and (pointer: coarse) and (min-width: 621px)").matches}catch(e){return false}}
-function tbBottom(){try{const mr=mp.getBoundingClientRect();let b=0;document.querySelectorAll(".mc .mr,.mc2").forEach(e=>{if(e.offsetParent)b=Math.max(b,e.getBoundingClientRect().bottom-mr.top)});return b}catch(e){return 0}}
+function tbBottom(){try{const mr=mp.getBoundingClientRect();let b=0;document.querySelectorAll(".mc .mr,.mc2,#flyT").forEach(e=>{if(e.offsetParent)b=Math.max(b,e.getBoundingClientRect().bottom-mr.top)});return b}catch(e){return 0}}
 function tbTouch(){try{return matchMedia("(hover: none) and (pointer: coarse) and (min-width: 621px)").matches}catch(e){return false}}
 /* v4.4.1 b2: ทั้งแนวตั้งและแนวนอน (เดิมเฉพาะแนวตั้ง) */
-function topY(){try{if(mp.classList.contains("full")&&tbTouch())return Math.max(108,Math.round(tbBottom())+8);return 108}catch(e){return 108}}
+function topY(){try{if(mp.classList.contains("fly"))return Math.max(8,Math.round(tbBottom())+8);if(mp.classList.contains("full")&&tbTouch())return Math.max(108,Math.round(tbBottom())+8);return 108}catch(e){return 108}}
 function dock(){if(!mp.classList.contains("full"))return;try{lbTop()}catch(e){}let y=topY();{const m2=document.querySelector(".mc2");if(mp.clientWidth<=620&&m2)y=Math.max(y,m2.getBoundingClientRect().bottom-mp.getBoundingClientRect().top+8)}
 ["mac","msum"].forEach(id=>{const el=$(id),p=PNL[id];if(getComputedStyle(el).display==="none")return;if(p&&p.x!=null)return;
 el.style.left="auto";el.style.right="8px";el.style.bottom="auto";el.style.top=y+"px";y+=el.offsetHeight+8});{const el=$("mpt");if(el&&getComputedStyle(el).display!=="none"){const p=PNL.mpt;
@@ -2544,7 +2544,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.6.2 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.0 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -2906,7 +2906,7 @@ function pvToggle(){if(M.pvMove){pvMode(false);return}if(!sarPt("a")||!SAR.prev|
 function pvApply(){if(!PVD)return;PVD.r=0;if(!PVD.n)return;const f=$("fmt").value,A=PVD.A,B=PVD.B,d=PVD.n;
 $("s_ala").value=fc(A.la+d[0],true,f);$("s_alo").value=fc(A.lo+d[1],false,f);if(B){$("s_bla").value=fc(B.la+d[0],true,f);$("s_blo").value=fc(B.lo+d[1],false,f)}
 SAR.hide=false;M.touched=true;sarUpd()}
-mp.addEventListener("pointerdown",e0=>{if(!M.pvMove||e0.button!==0)return;if(e0.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;
+mp.addEventListener("pointerdown",e0=>{if(!M.pvMove||e0.button!==0)return;if(e0.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;
 const e=RE(e0),A=sarPt("a");if(!A){pvMode(false);return}e0.stopImmediatePropagation();e0.preventDefault();
 PVD={id:e0.pointerId,s:xy2ll(e.clientX,e.clientY),A,B:SP[$("sp").value].b?sarPt("b"):null,n:null,r:0};M.touched=true;try{mp.setPointerCapture(e0.pointerId)}catch(x){}},true);
 mp.addEventListener("pointermove",e0=>{if(!PVD||e0.pointerId!==PVD.id)return;e0.stopImmediatePropagation();const e=RE(e0),ll=xy2ll(e.clientX,e.clientY);PVD.n=[ll[0]-PVD.s[0],ll[1]-PVD.s[1]];if(!PVD.r)PVD.r=requestAnimationFrame(pvApply)},true);
@@ -3055,7 +3055,7 @@ if(t.k==="ro"){const r=roFind(t.src,t.name);if(r){r.pts=b.map(q=>({...q,la:q.la+
 const x=SAR.list.find(y=>y.n===t.name);if(!x)return;x.a=b.a.map(a=>({...a,c:a.c.map(q=>({...q,la:q.la+dl,lo:q.lo+dn}))}));if(b.ds)x.ds={la:b.ds.la+dl,lo:b.ds.lo+dn};if(b.de)x.de={la:b.de.la+dl,lo:b.de.lo+dn};drawMap(false)}
 function smMode(on){M.selMove=!!on;mp.style.cursor=on?"move":"";try{if(SEL)selRender()}catch(x){}}
 function smToggle(){if(M.selMove){smMode(false);return}if(!SEL||!["act","ro","sa"].includes(SEL.k)){return}if(M.pvMove)pvMode(false);smMode(true);toast("กดเมาส์ค้างแล้วลากบนแผนที่เพื่อย้าย ปล่อยเมาส์เมื่อได้ตำแหน่ง · กด “↩ ย้อนกลับ” เพื่อคืนตำแหน่งเดิม")}
-mp.addEventListener("pointerdown",e0=>{if(!M.selMove||e0.button!==0||!SEL)return;if(e0.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;
+mp.addEventListener("pointerdown",e0=>{if(!M.selMove||e0.button!==0||!SEL)return;if(e0.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;
 const e=RE(e0),b=smGet(SEL);if(!b){smMode(false);return}e0.stopImmediatePropagation();e0.preventDefault();
 SMD={id:e0.pointerId,t:{...SEL},s:xy2ll(e.clientX,e.clientY),b,n:null,r:0};M.touched=true;try{mp.setPointerCapture(e0.pointerId)}catch(x){}},true);
 function smFrame(){if(!SMD)return;SMD.r=0;if(SMD.n)smApply(SMD.t,SMD.b,SMD.n[0],SMD.n[1])}
@@ -3146,7 +3146,7 @@ var LBX={r:"",s:""};
 var LBD={r:{id:"lbr",body:"lbrb"},s:{id:"lbs",body:"lbsb"},a:{id:"lba",body:"lbab"}};
 function lbRows(k){return k==="r"?store().map(r=>({src:"route",name:r.name,r,info:r.pts.length+" จุด"+(r.at?" · "+new Date(r.at).toLocaleString("th-TH"):"")+(r.pend?" · รอส่งขึ้นชีต":"")})):
 srStore().map(r=>({src:"sar",name:r.name,r,info:((SP[r.p]?SP[r.p].n:(r.p||""))?(SP[r.p]?SP[r.p].n:r.p)+" · ":"")+r.pts.length+" จุด"+(r.pend?" · รอส่งขึ้นชีต":"")}))}
-function lbTop(){const m2=document.querySelector(".mc2");if(!m2||!mp.classList.contains("full"))return;const mr=mp.getBoundingClientRect(),b=tbPort()?tbBottom():m2.getBoundingClientRect().bottom-mr.top;if(isFinite(b))mp.style.setProperty("--lbt",Math.max(56,Math.round(b+8))+"px");/* v4.5.0 b2: กล่องชั้นข้อมูล/รายการอยู่ใต้แถวปุ่มทั้งแนวตั้งและแนวนอนบนจอสัมผัส (เดิมเฉพาะแนวตั้ง) */if(tbTouch()){const tb=tbBottom();if(isFinite(tb))mp.style.setProperty("--tbb",Math.max(108,Math.round(tb+8))+"px")}}
+function lbTop(){const m2=document.querySelector(".mc2");if(!m2||!mp.classList.contains("full"))return;const mr=mp.getBoundingClientRect(),fly=mp.classList.contains("fly"),b=(tbPort()||fly)?tbBottom():m2.getBoundingClientRect().bottom-mr.top;if(isFinite(b))mp.style.setProperty("--lbt",Math.max(56,Math.round(b+8))+"px");/* v4.5.0 b2: กล่องชั้นข้อมูล/รายการอยู่ใต้แถวปุ่มทั้งแนวตั้งและแนวนอนบนจอสัมผัส (เดิมเฉพาะแนวตั้ง) */if(tbTouch()||fly){const tb=tbBottom();if(isFinite(tb))mp.style.setProperty("--tbb",Math.max(108,Math.round(tb+8))+"px")}}
 function lbOpen(k){try{lbTop()}catch(e){}const el=$(LBD[k].id);el.classList.add("on");el.style.zIndex=++PZ;lbRender(k);
 if(k==="r"&&rtOn())rtLoad(false);else if(k==="s"&&skOn())skLoad("route",false);else if(k==="a"&&skOn())skLoad("area",false)}
 function lbAll(){try{["r","s","a"].forEach(k=>{if($(LBD[k].id).classList.contains("on"))lbRender(k)})}catch(e){}try{lbHome()}catch(e){}try{selRender()}catch(e){}}
@@ -3536,7 +3536,7 @@ function edMode(on){M.roEd=null;if(on&&SEL&&SEL.k==="ro"){M.roEd={key:selKey(SEL
 function edHandles(z,ox,oy){if(!M.roEd)return"";const r=roFind(M.roEd.src,M.roEd.name);if(!r||r.hid)return"";let h="";r.pts.forEach((q,i)=>{const w=wp(q.la,q.lo,z);h+=`<circle cx="${(w[0]-ox).toFixed(1)}" cy="${(w[1]-oy).toFixed(1)}" r="9" fill="#fff" stroke="#ff6f00" stroke-width="3"/>`});return h}
 function edSnap(r){return r.pts.map(q=>({...q}))}
 function edFirst(r){const k=selKey({k:"ro",src:r.src,name:r.name});if(!(SMV&&SMV.key===k&&r.mvd))SMV={key:k,orig:edSnap(r)}}
-mp.addEventListener("pointerdown",e0=>{if(!M.roEd||e0.button!==0)return;if(e0.target.closest(".mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;
+mp.addEventListener("pointerdown",e0=>{if(!M.roEd||e0.button!==0)return;if(e0.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;
 const r=roFind(M.roEd.src,M.roEd.name);if(!r||r.hid)return;const e=RE(e0),z=M.z,ll=xy2ll(e.clientX,e.clientY),c=wp(ll[0],ll[1],z),P=r.pts.map(q=>wp(q.la,q.lo,z));
 let bi=-1,bd=24;P.forEach((q,i)=>{const d=Math.hypot(q[0]-c[0],q[1]-c[1]);if(d<bd){bd=d;bi=i}});
 let ins=-1,it=0;if(bi<0){let sd=14;for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1],dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy;if(!L2)continue;let t=((c[0]-a[0])*dx+(c[1]-a[1])*dy)/L2;t=Math.max(0,Math.min(1,t));const d=Math.hypot(a[0]+t*dx-c[0],a[1]+t*dy-c[1]);if(d<sd){sd=d;ins=i;it=t}}}
@@ -4224,6 +4224,7 @@ function twsDraw(W,H,ox,oy,z,L,T){const cv=$("tws"),lg=$("twl");if(!cv)return;
 {const m=$("twm"),h=PRF.hl;if(m){if(h){const p=wp(h.la,h.lo,z);m.style.left=(p[0]-(ox-L))+"px";m.style.top=(p[1]-(oy-T))+"px";m.hidden=false}else m.hidden=true}}
 prfUpd();
 if(typeof flDraw==="function")try{flDraw(ox,oy,z,L,T)}catch(e){}
+if(typeof trkDraw==="function")try{trkDraw(ox,oy,z,L,T)}catch(e){}
 if(!TW.on){cv.style.display="none";if(lg)lg.hidden=true;return}
 const S=3,PAD=192,ref=twRef();
 cv.style.display="block";
@@ -4369,9 +4370,9 @@ if(!TW.fl||st==="off"){b.hidden=true;if(ic)ic.hidden=true;FL.min=false;return}
 const sev=FLSEV[st]||0;if(FL.min){if(sev>FL.minSev)FL.min=false;else FL.minSev=Math.min(FL.minSev,sev)}
 if(!b.onclick)b.onclick=e=>{if(e.target.closest("#flmute"))return;FL.min=true;FL.minSev=FLSEV[FL.st]||0;flUi()};
 if(ic&&!ic.onclick)ic.onclick=e=>{e.stopPropagation();FL.min=false;flUi()};
-if(FL.min&&ic){b.hidden=true;ic.className="flic fl-"+st;ic.hidden=false;let bt=34;try{const mr=mp.getBoundingClientRect();["navbox","msel"].forEach(id=>{const e=$(id);if(e&&!e.hidden&&e.getClientRects().length){const r=e.getBoundingClientRect();if(r.right>mr.right-100&&r.bottom>mr.bottom-160)bt=Math.max(bt,mr.bottom-r.top+8)}});const at=mp.querySelector(".at");if(at&&at.getClientRects().length)bt=Math.max(bt,at.getBoundingClientRect().height+8)}catch(e){}ic.style.bottom=bt+"px";return}
+if(FL.min&&ic){b.hidden=true;ic.className="flic fl-"+st;ic.hidden=false;let bt=34;try{const mr=mp.getBoundingClientRect();["navbox","msel"].forEach(id=>{const e=$(id);if(e&&!e.hidden&&e.getClientRects().length){const r=e.getBoundingClientRect();if(r.right>mr.right-100&&r.bottom>mr.bottom-160)bt=Math.max(bt,mr.bottom-r.top+8)}});const at=mp.querySelector(".at");if(at&&at.getClientRects().length)bt=Math.max(bt,at.getBoundingClientRect().height+8)}catch(e){}{const fy=mp.classList.contains("fly");ic.style.bottom=(bt+(fy?(parseFloat(getComputedStyle(mp).getPropertyValue("--flyb"))||0):0))+"px";ic.style.right=fy?"96px":""}return}
 if(ic)ic.hidden=true;
-let top=48;try{const mr=mp.getBoundingClientRect();document.querySelectorAll(".mc .mr>*,.mc2>*").forEach(e=>{if(e.getClientRects().length){const r=e.getBoundingClientRect();if(r.top-mr.top<mp.clientHeight/2)top=Math.max(top,r.bottom-mr.top+6)}})}catch(e){}
+let top=48;try{const mr=mp.getBoundingClientRect();document.querySelectorAll(".mc .mr>*,.mc2>*,#flyT>*").forEach(e=>{if(e.getClientRects().length){const r=e.getBoundingClientRect();if(r.top-mr.top<mp.clientHeight/2)top=Math.max(top,r.bottom-mr.top+6)}})}catch(e){}
 b.style.top=top+"px";b.className="flb fl-"+st;b.hidden=false;
 const alt=FL.ref?(fnum(FL.ref.ft)+" ft"+(FL.ref.g?" GPS":" (ตั้งเอง)")):"";
 let h="";
@@ -4402,7 +4403,7 @@ flSync();FL.tm=setInterval(()=>{try{flTick()}catch(e){}},1000);
 try{if(window.speechSynthesis)speechSynthesis.getVoices()}catch(e){}})();
 </script>
 <script id="pwa">
-/* PWA (v4.6.2; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.7.0; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
@@ -4613,6 +4614,203 @@ window.omOpenMapTaws=function(){open();if(!OK||ST.busy)return;var cur=(typeof LA
 function bind(){["offb"].forEach(function(id){var b=document.getElementById(id);if(b)b.onclick=open})}
 bind();
 if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}},4000);
+})();
+</script>
+<style id="flycss">
+/* v4.7.0 โหมดบิน */
+#trkv{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}
+#map.fly .mc,#map.fly .mc2,#map.fly #uib{display:none!important}
+.fly-ui[hidden]{display:none!important}
+#flyT,#flyB,#flyZ,#flyR,.flyo{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;font-family:system-ui,-apple-system,sans-serif}
+#flyT{position:absolute;left:0;right:0;top:0;z-index:30;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:#111;border-bottom:1px solid #555}
+#flyT button{height:66px;min-width:0;margin:0;background:#1c1c1c;color:#f2f2f2;border:0;border-right:1px solid #333;border-bottom:1px solid #333;border-radius:0;font:600 13px/1.1 system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:2px;cursor:pointer}
+#flyT button .i{font-size:24px;line-height:1;font-weight:700}#flyT button .l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#flyT button:active{background:#3a3a3a}#flyT button.on{background:#0d47a1;color:#fff}#flyT button.rec{background:#b71c1c;color:#fff}#flyT button:disabled{color:#666}
+#flyB{position:absolute;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1.7fr repeat(5,minmax(0,1fr));background:#111;color:#fff;border-top:1px solid #555}
+#flyB>div{padding:4px 8px 6px;border-right:1px solid #333;min-width:0}#flyB small{display:block;color:#aaa;font:500 12px/1.2 system-ui,sans-serif}
+#flyB b{display:block;font:700 26px/1.15 system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}#flyB .fw b{color:#ffd54f;font-size:22px;line-height:1.36}
+#flyZ{position:absolute;right:10px;bottom:calc(var(--flyb,72px) + 40px);z-index:29;display:flex;flex-direction:column;gap:12px}
+#flyZ button{width:70px;height:70px;border-radius:12px;border:1px solid #666;background:rgba(24,24,24,.88);color:#ffd54f;font:700 38px/1 system-ui,sans-serif;cursor:pointer;padding:0}#flyZ button:active{background:#444}
+#flyR{position:absolute;left:8px;top:8px;z-index:31;width:64px;height:64px;border-radius:12px;border:1px solid #666;background:rgba(24,24,24,.88);color:#fff;font:700 30px/1 system-ui,sans-serif;cursor:pointer}
+.flyo{position:absolute;left:0;right:0;top:var(--flyt,66px);bottom:var(--flyb,72px);z-index:40;background:rgba(10,10,10,.95);color:#fff;overflow:auto;-webkit-overflow-scrolling:touch}
+.flyo .foh{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #444;position:sticky;top:0;background:#111;font-size:18px}
+.flyo .foh button{width:56px;height:56px;border-radius:10px;border:1px solid #666;background:#222;color:#fff;font-size:24px;cursor:pointer}
+.flyo .fom{padding:18px 14px;color:#bbb;font-size:17px}
+.flyo .fog{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+.flyo .fog button{min-height:92px;border-radius:12px;border:1px solid #555;background:#1e1e1e;color:#fff;font:600 19px/1.25 system-ui,sans-serif;cursor:pointer;padding:8px}
+.flyo .fog button.on{background:#0d47a1;border-color:#64b5f6}.flyo .fog button.rec{background:#b71c1c;border-color:#ef9a9a}.flyo .fog button.x{background:#3a1c1c;border-color:#a55}
+.flyo .for{display:flex;width:100%;min-height:66px;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;border:0;border-bottom:1px solid #333;background:transparent;color:#fff;text-align:left;cursor:pointer}
+.flyo .for.on{background:#0d47a1}.flyo .for .fn{font:600 21px/1.2 system-ui,sans-serif}.flyo .for .fd{font:500 17px system-ui,sans-serif;color:#ffd54f;white-space:nowrap}
+.flyo .fok{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #333}.flyo .fki{flex:1;min-width:0}.flyo .fki b{display:block;font-size:17px}.flyo .fki small{color:#aaa;font-size:14px}.flyo .rd{color:#ef5350}
+.flyo .fok button{min-width:72px;height:56px;border-radius:10px;border:1px solid #666;background:#222;color:#fff;font-size:16px;cursor:pointer}.flyo .fok button.on{background:#0d47a1}.flyo .fok button.d{background:#3a1c1c;border-color:#a55}
+#map.fly .at{bottom:var(--flyb,72px)}
+#map.fly #navbox,#map.fly #navlog{bottom:calc(var(--flyb,72px) + 36px)}
+#map.fly #rulb{bottom:calc(var(--flyb,72px) + 64px)}
+#map.fly #gpb{bottom:calc(var(--flyb,72px) + 110px)}
+#map.fly #wxb{bottom:calc(var(--flyb,72px) + 30px)}
+#map.fly #acst{bottom:calc(var(--flyb,72px) + 22px)}
+#map.fly #acd{bottom:calc(var(--flyb,72px) + 56px)}
+#map.fly #twl{bottom:calc(var(--flyb,72px) + 26px)}
+#map.fly #mprof{bottom:calc(var(--flyb,72px) + 28px)}
+#map.fly #simbox{top:calc(var(--flyt,66px) + 8px)}
+body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+</style>
+<script id="flymode">
+/* ===== v4.7.0: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
+(function(){
+const $f=id=>document.getElementById(id);
+const FT=1/0.3048,KT=1.943844;
+const isFly=()=>mp.classList.contains("fly");
+function p2(x){return String(x).padStart(2,"0")}
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+
+/* ---------- บันทึก Track ---------- */
+const TK=window.TK={on:false,cur:null,man:false,lastT:0,saveT:0,slow0:0,warned:false,
+ cfg:Object.assign({iv:5,show:true},lsGet("heliTrkCfg",{})),vis:{},P:null};
+if(![1,5,10,30].includes(+TK.cfg.iv))TK.cfg.iv=5;
+function tkIdx(){const a=lsGet("heliTrkIdx",[]);return Array.isArray(a)?a:[]}
+function tkSaveCfg(){lsSet("heliTrkCfg",TK.cfg)}
+function tkDist(P){let d=0;for(let i=1;i<P.length;i++)d+=leg({la:P[i-1][1],lo:P[i-1][2]},{la:P[i][1],lo:P[i][2]}).d;return d}
+function tkName(t){const d=new Date(t);return"Track "+d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())+" "+p2(d.getHours())+":"+p2(d.getMinutes())}
+function tkSave(force){const c=TK.cur;if(!c)return;const now=Date.now();if(!force&&now-TK.saveT<10000)return;TK.saveT=now;
+ const ok=lsSet("heliTrk_"+c.id,{pts:c.pts});
+ const idx=tkIdx().filter(x=>x.id!==c.id);const P=c.pts;idx.unshift({id:c.id,name:c.name,st:c.id,en:P.length?c.id+P[P.length-1][0]*1000:c.id,n:P.length,d:+tkDist(P).toFixed(2)});
+ const ok2=lsSet("heliTrkIdx",idx);lsSet("heliTrkCur",TK.on?c.id:null);
+ if((!ok||!ok2)&&!TK.warned){TK.warned=true;toast("พื้นที่เก็บในเครื่องเต็ม — ส่งออก GPX แล้วลบ Track เก่าออก (Track นี้ยังบันทึกต่อในหน่วยความจำ)")}}
+function tkStart(auto){if(TK.on)return;const id=Date.now();TK.cur={id,name:tkName(id),pts:[]};TK.on=true;TK.man=false;TK.lastT=0;TK.warned=false;tkAdd(true);tkSave(true);
+ toast((auto?"เริ่มบันทึก Track อัตโนมัติ (ความเร็วเกิน 20 kt)":"เริ่มบันทึก Track")+" · เก็บจุดทุก "+TK.cfg.iv+" วินาที");flyUi()}
+function tkStop(){if(!TK.on)return;tkAdd(true);TK.on=false;TK.man=true;tkSave(true);lsSet("heliTrkCur",null);
+ const c=TK.cur;toast("หยุดบันทึก Track · "+c.pts.length+" จุด · "+tkDist(c.pts).toFixed(1)+" NM");flyUi()}
+function tkFresh(){return MLP&&MLP.on&&MLP.la!=null&&MLP.t&&Date.now()-MLP.t<10000}
+function tkAdd(force){const c=TK.cur;if(!c||!tkFresh())return false;const now=Date.now(),P=c.pts,last=P[P.length-1];
+ if(last){const mv=leg({la:last[1],lo:last[2]},{la:MLP.la,lo:MLP.lo}).d*1852;if(!force&&mv<10&&now-TK.lastT<60000)return false}
+ P.push([Math.round((now-c.id)/1000),+MLP.la.toFixed(6),+MLP.lo.toFixed(6),MLP.alt!=null?Math.round(MLP.alt):null,MLP.sp!=null?Math.round(MLP.sp*KT):null]);
+ TK.lastT=now;tkSave(false);tkDrawLast();return true}
+function tkTick(){try{if(!tkFresh())return;const kt=(MLP.sp||0)*KT,now=Date.now();
+ if(TK.man){if(kt<5){if(!TK.slow0)TK.slow0=now;else if(now-TK.slow0>120000){TK.man=false;TK.slow0=0}}else TK.slow0=0}
+ if(!TK.on&&!TK.man&&kt>=20)tkStart(true);
+ if(TK.on&&now-TK.lastT>=TK.cfg.iv*1000-50)tkAdd(false)}catch(e){}}
+window.tkTick=tkTick;window.tkStart=tkStart;window.tkStop=tkStop;window.tkSave=tkSave;
+/* กลับมาบันทึกต่อหลังปิด/รีโหลดแอป (ถ้าจุดล่าสุดไม่เกิน 30 นาที) */
+(function(){const id=lsGet("heliTrkCur",null);if(!id)return;const d=lsGet("heliTrk_"+id,null),x=tkIdx().find(q=>q.id===id);if(!d||!x){lsSet("heliTrkCur",null);return}
+ const P=d.pts||[],lastAbs=P.length?id+P[P.length-1][0]*1000:id;if(Date.now()-lastAbs<30*60000){TK.cur={id,name:x.name,pts:P};TK.on=true;TK.lastT=lastAbs}else lsSet("heliTrkCur",null)})();
+setInterval(tkTick,1000);
+addEventListener("pagehide",()=>tkSave(true));document.addEventListener("visibilitychange",()=>{if(document.hidden)tkSave(true)});
+function tkLoad(id){if(TK.cur&&TK.cur.id===id)return TK.cur.pts;const d=lsGet("heliTrk_"+id,null);return d&&d.pts||[]}
+function tkGpx(id){const x=tkIdx().find(q=>q.id===id)||(TK.cur&&TK.cur.id===id?{id,name:TK.cur.name}:null);if(!x)return null;const P=tkLoad(id);
+ const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.0" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
+ P.forEach(p=>{g+='<trkpt lat="'+p[1]+'" lon="'+p[2]+'">'+(p[3]!=null?"<ele>"+p[3]+"</ele>":"")+"<time>"+new Date(id+p[0]*1000).toISOString()+"</time></trkpt>\n"});
+ return g+"</trkseg></trk>\n</gpx>\n"}
+window.tkGpx=tkGpx;
+async function tkExport(id){const x=tkIdx().find(q=>q.id===id);const g=tkGpx(id);if(!g)return;const fn=(x?x.name:"track").replace(/[\\\/:*?"<>|]+/g,"_")+".gpx";
+ let ok=false;try{ok=await saveFile(fn,g,"application/gpx+xml")}catch(e){}toast(ok?"สร้างไฟล์ "+fn+" แล้ว":"ส่งออกไม่สำเร็จ")}
+function tkDel(id){if(TK.on&&TK.cur&&TK.cur.id===id){toast("หยุดบันทึกก่อนจึงลบ Track นี้ได้");return}try{localStorage.removeItem("heliTrk_"+id)}catch(e){}lsSet("heliTrkIdx",tkIdx().filter(q=>q.id!==id));delete TK.vis[id];if(TK.cur&&TK.cur.id===id)TK.cur=null;drawMap(false)}
+/* วาดเส้น Track (svg #trkv ใต้สามเหลี่ยมเฮลิคอปเตอร์) เรียกจาก twsDraw */
+function trkPoly(P,ox,oy,z,L,T){let s="",lx=null,ly=null;for(let i=0;i<P.length;i++){const q=wp(P[i][1],P[i][2],z),x=q[0]-(ox-L),y=q[1]-(oy-T);if(i&&i<P.length-1&&Math.abs(x-lx)<2&&Math.abs(y-ly)<2)continue;s+=x.toFixed(1)+","+y.toFixed(1)+" ";lx=x;ly=y}return s}
+function trkDraw(ox,oy,z,L,T){TK.P=[ox,oy,z,L,T];const sv=$f("trkv");if(!sv)return;let s="";
+ if(TK.cfg.show){const ln=(P,c)=>{if(P.length<2)return"";const pp=trkPoly(P,ox,oy,z,L,T);return`<polyline points="${pp}" fill="none" stroke="#fff" stroke-width="6" stroke-opacity=".7" stroke-linejoin="round" stroke-linecap="round"/><polyline points="${pp}" fill="none" stroke="${c}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>`};
+  Object.keys(TK.vis).forEach(id=>{if(TK.vis[id]&&!(TK.cur&&TK.on&&String(TK.cur.id)===id))s+=ln(tkLoad(+id),"#9c27b0")});
+  if(TK.cur&&TK.on)s+=ln(TK.cur.pts.concat(tkFresh()?[[0,MLP.la,MLP.lo]]:[]),"#e040fb")}
+ if(sv.innerHTML!==s)sv.innerHTML=s}
+window.trkDraw=trkDraw;
+function tkDrawLast(){if(TK.P)try{trkDraw(...TK.P)}catch(e){}}
+
+/* ---------- โหมดบิน ---------- */
+const BT=[["prev","◀","NAV ก่อนหน้า"],["dto","D→","Direct to"],["next","▶","NAV ถัดไป"],["rot","N↑","North up"],["lay","☰","ชั้นข้อมูล"],["menu","▦","Menu"],
+ ["edit","✎","แก้เส้นทาง"],["rul","📏","ไม้บรรทัด"],["me","◎","ตำแหน่งฉัน"],["rec","●","REC Track"],["taws","⛰","TAWS"],["hide","⇱","ซ่อนเมนู"]];
+const host=mp;
+const T=document.createElement("div");T.id="flyT";T.className="fly-ui";T.hidden=true;
+T.innerHTML=BT.map(b=>`<button type="button" data-fk="${b[0]}" aria-label="${b[2]}"><span class="i">${b[1]}</span><span class="l">${b[2]}</span></button>`).join("");
+const B=document.createElement("div");B.id="flyB";B.className="fly-ui";B.hidden=true;
+B.innerHTML=`<div class="fw"><small>NAV ไปยัง</small><b id="fbN">—</b></div><div><small>DIS NM</small><b id="fbD">-</b></div><div><small>BRG</small><b id="fbB">-</b></div><div><small>TRK</small><b id="fbT">-</b></div><div><small>GS kt</small><b id="fbG">-</b></div><div><small>ETE</small><b id="fbE">-</b></div>`;
+const Z=document.createElement("div");Z.id="flyZ";Z.className="fly-ui";Z.hidden=true;Z.innerHTML=`<button type="button" data-fk="zi" aria-label="ขยาย">+</button><button type="button" data-fk="zo" aria-label="ย่อ">−</button>`;
+const R=document.createElement("button");R.id="flyR";R.type="button";R.className="fly-ui";R.hidden=true;R.setAttribute("aria-label","แสดงเมนูโหมดบิน");R.textContent="☰";
+const MN=document.createElement("div");MN.id="flyM";MN.className="fly-ui flyo";MN.hidden=true;
+const DL=document.createElement("div");DL.id="flyD";DL.className="fly-ui flyo";DL.hidden=true;
+const KL=document.createElement("div");KL.id="flyK";KL.className="fly-ui flyo";KL.hidden=true;
+[T,B,Z,R,MN,DL,KL].forEach(e=>host.appendChild(e));
+["pointerdown","pointerup","click","dblclick","touchstart","touchend","wheel","contextmenu","mousedown"].forEach(ev=>[T,B,Z,R,MN,DL,KL].forEach(e=>e.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu"||ev==="dblclick")x.preventDefault()},ev==="wheel"?{passive:true}:false)));
+function setVars(){const t=T.hidden?0:T.offsetHeight,b=B.hidden?0:B.offsetHeight;mp.style.setProperty("--flyt",t+"px");mp.style.setProperty("--flyb",b+"px")}
+function closeO(except){[MN,DL,KL].forEach(o=>{if(o!==except)o.hidden=true})}
+function flyOn(){if(!mp.classList.contains("full"))fsToggle();if(mp.classList.contains("uih"))try{$f("uis").click()}catch(e){}
+ mp.classList.add("fly");document.body.classList.add("flying");mp.classList.remove("flyh");T.hidden=B.hidden=Z.hidden=false;R.hidden=true;lsSet("heliFly",1);setVars();flyUi();
+ setTimeout(()=>{if(mp.classList.contains("uih"))try{$f("uis").click()}catch(e){}setVars();try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}drawMap(false)},0)}
+function flyOff(){mp.classList.remove("fly","flyh");document.body.classList.remove("flying");[T,B,Z,R,MN,DL,KL].forEach(e=>e.hidden=true);lsSet("heliFly",0);setVars();/* กลับสู่หน้าจอเต็มจอตามปกติ (ซ่อนเมนู เหลือแถบ ☰ เมนู) */if(mp.classList.contains("full")&&!mp.classList.contains("uih"))try{$f("hui").click()}catch(e){}setTimeout(()=>{try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}drawMap(false)},0)}
+function flyHide(h){mp.classList.toggle("flyh",h);T.hidden=Z.hidden=h;R.hidden=!h;closeO();setVars();setTimeout(()=>{try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}},0)}
+window.flyOn=flyOn;window.flyOff=flyOff;
+new MutationObserver(()=>{if(isFly()&&!mp.classList.contains("full"))flyOff()}).observe(mp,{attributes:true,attributeFilter:["class"]});
+function rotUp(){try{return NAVON?NAVUP:TUP}catch(e){return false}}
+function flyUi(){if(!isFly())return;const q=k=>T.querySelector(`[data-fk="${k}"]`);
+ const up=rotUp(),rb=q("rot");rb.querySelector(".i").textContent=up?(RMODE==="H"?"HDG↑":"TRK↑"):"N↑";rb.querySelector(".l").textContent=up?(RMODE==="H"?"Heading up":"Track up"):"North up";rb.classList.toggle("on",up);
+ q("rec").classList.toggle("rec",TK.on);q("rec").querySelector(".l").textContent=TK.on?"REC ●":"REC Track";
+ q("rul").classList.toggle("on",!!(M.rul&&M.rul.on));q("taws").classList.toggle("on",!!TW.on);
+ const fp=$f("fp");q("lay").classList.toggle("on",!!(fp&&!fp.hidden));
+ let L={b:[],k:-1};try{L=navList()}catch(e){}q("prev").disabled=!(L.k>0);q("next").disabled=!(L.k>=0&&L.k<L.b.length-1);q("dto").classList.toggle("on",!!DT);
+ /* แถบตัวเลข */
+ const s=dtPos(),gs=MLP.sp!=null&&MLP.on?MLP.sp*KT:null,tr=navTR();let n="—",d="-",br="-",ete="-";
+ if(DT&&s){const l=leg(s,DT.t);n=DT.t.n||"จุด";d=l.d.toFixed(l.d<10?1:0);br=bt(l.brg);if(gs!=null&&gs>=3){const sec=Math.round(l.d/gs*3600);ete=sec>=3600?Math.floor(sec/3600)+":"+p2(Math.floor(sec%3600/60))+" ชม.":p2(Math.floor(sec/60))+":"+p2(sec%60)}}
+ else if(!DT)n="STBY";
+ $f("fbN").textContent=n;$f("fbD").textContent=d;$f("fbB").textContent=br;$f("fbT").textContent=tr!=null?bt(tr):"-";$f("fbG").textContent=gs!=null?Math.round(gs):"-";$f("fbE").textContent=ete;
+ if(!MN.hidden)menuRender()}
+window.flyUi=flyUi;setInterval(()=>{try{flyUi()}catch(e){}},1000);
+function needPos(){if(dtAvail())return true;toast("ต้องเปิดตำแหน่งฉัน (GPS) หรือ SIM ก่อน");return false}
+function dtoItems(){const f=$("fmt").value;let o=[];try{if(DT&&DT.orig&&DT.orig.length)o=DT.orig.filter(q=>q.name||q.lat||q.lon).map((q,i)=>{const ll=dtLL(q,f);return ll&&{n:q.name||"จุด",la:ll.la,lo:ll.lo,ov:q,no:i+1}}).filter(Boolean);else o=calcData.valid.map((p,i)=>({n:p.name||"จุด",la:p.la,lo:p.lo,vi:i,no:i+1})).filter(x=>x.n!=="MY POS")}catch(e){}return o}
+function dtoRender(){const s=dtPos(),items=dtoItems();DL._it=items;
+ let h=`<div class="foh"><b>Direct to — เลือกจุดในเส้นทาง</b><button type="button" data-fx="1" aria-label="ปิด">✕</button></div>`;
+ if(!items.length)h+=`<div class="fom">ยังไม่มีเส้นทาง Active</div>`;
+ items.forEach((o,j)=>{const l=s?leg(s,o):null,cur=DT&&DT.t&&Math.abs(DT.t.la-o.la)<1e-6&&Math.abs(DT.t.lo-o.lo)<1e-6;
+  h+=`<button type="button" class="for${cur?" on":""}" data-dv="${j}"><span class="fn">${o.no}. ${esc(o.n)}</span><span class="fd">${l?bt(l.brg)+" · "+l.d.toFixed(1)+" NM":""}</span></button>`});
+ DL.innerHTML=h}
+function tkRender(){const idx=tkIdx();let h=`<div class="foh"><b>Track ที่บันทึก</b><button type="button" data-fx="1" aria-label="ปิด">✕</button></div>`;
+ if(!idx.length)h+=`<div class="fom">ยังไม่มี Track — กด REC หรือบินเร็วเกิน 20 kt เพื่อเริ่มบันทึกอัตโนมัติ</div>`;
+ idx.forEach(x=>{const rec=TK.on&&TK.cur&&TK.cur.id===x.id,v=!!TK.vis[x.id];const dur=Math.round((x.en-x.st)/60000);
+  h+=`<div class="fok"><div class="fki"><b>${esc(x.name)}${rec?' <span class="rd">● กำลังบันทึก</span>':""}</b><small>${x.n} จุด · ${(+x.d).toFixed(1)} NM · ${Math.floor(dur/60)} ชม. ${p2(dur%60)} น.</small></div>
+  <button type="button" data-kg="${x.id}">GPX</button><button type="button" data-kv="${x.id}" class="${v||rec?"on":""}">${rec?"แสดงอยู่":v?"ซ่อน":"แสดง"}</button><button type="button" data-kd="${x.id}" class="d">ลบ</button></div>`});
+ KL.innerHTML=h}
+function menuRender(){const t=[["rec",TK.on?"■ หยุดบันทึก Track":"● บันทึก Track",TK.on?"rec":""],["trk","🗂 Track ที่บันทึก / GPX",""],["iv","⏱ เก็บจุดทุก "+TK.cfg.iv+" วินาที",""],["show",TK.cfg.show?"〰 เส้น Track: แสดง":"〰 เส้น Track: ซ่อน",TK.cfg.show?"on":""],
+ ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],
+ ["fl","⚠ FLTA",TW.fl?"on":""],["prf","📈 กราฟความสูง",TW.pf?"on":""],["exit","✕ ออกจากโหมดบิน","x"]];
+ const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="ปิด">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div>`;
+ if(MN.innerHTML!==h)MN.innerHTML=h}
+function HSIc(){try{return HSION?"on":""}catch(e){return""}}
+function act(k){switch(k){
+ case"prev":case"next":{let L={b:[],k:-1};try{L=navList()}catch(e){}if(!DT){toast("ยังไม่ได้ NAV — กด D→ เพื่อเลือกจุด");break}navStep(k==="next"?1:-1,true);break}
+ case"dto":closeO(DL);if(!DL.hidden){DL.hidden=true;break}dtoRender();DL.hidden=false;break;
+ case"rot":$f("rzn").click();break;
+ case"lay":closeO();$f("fpb").click();setTimeout(()=>{try{lbTop()}catch(e){}},0);break;
+ case"menu":closeO(MN);MN.hidden=!MN.hidden;if(!MN.hidden)menuRender();break;
+ case"edit":closeO();try{menuAct("rt-pts")}catch(e){}break;
+ case"rul":closeO();$f("rl").click();break;
+ case"me":if(!MLP.on){if(SIM&&SIM.on){gpsCenter();break}$f("mlbtn").click()}else gpsCenter();break;
+ case"rec":TK.on?tkStop():tkStart(false);break;
+ case"taws":$f("twb").click();break;
+ case"hide":flyHide(true);break;
+ case"zi":$f("zi").click();break;case"zo":$f("zo").click();break}
+ setTimeout(flyUi,0)}
+T.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b&&!b.disabled)act(b.dataset.fk)});
+Z.addEventListener("click",e=>{const b=e.target.closest("[data-fk]");if(b)act(b.dataset.fk)});
+R.addEventListener("click",()=>flyHide(false));
+DL.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){DL.hidden=true;return}const r=e.target.closest("[data-dv]");if(!r)return;if(!needPos())return;const o=(DL._it||[])[+r.dataset.dv];if(!o)return;try{if(o.ov)directTo("",o.ov);else directTo("R:"+o.vi)}catch(x){}DL.hidden=true;setTimeout(flyUi,0)});
+KL.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){KL.hidden=true;return}let b;
+ if((b=e.target.closest("[data-kg]")))tkExport(+b.dataset.kg);
+ else if((b=e.target.closest("[data-kv]"))){const id=+b.dataset.kv;if(!(TK.on&&TK.cur&&TK.cur.id===id)){TK.vis[id]=!TK.vis[id];if(TK.vis[id]&&!TK.cfg.show){TK.cfg.show=true;tkSaveCfg()}drawMap(false)}tkRender()}
+ else if((b=e.target.closest("[data-kd]"))){if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="ยืนยันลบ?";setTimeout(()=>{if(b.isConnected){b.dataset.sure="";b.textContent="ลบ"}},3000);return}tkDel(+b.dataset.kd);tkRender()}});
+MN.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){MN.hidden=true;return}const b=e.target.closest("[data-fm]");if(!b)return;const k=b.dataset.fm;
+ if(k==="rec")TK.on?tkStop():tkStart(false);
+ else if(k==="trk"){MN.hidden=true;tkRender();KL.hidden=false;return}
+ else if(k==="iv"){const a=[1,5,10,30];TK.cfg.iv=a[(a.indexOf(+TK.cfg.iv)+1)%a.length];tkSaveCfg();toast("เก็บจุด Track ทุก "+TK.cfg.iv+" วินาที")}
+ else if(k==="show"){TK.cfg.show=!TK.cfg.show;tkSaveCfg();drawMap(false)}
+ else if(k==="hsi")$f("hsibtn").click();else if(k==="fms")$f("nlbtn").click();else if(k==="rmi")$f("navbtn").click();else if(k==="sim")$f("simbtn").click();
+ else if(k==="fl")flSet({fl:!TW.fl});else if(k==="prf")$f("pfb").click();
+ else if(k==="exit"){flyOff();return}
+ setTimeout(()=>{menuRender();flyUi()},0)});
+addEventListener("resize",()=>{if(isFly())setTimeout(()=>{setVars();try{dock();lbTop()}catch(e){}},50)});
+/* ปุ่มเข้าโหมดบินในแถบเครื่องมือปกติ */
+/* อยู่ในเมนู Flight INST. ▾ (ไม่เพิ่มความกว้างแถวปุ่ม) */{const sb=$f("simbtn");if(sb){const b=document.createElement("button");b.className="b s";b.id="flyon";b.type="button";b.title="โหมดบิน: ปุ่มใหญ่สำหรับใช้ขณะบิน (iPad)";b.textContent="✈ โหมดบิน";sb.after(b);b.onclick=()=>flyOn()}}
+{const ub=$f("uib"),us=$f("uis");if(ub&&us){const b=document.createElement("button");b.className="b s";b.id="flyon2";b.type="button";b.title="โหมดบิน: ปุ่มใหญ่สำหรับใช้ขณะบิน";b.textContent="✈ โหมดบิน";us.after(b);b.onclick=()=>flyOn()}}
+if(lsGet("heliFly",0)===1)setTimeout(()=>{try{flyOn()}catch(e){}},400);
 })();
 </script>
 </body>
