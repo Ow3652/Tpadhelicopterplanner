@@ -1,4 +1,4 @@
-// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.6) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
+// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.7) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
 // ตำแหน่งเครื่องจำลองผ่าน MLP · รัน: node tests/t4700.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8773 เอง ตั้ง SHOT=1 เพื่อบันทึกภาพไว้ใน /tmp)
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
 const ROOT=path.resolve(__dirname,'..');
@@ -26,7 +26,7 @@ const u2=await p.evaluate(()=>{const b=$('flyon2');return b&&b.getClientRects().
 t('T1 เต็มจอที่ซ่อนเมนูอยู่: มีปุ่ม "✈ โหมดบิน" ในแถบเล็ก ☰ เมนู',u2>0,u2);
 await p.tap('#flyon2');await W(600);
 const EN=await p.evaluate(()=>[...document.querySelectorAll('#flyT button,#flyZ button,#flyR')].map(e=>e.textContent.trim()));
-t('T2 b ชื่อปุ่มโหมดบินเป็นภาษาอังกฤษ: Prev WP, Next WP, NAV, Coords, Rec Route (ไม่มี Edit route/Prev NAV ในแถบบน)',EN.every(x=>!/[\u0E00-\u0E7F]/.test(x))&&['Prev WP','Next WP','Coords','Route','My position'].every(k=>EN.some(x=>x.includes(k)))&&!EN.some(x=>/REC Track|Rec Route|Prev NAV|Next NAV/.test(x)),EN.join(' | '));
+t('T2 b ชื่อปุ่มโหมดบินเป็นภาษาอังกฤษ: Prev WP, Next WP, NAV, Coords, Rec Route (ไม่มี Edit route/Prev NAV ในแถบบน)',EN.every(x=>!/[\u0E00-\u0E7F]/.test(x.replace('พิกัด','')))&&['Prev WP','Next WP','พิกัด','Route','My position'].every(k=>EN.some(x=>x.includes(k)))&&!EN.some(x=>/REC Track|Rec Route|Prev NAV|Next NAV/.test(x)),EN.join(' | '));
 const ic=await p.evaluate(()=>{const g=k=>document.querySelector(`#flyT [data-fk="${k}"]`);return{nav:!g('nav').querySelector('.l'),navT:g('nav').querySelector('.i').textContent,dto:!g('dto').querySelector('.l')&&g('dto').getAttribute('aria-label')==='Direct to'&&g('dto').textContent.trim()==='D→',me:g('me').querySelector('.i').textContent.charCodeAt(0)===0x2708&&getComputedStyle(g('me').querySelector('.i')).color==='rgb(255, 255, 255)'}});
 t('T2 d v4.7.3 NAV แสดงแค่สถานะ · D→ เฉพาะสัญลักษณ์ · My position ไอคอนเครื่องบินสีขาว',ic.nav&&/^(NAV|STBY)$/.test(ic.navT)&&ic.dto&&ic.me,ic);
 t('T2 c v4.7.2 แถบบนไม่มี Edit route และ North up (North up อยู่เหนือปุ่มซูม)',await p.evaluate(()=>!document.querySelector('#flyT [data-fk="edit"]')&&!document.querySelector('#flyT [data-fk="rot"]')&&(()=>{const r=document.querySelector('#flyZ [data-fk="rot"]').getBoundingClientRect(),z=document.querySelector('#flyZ [data-fk="zi"]').getBoundingClientRect();return r.bottom<=z.top&&Math.abs(r.left-z.left)<2&&r.height>=64})()));
@@ -249,5 +249,30 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   const dm=await p.evaluate(()=>__dm);await TE('touchEnd',[]);await W(450);return{z0,z1:await p.evaluate(()=>M.z),mid,dm,tf:await p.evaluate(()=>$('rot').style.transform)}};
  const pi=await pin(200,360),po=await pin(400,180);
  t('T27 g ซูมสองนิ้วต่อเนื่อง: ระหว่างถ่าง/หุบ ย่อ/ขยายทั้งชั้นด้วย transform (ไม่วาดใหม่ทุกครั้งที่ขยับ) ยกนิ้วแล้วเข้าระดับซูมใกล้สุด (×1.8 → +1, ×0.45 → −1)',/scale\(1\.[2-9]/.test(pi.mid||'')&&pi.dm<=3&&pi.z1===pi.z0+1&&!pi.tf&&/scale\(0\.[5-9]/.test(po.mid||'')&&po.z1===po.z0-1&&!po.tf,{pi,po})}
+// v4.7.7: ปุ่ม พิกัด · Aircraft (ชื่อ + ปุ่มปิด) · เมนู Marks / Download map/TAWS / Manual · ปุ่ม MARK สร้างจุดจากตำแหน่งปัจจุบัน
+{const W=n=>p.waitForTimeout(n);
+ const a=await p.evaluate(()=>({co:document.querySelector('#flyT [data-fk="coord"]').textContent.trim(),mb:$('mb').textContent.trim(),ph:document.querySelector('#mac .ph b').textContent,h2:document.querySelector('#acard h2').textContent,old:document.documentElement.innerHTML.includes('>ข้อมูลอากาศยาน<')}));
+ t('T28 v4.7.7 ปุ่ม Coords เป็น "พิกัด" · กล่อง/ปุ่ม ข้อมูลอากาศยาน เปลี่ยนเป็น Aircraft',/พิกัด$/.test(a.co)&&a.mb==='Aircraft'&&a.ph==='Aircraft'&&a.h2==='Aircraft'&&!a.old,a);
+ await p.evaluate(()=>{if(!M.mac)$('mb').click()});await W(300);const x0=await p.evaluate(()=>{const b=$('macx').getBoundingClientRect();return{w:b.width,h:b.height}});await p.tap('#macx');await W(300);
+ const x1=await p.evaluate(()=>({mac:M.mac,d:getComputedStyle($('mac')).display}));
+ t('T28 b โหมดบิน: กล่อง Aircraft มีปุ่ม ✕ (≥ 44 px) แตะแล้วปิดกล่อง',x0.w>=44&&x0.h>=44&&!x1.mac&&x1.d==='none',{x0,x1});
+ await p.evaluate(()=>{DB.MK.length=0;localStorage.removeItem('heliMarks');localStorage.removeItem('heliMarkN');window.__mlp={on:MLP.on,la:MLP.la,lo:MLP.lo};MLP.on=false});
+ await p.tap('#flyZ [data-fk="mark"]');await W(200);const m0=await p.evaluate(()=>DB.MK.length);
+ await p.evaluate(()=>{MLP.on=true;MLP.la=13.9;MLP.lo=100.6});await p.tap('#flyZ [data-fk="mark"]');await W(150);await p.evaluate(()=>{MLP.la=14.0});await p.tap('#flyZ [data-fk="mark"]');await W(200);
+ const m1=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),mk=g(document.querySelector('#flyZ [data-fk="mark"]')),un=g(document.querySelector('#flyZ [data-fk="un"]'));return{n:DB.MK.map(x=>x.n),la:DB.MK.map(x=>x.la),ls:JSON.parse(localStorage.getItem('heliMarks')||'[]').length,above:mk.bottom<=un.top,sz:mk.width>=56&&mk.height>=56,chip:!!$('c_MK')&&$('c_MK').checked,cnt:$('cn_MK').textContent}});
+ t('T28 c ปุ่ม MARK (เหนือ Undo, ≥ 56 px) สร้าง Mark 1, Mark 2 ตามลำดับที่ตำแหน่งปัจจุบัน เก็บในเครื่อง · ไม่มีตำแหน่งไม่สร้าง',m0===0&&m1.n.join()==='Mark 1,Mark 2'&&m1.la.join()==='13.9,14'&&m1.ls===2&&m1.above&&m1.sz&&m1.chip&&m1.cnt==='2',{m0,m1});
+ await p.tap('#flyT [data-fk="menu"]');await W(200);const mt=await p.evaluate(()=>[...document.querySelectorAll('#flyM [data-fm]')].map(b=>b.dataset.fm+':'+b.textContent));
+ t('T28 d Menu มี Marks / Download map/TAWS / Manual',['mk:🚩 Marks (2)','dl:📥 Download map/TAWS','man:📖 Manual'].every(k=>mt.includes(k)),mt);
+ await p.tap('[data-fm="mk"]');await W(200);await p.fill('#flyMk [data-mn="0"]','LZ ALPHA');await p.press('#flyMk [data-mn="0"]','Enter');await W(150);
+ await p.tap('#flyMk [data-mx="1"]');await W(100);const n1=await p.evaluate(()=>DB.MK.length);await p.tap('#flyMk [data-mx="1"]');await W(200);
+ const r=await p.evaluate(()=>({n:DB.MK.map(x=>x.n),ls:JSON.parse(localStorage.getItem('heliMarks')).map(x=>x.n)}));await p.tap('#flyMk [data-fx]');
+ await p.evaluate(()=>{MLP.la=14.1});await p.tap('#flyZ [data-fk="mark"]');await W(200);const nx=await p.evaluate(()=>DB.MK.map(x=>x.n).join());
+ const sr=await p.evaluate(async()=>{const i=document.querySelector('#mpt .pt input.nm')||null;return DB.MK.some(x=>x.n==='LZ ALPHA')});
+ t('T28 e หน้าต่าง Marks: เปลี่ยนชื่อ · ลบต้องแตะยืนยัน 2 ครั้ง · Mark ถัดไปนับต่อ (Mark 3)',n1===2&&r.n.join()==='LZ ALPHA'&&r.ls.join()==='LZ ALPHA'&&nx==='LZ ALPHA,Mark 3'&&sr,{n1,r,nx});
+ await p.evaluate(()=>{window.__dl=0;$('twdl').addEventListener('click',()=>window.__dl++,true)});await p.tap('#flyT [data-fk="menu"]');await W(200);await p.tap('[data-fm="dl"]');await W(300);
+ const dl=await p.evaluate(()=>({n:__dl,omd:!!$('omd')&&!$('omd').hidden}));await p.evaluate(()=>{if($('omd'))$('omd').hidden=true});
+ await p.tap('#flyT [data-fk="menu"]');await W(200);await p.tap('[data-fm="man"]');await W(400);const mn=await p.evaluate(()=>{const v=$('mnv'),f=v&&v.querySelector('iframe');return{open:!!v,src:f?f.getAttribute('src'):''}});await p.evaluate(()=>{const x=$('mnx');if(x)x.click()});
+ t('T28 f Menu → Download map/TAWS เปิดหน้าต่างดาวน์โหลด · Menu → Manual เปิดคู่มือในกรอบซ้อน (docs/manual.html)',dl.n===1&&dl.omd&&mn.open&&mn.src==='docs/manual.html',{dl,mn});
+ await p.evaluate(()=>{DB.MK.length=0;localStorage.removeItem('heliMarks');localStorage.removeItem('heliMarkN');MLP.on=__mlp.on;MLP.la=__mlp.la;MLP.lo=__mlp.lo;drawMap(false)})}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
