@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.5</title>
 <meta name="theme-color" content="#0f6c78">
@@ -4680,6 +4681,9 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 #flyRec{position:absolute;left:10px;top:calc(var(--flyt,66px) + 10px);z-index:29;height:44px;padding:0 14px;border-radius:22px;border:2px solid #fff;background:#c62828;color:#fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .flyo .fiv{display:flex;align-items:center;gap:6px;font-size:14px;color:#ccc;margin-left:auto;margin-right:10px}.flyo .fiv button{width:auto;min-width:52px;height:48px;font-size:15px;padding:0 8px}.flyo .fiv button.on{background:#0d47a1;border-color:#64b5f6}
 body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+/* v4.7.5 b2: หลายอุปกรณ์ — ข้อความบนแผนที่ในโหมดบินขอบหนาขึ้น อ่านง่ายบนแผนที่สีเข้ม · บรรทัดข้อมูลจอในเมนู */
+#map.fly .lt,#map.fly .ml,#map.fly .pl{stroke-width:3.2px}
+.flyo .fom.fdi{font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#888;padding:6px 14px 14px}
 </style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.5: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
@@ -4726,7 +4730,7 @@ addEventListener("pagehide",()=>tkSave(true));document.addEventListener("visibil
 function tkLoad(id){if(TK.cur&&TK.cur.id===id)return TK.cur.pts;const d=lsGet("heliTrk_"+id,null);return d&&d.pts||[]}
 function tkGpx(id){const x=tkIdx().find(q=>q.id===id)||(TK.cur&&TK.cur.id===id?{id,name:TK.cur.name}:null);if(!x)return null;const P=tkLoad(id);
  const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
- let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.5" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
+ let g='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tpad Helicopter Planner v4.7.0" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>'+e(x.name)+'</name><trkseg>\n';
  P.forEach(p=>{g+='<trkpt lat="'+p[1]+'" lon="'+p[2]+'">'+(p[3]!=null?"<ele>"+p[3]+"</ele>":"")+"<time>"+new Date(id+p[0]*1000).toISOString()+"</time></trkpt>\n"});
  return g+"</trkseg></trk>\n</gpx>\n"}
 window.tkGpx=tkGpx;
@@ -4803,8 +4807,8 @@ function tkRender(){const idx=tkIdx();let h=`<div class="foh"><b>Tracks</b><span
  KL.innerHTML=h}
 function menuRender(){const t=[["rec",TK.on?"■ Stop track":"● Record track",TK.on?"rec":""],["trk","🗂 Tracks / GPX",""],["ac","✈ Aircraft",M.mac?"on":""],["gps","📍 GPS / Position",MLP.on?"on":""],["sum","📋 Summary",M.sum?"on":""],["show",TK.cfg.show?"〰 Track line: On":"〰 Track line: Off",TK.cfg.show?"on":""],
  ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],
- ["fl","⚠ FLTA",TW.fl?"on":""],["prf","📈 Terrain profile",TW.pf?"on":""],["exit","✕ Exit flight mode","x"]];
- const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div>`;
+ ["fl","⚠ FLTA",TW.fl?"on":""],["prf","📈 Terrain profile",TW.pf?"on":""],["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["exit","✕ Exit flight mode","x"]];
+ const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div><div class="fom fdi">${esc(fitInfo())}</div>`;
  if(MN.innerHTML!==h)MN.innerHTML=h}
 /* v4.7.3: หน้าต่างตำแหน่งฉัน (GPS) — ใช้ตำแหน่ง · ตามตำแหน่ง · เข็มทิศเครื่อง · กลางแผนที่ (ตัวเดียวกับเมนู 📍 ตำแหน่งฉัน ของหน้าจอปกติ) */
 function gpsRender(){let cp=false;try{cp=!!CPON}catch(e){}const fo=!!($f("mlf")&&$f("mlf").checked),fx=MLP.on&&MLP.la!=null;
@@ -4854,6 +4858,7 @@ MN.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){MN.hidden=true
  else if(k==="show"){TK.cfg.show=!TK.cfg.show;tkSaveCfg();drawMap(false)}
  else if(k==="hsi")$f("hsibtn").click();else if(k==="fms")$f("nlbtn").click();else if(k==="rmi")$f("navbtn").click();else if(k==="sim")$f("simbtn").click();
  else if(k==="fl")flSet({fl:!TW.fl});else if(k==="prf")$f("pfb").click();
+ else if(k==="fit"){const L=[100,96,92,88,84];FIT.k=L[(L.indexOf(FIT.k)+1)%L.length];try{localStorage.setItem("heliFit",String(FIT.k))}catch(e){}fitApply()}
  else if(k==="exit"){flyOff();return}
  setTimeout(()=>{menuRender();flyUi()},0)});
 addEventListener("resize",()=>{if(isFly())setTimeout(()=>{setVars();try{dock();lbTop()}catch(e){}},50)});
@@ -4872,6 +4877,31 @@ addEventListener("resize",()=>{if(isFly())setTimeout(()=>{setVars();try{dock();l
  U.addEventListener("click",()=>{try{kyOpen()}catch(e){}});
  window.ubUpd=function(){let n="",k=false;try{k=!!myKey();n=myOn()&&MYDIAG.u?MYDIAG.u:""}catch(e){}U.textContent=n?"👤 "+n:(k?"👤 …":"🔑 Sign in");U.classList.toggle("in",!!n)};
  ubUpd();setInterval(ubUpd,3000)}
+
+/* v4.7.5 b2: หลายอุปกรณ์ — ให้แผนที่เต็มจอ/โหมดบินพอดีส่วนที่มองเห็นจริง
+   (Android บางเครื่อง/บางเบราว์เซอร์ขยายหน้า หรือแถบของเบราว์เซอร์บังขอบล่าง → ใช้ visualViewport)
+   + ตั้ง "Screen fit" เองต่อเครื่อง (localStorage heliFit) สำหรับเครื่องที่เบราว์เซอร์ไม่บอกขนาดจริง */
+var FIT={k:100,busy:false};
+{let v=100;try{v=+localStorage.getItem("heliFit")||100}catch(e){}FIT.k=[100,96,92,88,84].includes(v)?v:100}
+function fitInfo(){const v=window.visualViewport,r=x=>Math.round(x);let dk=false;try{dk=matchMedia("(prefers-color-scheme:dark)").matches}catch(e){}
+ const ua=navigator.userAgent,br=/SamsungBrowser/.test(ua)?"Samsung Internet":/CriOS|Chrome/.test(ua)?"Chrome":/Safari/.test(ua)?"Safari":"other";
+ return `Screen ${r(innerWidth)}×${r(innerHeight)}`+(v?` · view ${r(v.width)}×${r(v.height)} ×${(v.scale||1).toFixed(2)}`:"")+` · DPR ${(devicePixelRatio||1).toFixed(2)} · ${dk?"dark":"light"} · ${br} · fit ${FIT.k}%`}
+function fitApply(){if(FIT.busy)return;const S=mp.style,P=["left","top","width","height","right","bottom"];
+ const clr=()=>{if(S.width||S.height){P.forEach(p=>S.removeProperty(p));return true}return false};let ch=false;
+ if(!mp.classList.contains("full"))ch=clr();
+ else{const v=window.visualViewport;let x=0,y=0,w=innerWidth,h=innerHeight,vv=false;
+  if(v&&((v.scale||1)>1.01||v.width<innerWidth-2||v.height<innerHeight-2)){x=v.offsetLeft;y=v.offsetTop;w=v.width;h=v.height;vv=true}
+  if(!vv&&FIT.k===100)ch=clr();
+  else{w=Math.floor(w*FIT.k/100);h=Math.floor(h*FIT.k/100);const nv={left:x+"px",top:y+"px",width:w+"px",height:h+"px",right:"auto",bottom:"auto"};
+   P.forEach(p=>{if(S.getPropertyValue(p)!==nv[p]){S.setProperty(p,nv[p],"important");ch=true}})}}
+ if(ch){FIT.busy=true;try{dispatchEvent(new Event("resize"))}catch(e){}FIT.busy=false;try{if(isFly())setVars();drawMap(false)}catch(e){}}}
+window.fitApply=fitApply;window.fitInfo=fitInfo;
+{let tm=0;const q=()=>{clearTimeout(tm);tm=setTimeout(fitApply,60)};
+ addEventListener("resize",()=>{if(!FIT.busy)q()});addEventListener("orientationchange",q);
+ if(window.visualViewport){visualViewport.addEventListener("resize",q);visualViewport.addEventListener("scroll",q)}
+ new MutationObserver(q).observe(mp,{attributes:true,attributeFilter:["class"]});setTimeout(fitApply,500)}
+/* Samsung Internet โหมดมืดจะเปลี่ยนสีแผนที่และตัวหนังสือทับธีมของแอป → แนะนำครั้งเดียว */
+setTimeout(()=>{try{if(/SamsungBrowser/.test(navigator.userAgent)&&matchMedia("(prefers-color-scheme:dark)").matches&&!localStorage.getItem("heliSbTip")){localStorage.setItem("heliSbTip","1");toast("Samsung Internet โหมดมืดเปลี่ยนสีแผนที่/ตัวหนังสือ — ปิดได้ที่ ☰ เมนูของเบราว์เซอร์ → โหมดมืด (หรือเปิดด้วย Chrome)")}}catch(e){}},2500)
 })();
 </script>
 </body>
