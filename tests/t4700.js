@@ -1,4 +1,4 @@
-// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.4) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
+// ทดสอบโหมดบิน + บันทึก Track (v4.7.0–4.7.5) Playwright/Chromium จำลอง iPad แนวตั้ง (ไม่ใช่ iPad/GPS จริง)
 // ตำแหน่งเครื่องจำลองผ่าน MLP · รัน: node tests/t4700.js (เปิดเซิร์ฟเวอร์ชั่วคราวพอร์ต 8773 เอง ตั้ง SHOT=1 เพื่อบันทึกภาพไว้ใน /tmp)
 const {chromium,devices}=require('playwright');const fs=require('fs');const path=require('path');const http=require('http');const os=require('os');
 const ROOT=path.resolve(__dirname,'..');
@@ -169,9 +169,10 @@ await p.setViewportSize({width:1080,height:810});await p.evaluate(()=>flyOn());a
 const ls=await p.evaluate(()=>{const bt=[...document.querySelectorAll('#flyT button')].map(e=>e.getBoundingClientRect());return{n:bt.length,ok:bt.every(r=>r.height>=60&&r.right<=innerWidth+1)}});
 t('T19 iPad แนวนอน: ปุ่มโหมดบินครบ ไม่ล้นจอ',ls.n===12&&ls.ok,ls);
 // v4.7.4: หน้าแรก (ใช้ ?start=auto เพราะเครื่องทดสอบอัตโนมัติปิดพฤติกรรมนี้ไว้)
-const sc=async(opt)=>{const c=await b.newContext(opt);await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();await q.goto('http://localhost:8773/?start=auto');await q.waitForTimeout(1500);const o=await q.evaluate(()=>({full:mp.classList.contains('full'),fly:mp.classList.contains('fly')}));await c.close();return o};
+const sc=async(opt)=>{const c=await b.newContext(opt);await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();await q.goto('http://localhost:8773/?start=auto');await q.waitForTimeout(1500);const o=await q.evaluate(()=>({full:mp.classList.contains('full'),fly:mp.classList.contains('fly'),ky:!$('kyd').hidden,ub:$('ubadge').getClientRects().length>0?$('ubadge').textContent:''}));await c.close();return o};
 const sPC=await sc({viewport:{width:1366,height:800}}),sPad=await sc({viewport:{width:810,height:1080},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'}),sPh=await sc({viewport:{width:440,height:956},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'});
 t('T21 v4.7.4 เปิดแอป: PC = แผนที่เต็มจอ · iPad และ iPhone = โหมดบิน',sPC.full&&!sPC.fly&&sPad.fly&&sPh.fly,{sPC,sPad,sPh});
+t('T21 b v4.7.5 เปิดเพจโดยยังไม่มีรหัส: ขึ้นกล่องใส่รหัส (popup) ทั้ง PC/iPad/iPhone และมีป้าย Sign in มุมล่างซ้าย',[sPC,sPad,sPh].every(x=>x.ky&&/Sign in/.test(x.ub)),{sPC,sPad,sPh});
 // v4.7.4: iPhone 17 Pro Max แนวตั้ง (440×956) หน้าจอกะทัดรัด
 {const c=await b.newContext({viewport:{width:440,height:956},deviceScaleFactor:3,isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'});await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();await q.goto('http://localhost:8773/');await q.waitForTimeout(1200);
  const ip=await q.evaluate(async()=>{MLP.on=true;MLP.la=13.98;MLP.lo=100.25;MLP.hd=60;MLP.sp=123/1.943844;MLP.t=Date.now();flyOn();await new Promise(r=>setTimeout(r,600));flyUi();const W=innerWidth;const cut=e=>e.scrollWidth>e.clientWidth+1;
@@ -179,6 +180,16 @@ t('T21 v4.7.4 เปิดแอป: PC = แผนที่เต็มจอ �
   const cols=new Set([...document.querySelectorAll('#flyB>div')].map(e=>Math.round(e.getBoundingClientRect().left))).size;
   return{sw:document.documentElement.scrollWidth,W,labCut:labs.filter(cut).map(e=>e.textContent),valCut:vals.filter(cut).map(e=>e.textContent),btnH:Math.min(...bt.map(r=>r.height)),inside:bt.every(r=>r.right<=W+1),cols,zoom:[...document.querySelectorAll('#flyZ button')].every(e=>e.getBoundingClientRect().right<=W)}});
  t('T22 v4.7.4 iPhone 17 Pro Max แนวตั้ง: ไม่ล้นจอ ชื่อปุ่ม/ตัวเลขไม่ถูกตัด ปุ่มสูง ≥ 52 px แถบตัวเลข 3 คอลัมน์',ip.sw<=ip.W&&!ip.labCut.length&&!ip.valCut.length&&ip.btnH>=52&&ip.inside&&ip.cols===3&&ip.zoom,ip);
+ t('T22 b v4.7.5 viewport ไม่ให้ iOS ซูมเองเมื่อแตะช่องกรอก (maximum-scale=1) และช่องรหัสตัวอักษร ≥ 16 px',await q.evaluate(()=>/maximum-scale=1/.test(document.querySelector('meta[name=viewport]').content)&&parseFloat(getComputedStyle($('kyi')).fontSize)>=16));
+ await q.tap('#flyT [data-fk="lay"]');await q.waitForTimeout(400);
+ const fpI=await q.evaluate(()=>{const r=$('fp').getBoundingClientRect(),T=$('flyT').getBoundingClientRect(),x=$('fpx').getBoundingClientRect(),top=document.elementFromPoint(x.left+x.width/2,x.top+x.height/2);return{l:Math.round(r.left),r:Math.round(r.right),W:innerWidth,top:Math.round(r.top),tb:Math.round(T.bottom),xVis:x.width>0&&x.right<=innerWidth&&(top===$('fpx')||$('fpx').contains(top)),hs:$('fp').scrollWidth<=$('fp').clientWidth+1}});
+ t('T22 c v4.7.5 iPhone: กล่องชั้นข้อมูลอยู่ในจอ ใต้แถบบน ไม่เลื่อนแนวนอน และมีปุ่ม ✕ ที่แตะได้',fpI.l>=0&&fpI.r<=fpI.W&&fpI.top>=fpI.tb&&fpI.xVis&&fpI.hs,fpI);
+ await q.tap('#fpx');await q.waitForTimeout(200);t('T22 d v4.7.5 แตะ ✕ ปิดกล่องชั้นข้อมูล',await q.evaluate(()=>$('fp').hidden&&!document.querySelector('#flyT [data-fk="lay"]').classList.contains('on')));
+ await q.tap('#flyT [data-fk="hide"]');await q.waitForTimeout(200);const hr=await q.evaluate(()=>{const r=$('flyR').getBoundingClientRect();return{vis:!$('flyR').hidden,l:r.left,t:r.top,r:r.right,W:innerWidth}});
+ t('T22 e v4.7.5 iPhone: ซ่อนเมนูแล้วปุ่ม ☰ อยู่ในจอ',hr.vis&&hr.l>=0&&hr.t>=0&&hr.r<=hr.W,hr);await q.tap('#flyR');
  if(process.env.SHOT)await q.screenshot({path:'/tmp/t4700_iphone.png'});await c.close()}
+// v4.7.5: ป้ายชื่อผู้ใช้
+const ub=await p.evaluate(async()=>{const r={};r.vis=$('ubadge').getClientRects().length>0;const a=$('ubadge').getBoundingClientRect(),m=mp.getBoundingClientRect(),B=$('flyB').getBoundingClientRect();r.pos=a.left-m.left<20&&a.bottom<=B.top;localStorage.setItem('heliMyKey','demo');MYDIAG.u='นักบินทดสอบ';ubUpd();r.txt=$('ubadge').textContent;$('ubadge').click();await new Promise(x=>setTimeout(x,100));r.ky=!$('kyd').hidden;kyClose();localStorage.removeItem('heliMyKey');MYDIAG.u='';ubUpd();return r});
+t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ้าย (เหนือแถบตัวเลข) แสดงชื่อ · แตะเพื่อเปิดกล่องรหัส',ub.vis&&ub.pos&&/นักบินทดสอบ/.test(ub.txt)&&ub.ky,ub);
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
