@@ -4743,6 +4743,8 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #flyZ button.zme{flex-direction:column;gap:0;line-height:1}#flyZ button.zme .i{font-size:28px;color:#fff}#flyZ button.zme small{font:800 10px/1 system-ui,sans-serif;margin-top:3px;color:#fff}
 #flySar .sarh{padding:12px 14px 0;color:#ffd54f;font:700 17px system-ui,sans-serif}#flySar .fog button{min-height:64px}
 @media (max-width:600px){#flyZ button.zme .i{font-size:24px}#flyZ button.zme small{font-size:9px}}
+/* v4.7.7 b4: หน้าต่าง Route / TAWS */
+#flyPk .fog button{min-height:72px}#flyPk .pkn{font-size:14px;padding:4px 14px 14px}
 </style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.7: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
@@ -4825,17 +4827,18 @@ const MN=document.createElement("div");MN.id="flyM";MN.className="fly-ui flyo";M
 const DL=document.createElement("div");DL.id="flyD";DL.className="fly-ui flyo";DL.hidden=true;
 const KL=document.createElement("div");KL.id="flyK";KL.className="fly-ui flyo";KL.hidden=true;
 const GP=document.createElement("div");GP.id="flyG";GP.className="fly-ui flyo flyw";GP.hidden=true;DL.classList.add("flyw");
+const PK=document.createElement("div");PK.id="flyPk";PK.className="fly-ui flyo flyw";PK.hidden=true;PK.k="";
 const SW=document.createElement("div");SW.id="flySar";SW.className="fly-ui flyo flyw";SW.hidden=true;
 const MKW=document.createElement("div");MKW.id="flyMk";MKW.className="fly-ui flyo flyw";MKW.hidden=true;
 const RB=document.createElement("button");RB.id="flyRec";RB.type="button";RB.className="fly-ui";RB.hidden=true;RB.setAttribute("aria-label","Track recording — open Tracks");RB.textContent="● REC";
-[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW].forEach(e=>host.appendChild(e));
-["pointerdown","pointerup","click","dblclick","touchstart","touchend","wheel","contextmenu","mousedown"].forEach(ev=>[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW].forEach(e=>e.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu"||ev==="dblclick")x.preventDefault()},ev==="wheel"?{passive:true}:false)));
+[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK].forEach(e=>host.appendChild(e));
+["pointerdown","pointerup","click","dblclick","touchstart","touchend","wheel","contextmenu","mousedown"].forEach(ev=>[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK].forEach(e=>e.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu"||ev==="dblclick")x.preventDefault()},ev==="wheel"?{passive:true}:false)));
 function setVars(){const t=T.hidden?0:T.offsetHeight,b=B.hidden?0:B.offsetHeight;mp.style.setProperty("--flyt",t+"px");mp.style.setProperty("--flyb",b+"px")}
-function closeO(except){[MN,DL,KL,GP,MKW,SW].forEach(o=>{if(o!==except)o.hidden=true})}
+function closeO(except){[MN,DL,KL,GP,MKW,SW,PK].forEach(o=>{if(o!==except)o.hidden=true})}
 function flyOn(){if(!mp.classList.contains("full"))fsToggle();if(mp.classList.contains("uih"))try{$f("uis").click()}catch(e){}
  mp.classList.add("fly");document.body.classList.add("flying");mp.classList.remove("flyh");T.hidden=B.hidden=Z.hidden=false;R.hidden=true;lsSet("heliFly",1);setVars();flyUi();
  setTimeout(()=>{if(mp.classList.contains("uih"))try{$f("uis").click()}catch(e){}setVars();try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}drawMap(false)},0)}
-function flyOff(){mp.classList.remove("fly","flyh");document.body.classList.remove("flying");[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW].forEach(e=>e.hidden=true);lsSet("heliFly",0);setVars();/* กลับสู่หน้าจอเต็มจอตามปกติ (ซ่อนเมนู เหลือแถบ ☰ เมนู) */if(mp.classList.contains("full")&&!mp.classList.contains("uih"))try{$f("hui").click()}catch(e){}setTimeout(()=>{try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}drawMap(false)},0)}
+function flyOff(){mp.classList.remove("fly","flyh");document.body.classList.remove("flying");[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK].forEach(e=>e.hidden=true);lsSet("heliFly",0);setVars();/* กลับสู่หน้าจอเต็มจอตามปกติ (ซ่อนเมนู เหลือแถบ ☰ เมนู) */if(mp.classList.contains("full")&&!mp.classList.contains("uih"))try{$f("hui").click()}catch(e){}setTimeout(()=>{try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}drawMap(false)},0)}
 function flyHide(h){mp.classList.toggle("flyh",h);T.hidden=Z.hidden=h;R.hidden=!h;closeO();setVars();setTimeout(()=>{try{dock();lbTop()}catch(e){}try{flUi()}catch(e){}},0)}
 window.flyOn=flyOn;window.flyOff=flyOff;
 new MutationObserver(()=>{if(isFly()&&!mp.classList.contains("full"))flyOff()}).observe(mp,{attributes:true,attributeFilter:["class"]});
@@ -4893,10 +4896,10 @@ function act(k){switch(k){
  case"edit":closeO();try{mptShow(!M.mpt)}catch(e){}break;
  case"nav":closeO();$f("navgo").click();break;
  case"coord":{const c=$f("fcur");if(c){c.checked=!CURON;c.dispatchEvent(new Event("change",{bubbles:true}))}try{curUpd()}catch(e){}break}
- case"rrt":{closeO();const lb=$f("lbr");if(lb&&lb.classList.contains("on")){const x=lb.querySelector("[data-lbx]");if(x)x.click();else lb.classList.remove("on")}else try{menuAct("rt-list")}catch(e){}break}
+ case"rrt":{if(PK.k==="rt"&&!PK.hidden){PK.hidden=true;break}closeO(PK);pkRender("rt");PK.hidden=false;break}case"rrtx":{closeO();const lb=$f("lbr");if(lb&&lb.classList.contains("on")){const x=lb.querySelector("[data-lbx]");if(x)x.click();else lb.classList.remove("on")}else try{menuAct("rt-list")}catch(e){}break}
  case"rul":closeO();$f("rl").click();break;
  case"sar":closeO(SW);sarRender();SW.hidden=!SW.hidden;break;case"me":if(!MLP.on){if(SIM&&SIM.on){gpsCenter();break}$f("mlbtn").click()}else gpsCenter();break;
- case"taws":$f("twb").click();break;
+ case"taws":if(PK.k==="tw"&&!PK.hidden){PK.hidden=true;break}closeO(PK);pkRender("tw");PK.hidden=false;break;
  case"hide":flyHide(true);break;
  case"mark":mkAdd();break;case"un":$f("hun").click();break;case"re":$f("hre").click();break;case"zi":$f("zi").click();break;case"zo":$f("zo").click();break}
  setTimeout(flyUi,0)}
@@ -5010,8 +5013,22 @@ function sarRender(){let on=false;try{on=!!M.sarp}catch(e){}
 window.sarRender=sarRender;
 SW.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){SW.hidden=true;return}let b;
  if(e.target.closest("[data-sp]")){try{sarShow(!M.sarp)}catch(x){}SW.hidden=true;setTimeout(flyUi,0);return}
- if((b=e.target.closest("[data-sg]"))){const t0=b.textContent;try{menuAct(b.dataset.sg,b)}catch(x){}
-  if(b.textContent===t0)SW.hidden=true}});
+ if((b=e.target.closest("[data-sg]"))){try{menuAct(b.dataset.sg,b)}catch(x){}
+  if(b.dataset.sure!=="1")SW.hidden=true}});
+
+/* v4.7.7 b4: ปุ่ม Route → New Route / Saved Route / Clear · ปุ่ม TAWS → TAWS / FLTA (หน้าต่าง #flyPk) */
+function pkRender(k){PK.k=k;const bt=(a,t,cls)=>`<button type="button" ${a} class="${cls||""}">${t}</button>`;let h;
+ if(k==="rt"){const lb=$f("lbr"),on=!!(lb&&lb.classList.contains("on"));
+  h=`<div class="foh"><b>Route</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pr="rt-new"',"➕ New Route")+bt('data-pr="rt-list"',"🗂 Saved Route"+(on?" (เปิดอยู่)":""),on?"on":"")+bt('data-pr="cl-rt"',"🧹 Clear","x")+`</div><div class="fom pkn">Clear = ล้างเส้นทาง Active ออกจากแผนที่ (เส้นทางที่บันทึกไว้ไม่ถูกลบ) ถ้ายังไม่ได้บันทึกต้องแตะยืนยันอีกครั้ง</div>`}
+ else{const tw=!!TW.on,fl=!!TW.fl;
+  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+`</div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
+ PK.innerHTML=h}
+window.pkRender=pkRender;
+PK.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){PK.hidden=true;return}let b;
+ if((b=e.target.closest("[data-pr]"))){const g=b.dataset.pr,t0=b.textContent;
+  if(g==="rt-list"){PK.hidden=true;act("rrtx");setTimeout(flyUi,0);return}
+  try{menuAct(g,b)}catch(x){}if(b.dataset.sure!=="1"){PK.hidden=true;setTimeout(flyUi,0)}return}
+ if((b=e.target.closest("[data-pt]"))){if(b.dataset.pt==="taws")$f("twb").click();else flSet({fl:!TW.fl});setTimeout(()=>{pkRender("tw");flyUi()},50)}});
 })();
 </script>
 </body>

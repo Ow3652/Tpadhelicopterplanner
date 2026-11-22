@@ -102,8 +102,8 @@ const sv2=await p.evaluate(async()=>{const n0=store().length;$('save').click();a
 t('T11 e v4.7.4 ใส่ชื่อแล้วกดบันทึก: บันทึกเส้นทางด้วยชื่อที่ใส่ · กดยกเลิกไม่บันทึก',sv2.closed&&sv2.n===1&&sv2.has&&sv2.rname==='เที่ยวบินทดสอบ 1',sv2);
 await p.tap('#fbW');await W(300);
 t('T11 b v4.7.2 แตะช่อง NAV TO อีกครั้ง: ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
-await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr1=await p.evaluate(()=>{const e=$('lbr');return{on:e.classList.contains('on'),vis:e.getClientRects().length>0,top:Math.round(e.getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}});
-await p.tap('#flyT [data-fk="rrt"]');await W(300);const rr2=await p.evaluate(()=>$('lbr').classList.contains('on'));
+await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="rt-list"]');await W(300);const rr1=await p.evaluate(()=>{const e=$('lbr');return{on:e.classList.contains('on'),vis:e.getClientRects().length>0,top:Math.round(e.getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}});
+await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="rt-list"]');await W(300);const rr2=await p.evaluate(()=>$('lbr').classList.contains('on'));
 t('T11 c v4.7.1 Rec Route: เปิดกล่องเส้นทางที่บันทึกไว้ (ใต้แถบบน) กดอีกครั้งปิด',rr1.on&&rr1.vis&&rr1.top>=rr1.tb-1&&!rr2,{rr1,rr2});
 // Menu กระเบื้อง
 await p.tap('#flyT [data-fk="menu"]');await W(200);
@@ -239,9 +239,9 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  const bx=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),m=g($('mac')),s=g($('msum')),st=g(document.querySelector('#mac .st button'));return{mw:Math.round(m.width),sw:Math.round(s.width),bw:Math.round(st.width),bh:Math.round(st.height),fs:parseFloat(getComputedStyle($('mac')).fontSize)}});
  t('T27 e โหมดบิน: กล่อง Aircraft/Summary ใหญ่ขึ้น (≥ 330 px, ตัวอักษร 16 px) ปุ่ม +/− ≥ 44 px',bx.mw>=330&&bx.sw>=330&&bx.bw>=44&&bx.bh>=44&&bx.fs>=16,bx);
  await p.evaluate(()=>{if(M.mac)$('mb').click();if(M.sum)$('sb').click()});
- await p.evaluate(()=>{if(!TW.on)document.querySelector('#flyT [data-fk="taws"]').click()});await W(700);
+ await p.evaluate(()=>{if(!TW.on)$('twb').click()});await W(700);
  const tw=await p.evaluate(()=>{const l=$('twl'),n=l.querySelector('.twn');return{vis:!l.hidden,h:Math.round(l.getBoundingClientRect().height),twn:n?getComputedStyle(n).display:'none',ref:/TAWS/.test(l.textContent)}});
- await p.evaluate(()=>{if(TW.on)document.querySelector('#flyT [data-fk="taws"]').click()});
+ await p.evaluate(()=>{if(TW.on)$('twb').click()});
  t('T27 f โหมดบิน: กล่อง TAWS เหลือบรรทัดเดียว (ตัดบรรทัดคำอธิบาย)',tw.vis&&tw.ref&&tw.twn==='none'&&tw.h<=34,tw);
  const cdp=await ctx.newCDPSession(p);const TE=(type,q)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:q.map((x,i)=>({x:x[0],y:x[1],id:i}))});
  const pin=async(d0,d1)=>{await p.evaluate(()=>{window.__dm=0;if(!window.__dmw){window.__dmw=1;const o=window.drawMap;window.drawMap=function(){window.__dm++;return o.apply(this,arguments)}}});const z0=await p.evaluate(()=>M.z);
@@ -290,5 +290,20 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  await p.tap('#flyT [data-fk="sar"]');await W(300);await p.tap('#flySar [data-sg="sr-list"]');await W(400);const l1=await p.evaluate(()=>$('lbs')&&$('lbs').classList.contains('on'));await p.evaluate(()=>{try{$('lbs').classList.remove('on')}catch(e){}});
  await p.tap('#flyT [data-fk="sar"]');await W(300);await p.tap('#flySar [data-sg="sa-list"]');await W(400);const l2=await p.evaluate(()=>$('lba')&&$('lba').classList.contains('on'));await p.evaluate(()=>{try{$('lba').classList.remove('on')}catch(e){}});
  t('T29 c แตะ รูปแบบ SAR เปิดแผง SAR (ปุ่ม SAR ติดไฟ) · เส้นทาง SAR → รายการ · พื้นที่ SAR → รายการ เปิดกล่องเดียวกับแผนที่เต็มจอ',!s0&&s1.sarp&&s1.vis&&s1.lit&&s1.closed&&l1&&l2,{s0,s1,l1,l2})}
+// v4.7.7 b4: Route → New Route / Saved Route / Clear · TAWS → TAWS / FLTA
+{const W=n=>p.waitForTimeout(n);
+ await p.tap('#flyT [data-fk="rrt"]');await W(300);
+ const r=await p.evaluate(()=>({vis:!$('flyPk').hidden,b:[...document.querySelectorAll('#flyPk [data-pr]')].map(x=>x.textContent.trim())}));
+ await p.evaluate(()=>{pts.length=0;pts.push({name:"AAA",lat:"14.0",lon:"100.3"},{name:"BBB",lat:"14.3",lon:"100.6"});drawPts();calc();render()});
+ await p.tap('#flyPk [data-pr="cl-rt"]');await W(200);const c1=await p.evaluate(()=>({txt:document.querySelector('#flyPk [data-pr="cl-rt"]').textContent,open:!$("flyPk").hidden,n:pts.filter(q=>q.name).length}));
+ await p.tap('#flyPk [data-pr="cl-rt"]');await W(300);const c2=await p.evaluate(()=>({n:pts.filter(q=>q.name).length,closed:$('flyPk').hidden}));
+ await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="rt-new"]');await W(400);const nw=await p.evaluate(()=>({mpt:!!M.mpt,closed:$('flyPk').hidden}));await p.evaluate(()=>{try{mptShow(false)}catch(e){}});
+ t('T30 v4.7.7 b4 ปุ่ม Route มีเมนูย่อย New Route / Saved Route / Clear · Clear ต้องยืนยันเมื่อยังไม่บันทึก · New Route เปิดกล่องจุดพิกัด',r.vis&&r.b.length===3&&/New Route/.test(r.b[0])&&/Saved Route/.test(r.b[1])&&/Clear/.test(r.b[2])&&c1.open&&c1.n===2&&/ยืนยัน/.test(c1.txt)&&c2.n===0&&c2.closed&&nw.mpt&&nw.closed,{r,c1,c2,nw});
+ await p.evaluate(()=>{if(TW.on)$('twb').click();if(TW.fl)flSet({fl:false})});await W(200);
+ await p.tap('#flyT [data-fk="taws"]');await W(300);const t0=await p.evaluate(()=>[...document.querySelectorAll('#flyPk [data-pt]')].map(x=>x.textContent.trim()));
+ await p.tap('#flyPk [data-pt="taws"]');await W(300);await p.tap('#flyPk [data-pt="fl"]');await W(300);
+ const t1=await p.evaluate(()=>({tw:!!TW.on,fl:!!TW.fl,b:[...document.querySelectorAll('#flyPk [data-pt]')].map(x=>x.textContent.trim()+(x.classList.contains('on')?'*':'')),open:!$('flyPk').hidden,lit:document.querySelector('#flyT [data-fk="taws"]').classList.contains('on')}));
+ await p.tap('#flyPk [data-pt="taws"]');await W(200);await p.tap('#flyPk [data-pt="fl"]');await W(200);const t2=await p.evaluate(()=>({tw:!!TW.on,fl:!!TW.fl}));await p.tap('#flyPk [data-fx]');
+ t('T30 b ปุ่ม TAWS มีเมนูย่อย TAWS / FLTA เปิด/ปิดแยกกัน แสดงสถานะ On/Off (ปุ่ม TAWS ติดไฟเมื่อ TAWS เปิด)',t0.join()==='⛰ TAWS: Off,⚠ FLTA: Off'&&t1.tw&&t1.fl&&t1.b.join()==='⛰ TAWS: On*,⚠ FLTA: On*'&&t1.open&&t1.lit&&!t2.tw&&!t2.fl,{t0,t1,t2})}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
