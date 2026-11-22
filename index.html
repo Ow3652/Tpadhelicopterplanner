@@ -4731,7 +4731,7 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #map.fly #msum small{font-size:13px}#map.fly #msum b{font-size:18px}#map.fly #msum .mg{gap:6px 16px}
 @media (max-width:600px){#map.fly #mac,#map.fly #msum{width:min(340px,calc(100% - 92px))}#map.fly #mac .st button{width:40px;height:40px}#map.fly #mac .st input,#map.fly #mac input{width:72px}}
 /* v4.7.7: ปุ่ม MARK (คอลัมน์ขวา) · หน้าต่าง Marks · ปุ่ม ✕ กล่อง Aircraft */
-#flyZ button.zm{background:#e65100;color:#fff;flex-direction:column;gap:0;line-height:1}#flyZ button.zm small{font:800 11px/1 system-ui,sans-serif;letter-spacing:.5px;margin-top:2px}#flyZ button.zm:active{background:#ff8f00}
+/* b2: ไฟส้มเฉพาะตอนกด (และค้างสั้นๆ เมื่อสร้างจุดสำเร็จ) */#flyZ button.zm{color:#fff;flex-direction:column;gap:0;line-height:1}#flyZ button.zm.lit{background:#e65100}#flyZ button.zm small{font:800 11px/1 system-ui,sans-serif;letter-spacing:.5px;margin-top:2px}#flyZ button.zm:active{background:#ff8f00}
 #flyMk .mkl{display:flex;flex-direction:column;gap:8px;padding:4px 12px 12px;max-height:60vh;overflow:auto}#flyMk .mkr{border:1px solid #444;border-radius:10px;padding:8px;background:#1d1d1d}
 #flyMk .mkn{width:100%;box-sizing:border-box;font:700 18px system-ui,sans-serif;height:44px;padding:4px 10px;border-radius:8px;border:1px solid #555;background:#111;color:#ffd54f}
 #flyMk small{display:block;color:#bbb;font-size:13px;margin:4px 2px 6px}#flyMk .mkb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
@@ -4972,7 +4972,7 @@ function mkAfter(){const e=$f("cn_MK");if(e)e.textContent=DB.MK.length;M.pop=nul
 function mkNext(){let m=DB.MK.length?(+lsGet("heliMarkN",0)||0):0;DB.MK.forEach(p=>{const r=/^Mark (\d+)$/i.exec(String(p.n).trim());if(r)m=Math.max(m,+r[1])});lsSet("heliMarkN",m+1);return m+1}
 function mkAdd(){if(!(MLP.on&&MLP.la!=null&&MLP.lo!=null)){toast("ยังไม่มีตำแหน่งปัจจุบัน — เปิด GPS (Menu → GPS / Position) หรือ SIM ก่อน");return null}
  const p={n:"Mark "+mkNext(),la:+(+MLP.la).toFixed(6),lo:+(+MLP.lo).toFixed(6),t:Date.now()};DB.MK.push(p);mkSave();const c=$f("c_MK");if(c&&!c.checked){c.checked=true}
- mkAfter();const fm=$f("fmt").value;toast("🚩 "+p.n+" · "+fc(p.la,true,fm)+" "+fc(p.lo,false,fm)+" (Menu → Marks)");try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}return p}
+ mkAfter();{const b=Z.querySelector('[data-fk="mark"]');if(b){b.classList.add("lit");clearTimeout(mkAdd.t);mkAdd.t=setTimeout(()=>b.classList.remove("lit"),700)}}const fm=$f("fmt").value;toast("🚩 "+p.n+" · "+fc(p.la,true,fm)+" "+fc(p.lo,false,fm)+" (Menu → Marks)");try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}return p}
 function mkDel(i){if(!DB.MK[i])return;const n=DB.MK[i].n;DB.MK.splice(i,1);mkSave();mkAfter();toast("ลบ "+n+" แล้ว")}
 function mkMy(i){const p=DB.MK[i];if(!p)return;try{addMy({n:p.n,la:p.la,lo:p.lo,note:"Mark "+new Date(p.t||Date.now()).toLocaleString("th-TH")})}catch(e){toast("บันทึกเป็นจุดของฉันไม่สำเร็จ")}}
 window.mkAdd=mkAdd;window.mkDel=mkDel;window.mkMy=mkMy;
