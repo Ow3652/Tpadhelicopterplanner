@@ -39,7 +39,7 @@ t('T2 ปุ่ม North up / ซูม +/− ใหญ่ ≥ 64×64 px อย�
 t('T2 แถบบนชิดขอบบน แถบตัวเลขชิดขอบล่างของแผนที่',Math.abs(L.T.t-L.map.t)<=1&&Math.abs(L.B.b-L.map.b)<=1,{T:L.T,B:L.B,map:L.map});
 t('T2 ข้อความลิขสิทธิ์แผนที่อยู่เหนือแถบตัวเลข (ไม่ถูกบัง)',L.at.b<=L.B.t+1,{at:L.at,B:L.B});
 // แตะปุ่มโหมดบินต้องไม่เลื่อนแผนที่หรือเปิดป๊อปอัปบนแผนที่
-const c0=await p.evaluate(()=>[M.cx,M.cy]);await p.tap('#flyB');await p.tap('#flyT [data-fk="hide"]');await p.tap('#flyR');await W(200);
+const c0=await p.evaluate(()=>[M.cx,M.cy]);await p.tap('#flyB .fbbr',{position:{x:10,y:30}});await p.tap('#flyT [data-fk="hide"]');await p.tap('#flyR');await W(200);
 const c1=await p.evaluate(()=>({c:[M.cx,M.cy],pop:!document.getElementById('pop')||document.getElementById('pop').hidden}));
 t('T3 แตะแถบโหมดบินไม่เลื่อนแผนที่และไม่เปิดป๊อปอัป',c1.pop&&c1.c[0]===c0[0]&&c1.c[1]===c0[1],c1);
 // ซ่อนเมนู / แสดงกลับ
@@ -324,5 +324,35 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  const m1=await p.evaluate(()=>({min:$('rulb').classList.contains('rmin'),h:$('rulb').getBoundingClientRect().height,mini:$('rlmini').textContent,on:!!(M.rul&&M.rul.on)}));await p.tap('#rlmini');await W(200);
  const m2=await p.evaluate(()=>!$('rulb').classList.contains('rmin'));await p.tap('#rlhide');await W(100);await p.tap('#flyT [data-fk="rul"]');await W(300);await p.tap('#flyT [data-fk="rul"]');await W(300);const m3=await p.evaluate(()=>!$('rulb').classList.contains('rmin'));await p.tap('#flyT [data-fk="rul"]');await W(200);
  t('T31 d กล่องไม้บรรทัดมีปุ่ม ซ่อนเมนู → ย่อเป็นป้าย 📏 (ไม้บรรทัดยังทำงาน) แตะป้ายแสดงกลับ · เปิดไม้บรรทัดใหม่เริ่มแบบเต็ม',h0&&m1.min&&m1.h<70&&/📏/.test(m1.mini)&&m1.on&&m2&&m3,{h0,m1,m2,m3})}
+// v4.7.7 b6: ซ่อนแถบ NAV TO · กล่อง GPS กลางจอ/ลากได้ · FLT ALTITUDE · ไม้บรรทัด + และกดค้างย้ายจุด
+{const W=n=>p.waitForTimeout(n);const cdp=await ctx.newCDPSession(p);const TE=(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:type==='touchEnd'?[]:[{x,y,id:8}]});
+ const hb=await p.evaluate(()=>{const r=$('fbHide').getBoundingClientRect(),br=$('fbB').parentNode.getBoundingClientRect();return r.right>=br.right-4&&r.top<=br.top+4});
+ await p.tap('#fbHide');await W(300);const s1=await p.evaluate(()=>({B:$('flyB').hidden,sb:!$('flySb').hidden,fb:getComputedStyle(mp).getPropertyValue('--flyb').trim()}));
+ await p.tap('#flySb');await W(300);const s2=await p.evaluate(()=>({B:$('flyB').hidden,sb:!$('flySb').hidden}));
+ t('T32 v4.7.7 b6 โหมดบิน: ปุ่มซ่อนแถบ NAV TO อยู่มุมขวาบนของช่อง BRG · ซ่อนแล้วมีปุ่ม ▴ NAV เรียกกลับ',hb&&s1.B&&s1.sb&&s1.fb==='0px'&&!s2.B&&!s2.sb,{hb,s1,s2});
+ await p.evaluate(()=>{if(MLP.on)gpsOff()});await p.tap('#flyZ [data-fk="me"]');await W(300);
+ const g1=await p.evaluate(()=>{const r=$('mlmenu').getBoundingClientRect(),m=mp.getBoundingClientRect();return{vis:!$('mlmenu').hidden,cy:(r.top+r.height/2-m.top)/m.height,cx:Math.abs(r.left+r.width/2-(m.left+m.width/2))}});
+ const hr=await p.evaluate(()=>{const r=document.querySelector('#mlmenu .mlh').getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2]});
+ await TE('touchStart',hr[0],hr[1]);for(let i=1;i<=6;i++)await TE('touchMove',hr[0]-i*10,hr[1]+i*20);await TE('touchEnd');await W(200);
+ const g2=await p.evaluate(()=>{const r=document.querySelector('#mlmenu .mlh').getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2]});
+ t('T32 b กด My position ตอน GPS ปิด → กล่องเลือก GPS แสดงกลางจอ และลากย้ายได้',g1.vis&&g1.cy>0.25&&g1.cy<0.6&&g1.cx<20&&Math.abs(g2[0]-(hr[0]-60))<4&&Math.abs(g2[1]-(hr[1]+120))<4,{g1,hr,g2});
+ await p.evaluate(()=>{$('mlmenu').hidden=true});
+ await p.evaluate(()=>{const b=document.querySelector('#flyT [data-fk="taws"]');b.click()});await W(300);const a0=await p.evaluate(()=>({t:/FLT ALTITUDE/.test($('flyPk').innerText),alt:TW.alt}));
+ await p.tap('#flyPk [data-pa="100"]');await W(200);const a1=await p.evaluate(()=>({tw:TW.alt,inp:$('pkAlt').value}));await p.tap('#flyPk [data-pa="-100"]');await W(200);const a2=await p.evaluate(()=>TW.alt);
+ await p.fill('#pkAlt','2500');await p.press('#pkAlt','Enter');await W(200);const a3=await p.evaluate(()=>TW.alt);await p.fill('#pkAlt',String(a0.alt));await p.press('#pkAlt','Enter');await p.tap('#flyPk [data-fx]');
+ t('T32 c เมนูย่อย TAWS มี FLT ALTITUDE ปรับ ±100 ft และพิมพ์ค่าได้ (ใช้ค่าเดียวกับความสูงบินของ TAWS)',a0.t&&a1.tw===a0.alt+100&&a1.inp===String(a0.alt+100)&&a2===a0.alt&&a3===2500,{a0,a1,a2,a3});
+ await p.evaluate(()=>{if(!CURON){const c=$('fcur');c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}});
+ await p.tap('#flyT [data-fk="rul"]');await W(300);await p.evaluate(()=>{$('rlm').click()});await W(100);await p.tap('#rlhide');await W(200);
+ await p.evaluate(()=>{M.cx+=120;drawMap(false)});await p.tap('#rlplus');await W(200);await p.evaluate(()=>{M.cx+=120;drawMap(false)});await p.tap('#rlplus');await W(200);
+ const r1=await p.evaluate(()=>({n:M.rul.pts.length,plus:!!$('rlplus').offsetParent,mini:$('rlmini').textContent}));
+ const pt=await p.evaluate(()=>{const q=wp(M.rul.pts[0].la,M.rul.pts[0].lo,M.z),r=mp.getBoundingClientRect();return[q[0]-(M.cx-mp.clientWidth/2)+r.left,q[1]-(M.cy-mp.clientHeight/2)+r.top,M.rul.pts[0].la]});
+ await TE('touchStart',pt[0],pt[1]);await W(500);for(let i=1;i<=5;i++)await TE('touchMove',pt[0],pt[1]+i*20);await TE('touchEnd');await W(200);
+ const r2=await p.evaluate(()=>({n:M.rul.pts.length,la:M.rul.pts[0].la}));
+ const cx0=await p.evaluate(()=>M.cx);const p1=await p.evaluate(()=>{const q=wp(M.rul.pts[1].la,M.rul.pts[1].lo,M.z),r=mp.getBoundingClientRect();return[q[0]-(M.cx-mp.clientWidth/2)+r.left,q[1]-(M.cy-mp.clientHeight/2)+r.top,M.rul.pts[1].la,M.rul.pts[1].lo]});
+ await TE('touchStart',p1[0],p1[1]);for(let i=1;i<=5;i++)await TE('touchMove',p1[0]+i*15,p1[1]);await TE('touchEnd');await W(200);
+ const r3=await p.evaluate(a=>({pan:M.cx!==a[0],same:M.rul.pts[1].la===a[1]&&M.rul.pts[1].lo===a[2]}),[cx0,p1[2],p1[3]]);
+ await p.evaluate(()=>{M.rul.tch=Date.now();mp.dispatchEvent(new MouseEvent('contextmenu',{bubbles:true,cancelable:true,clientX:200,clientY:500}))});await W(100);const r4=await p.evaluate(()=>M.rul.pts.length);
+ t('T32 d ไม้บรรทัดย่อแล้วมีปุ่ม + เพิ่มจุดที่กลางจอ · กดค้างที่จุดแล้วลาก = ย้ายจุด (ไม่ลบ) · ปัดเร็วจากจุด = เลื่อนแผนที่',r1.n===3&&r1.plus&&r2.n===3&&r2.la<pt[2]-1e-4&&r3.pan&&r3.same&&r4===3,{r1,pt,r2,r3,r4});
+ await p.evaluate(()=>{$('rlmini').click()});await W(100);await p.tap('#flyT [data-fk="rul"]');await W(200);await p.evaluate(()=>{if(CURON){const c=$('fcur');c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}))}})}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});

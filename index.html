@@ -1798,7 +1798,7 @@ function rulUi(){try{const x=M.rul.on&&crossMode();$("rlm").hidden=!x;$("rld").h
 $("rlun").value=RU;$("rlun").onchange=()=>{RU=$("rlun").value;try{localStorage.setItem("heliRulUnit",RU)}catch(e){}drawMap(false)};
 $("rlc").onclick=()=>{M.rul.pts=[];M.rul.fin=false;drawMap(false)};$("rlu").onclick=()=>{M.rul.pts.pop();drawMap(false)};
 addEventListener("keydown",e=>{if(e.key==="Escape"&&M.rul.on){if(M.rul.pts.length){M.rul.pts=[];M.rul.fin=false}else rulOn(false);drawMap(false)}});
-mp.addEventListener("contextmenu",e=>{if(!M.rul.on||e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();const n=M.rul.pts.length;if(n>0&&!M.rul.fin&&!crossMode()){M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>2){M.rul.pts.pop();M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>0){M.rul.pts=[];M.rul.cur=null;M.rul.fin=false;$("rlt").textContent=rulF(0);drawMap(false)}else rulOn(false)});
+mp.addEventListener("contextmenu",e=>{if(M.rul&&M.rul.on&&M.rul.tch&&Date.now()-M.rul.tch<3000){e.preventDefault();return}if(!M.rul.on||e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();const n=M.rul.pts.length;if(n>0&&!M.rul.fin&&!crossMode()){M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>2){M.rul.pts.pop();M.rul.cur=null;M.rul.fin=true;drawMap(false)}else if(n>0){M.rul.pts=[];M.rul.cur=null;M.rul.fin=false;$("rlt").textContent=rulF(0);drawMap(false)}else rulOn(false)});
 $("rulb").addEventListener("wheel",e=>e.stopPropagation());
 mp.addEventListener("pointerleave",()=>{M.hov=null;M.rul.cur=null;if(!dr)drawMap(false)});
 function addAt(cx,cy){const ll=xy2ll(cx,cy);
@@ -1811,9 +1811,9 @@ mp.addEventListener("pointerup",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINC
 mp.addEventListener("pointercancel",e=>{PT.delete(e.pointerId);if(PT.size<2){if(PINCH&&PINCH.mode==="rot")setRot(RZ);if(PINCH&&PINCH.mode==="zoom")pzEnd(PINCH);PINCH=null}},true);
 mp.addEventListener("pointerdown",e0=>{const e=RE(e0);if(e.button!==0)return;if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2,#svd,#ptd,#gpb,#ind,#shd,#kyd,#sarc,#msar,#mpt,#lbr,#lbs,#lba,#msel,#acd,#acst,#cmenu,#ctm,#fqs,#mlbox,#mlmenu,#navbox,#hsibox,#navlog,#simbox,#uib,.ddm"))return;e.preventDefault();try{getSelection().removeAllRanges()}catch(x){}if(e.pointerType==="touch"){if(PT.size>=2)PT.clear();PT.set(e.pointerId,{x:e.clientX,y:e.clientY,rx:e0.clientX,ry:e0.clientY});
 if(PT.size===2){dr=null;if(M.drag){M.drag=null}PINCH=ptc();PINCH.la=PINCH.ang;PINCH.acc=0;PINCH.mode=null;PINCH.d0=PINCH.d;PINCH.c0=pzRaw();PINCH.e0={x:PINCH.x,y:PINCH.y};try{mp.setPointerCapture(e.pointerId)}catch(x){}drawMap(false);return}}
-const rl=M.rul.on,mvm=M.mvi!=null,pe=rl?null:e.target.closest("[data-poi]"),lg=rl||mvm?null:e.target.closest("[data-leg]"),rg=rl||mvm?null:e.target.closest("[data-rp]");const ru=rl&&!crossMode()?e.target.closest("[data-rul]"):null;
+const rl=M.rul.on,mvm=M.mvi!=null,pe=rl?null:e.target.closest("[data-poi]"),lg=rl||mvm?null:e.target.closest("[data-leg]"),rg=rl||mvm?null:e.target.closest("[data-rp]");/* v4.7.7 b5+: จุดไม้บรรทัด — แตะใกล้จุด (≤ 28 px) แล้วลากเพื่อย้าย · โหมดกากบาท (จอสัมผัส) ต้องกดค้าง ~0.4 วินาทีก่อนลาก (ไม่งั้นเป็นการเลื่อนแผนที่) */let ru=null,rh=false;if(rl){const t=e.target.closest("[data-rul]");if(t&&!crossMode())ru=t;else{const r0=mp.getBoundingClientRect(),W0=mp.clientWidth,H0=mp.clientHeight;let bd=e0.pointerType==="touch"?28:14,bi=-1;M.rul.pts.forEach((p,i)=>{const q=wp(p.la,p.lo,M.z),d=Math.hypot(q[0]-(M.cx-W0/2)-(e.clientX-r0.left),q[1]-(M.cy-H0/2)-(e.clientY-r0.top));if(d<bd){bd=d;bi=i}});if(bi>=0){ru={dataset:{rul:bi}};rh=crossMode()}}if(e0.pointerType==="touch")M.rul.tch=Date.now()}
 let mvd=false;if(mvm&&!rl){const r0=mp.getBoundingClientRect(),W0=mp.clientWidth,H0=mp.clientHeight,pv=calcData.valid[M.mvi];if(pv){const q=wp(pv.la,pv.lo,M.z);mvd=Math.hypot(q[0]-(M.cx-W0/2)-(e.clientX-r0.left),q[1]-(M.cy-H0/2)-(e.clientY-r0.top))<30}}
-dr={mvd,x:e.clientX,y:e.clientY,cx:M.cx,cy:M.cy,poi:pe?pe.dataset.poi:null,leg:lg?+lg.dataset.leg:null,rp:rg?+rg.dataset.rp:null,sd:(rl||mvm)?null:((e.target.closest("[data-sd]")||{dataset:{}}).dataset.sd||null),ru:ru?+ru.dataset.rul:null,mv:0};
+dr={mvd,x:e.clientX,y:e.clientY,cx:M.cx,cy:M.cy,poi:pe?pe.dataset.poi:null,leg:lg?+lg.dataset.leg:null,rp:rg?+rg.dataset.rp:null,sd:(rl||mvm)?null:((e.target.closest("[data-sd]")||{dataset:{}}).dataset.sd||null),ru:ru?+ru.dataset.rul:null,rh,t0:Date.now(),mv:0};
 try{mp.setPointerCapture(e.pointerId)}catch(x){}});
 function cmHide(){const m=$("cmenu");if(m)m.hidden=true}
 function candMenu(e0){try{const now=Date.now(),L=M.lt;if(L&&now-L.t<420&&Math.hypot(e0.clientX-L.x,e0.clientY-L.y)<28)return false;
@@ -1849,6 +1849,7 @@ if(!dr){if(e.target.closest(".fly-ui,.mc,.at,.pop,.fp,#wxb,#rulb,#msum,#mac,.mc2
 const r=mp.getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};if(M.rul.on){if(!M.rul.fin)M.rul.cur=p}else return;
 if(!M.hr){M.hr=1;requestAnimationFrame(()=>{M.hr=0;drawMap(false)})}return}
 if(dr.mvd){dr.mv=Math.max(dr.mv,Math.hypot(e.clientX-dr.x,e.clientY-dr.y));if(dr.mv>=3){const r=mp.getBoundingClientRect();M.mdrag={x:e.clientX-r.left,y:e.clientY-r.top};if(!M.hr){M.hr=1;requestAnimationFrame(()=>{M.hr=0;drawMap(false)})}}return}
+if(dr.ru!=null&&dr.rh&&!dr.ruOk){const m0=Math.hypot(e.clientX-dr.x,e.clientY-dr.y);if(Date.now()-dr.t0>=380){dr.ruOk=true;try{navigator.vibrate&&navigator.vibrate(30)}catch(x){}}else if(m0>=8)dr.ru=null;else return}
 if(dr.ru!=null){dr.mv=Math.max(dr.mv,Math.hypot(e.clientX-dr.x,e.clientY-dr.y));
 if(dr.mv>=3&&M.rul.pts[dr.ru]){const r=mp.getBoundingClientRect(),W=mp.clientWidth,H=mp.clientHeight,t=rulSnap(e.clientX-r.left,e.clientY-r.top,M.cx-W/2,M.cy-H/2,M.z);M.rul.pts[dr.ru]={la:t.la,lo:t.lo,n:t.n};M.rul.cur=null;drawMap(false)}return}
 if(M.rul.on&&!M.rul.fin){const r=mp.getBoundingClientRect();M.rul.cur={x:e.clientX-r.left,y:e.clientY-r.top}}dr.mv=Math.max(dr.mv,Math.hypot(e.clientX-dr.x,e.clientY-dr.y));if(dr.leg!=null){if(dr.mv>=5){const r=mp.getBoundingClientRect();M.drag={leg:dr.leg,x:e.clientX-r.left,y:e.clientY-r.top};drawMap(false)}return}M.cx=dr.cx-(e.clientX-dr.x);M.cy=dr.cy-(e.clientY-dr.y);M.touched=true;drawMap(false)});
@@ -4753,6 +4754,14 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #map.fly #rulb.rmin{right:auto!important}#map.fly #rlmini{min-height:44px;font-size:16px}#map.fly #rlhide{min-height:36px}
 #map.fly.flyed #mpt .pb{max-height:calc(100vh - var(--flyt,66px) - 90px)}
 #map.fly #mpt{width:min(470px,calc(100% - 96px))!important;max-width:none}
+/* v4.7.7 b6: ปุ่มซ่อนแถบ NAV (มุมขวาบนช่อง BRG) + ปุ่มเรียกกลับ · FLT ALTITUDE · กล่อง GPS ลากได้ · ปุ่ม + ไม้บรรทัดที่ย่อ */
+#flyB .fbbr{position:relative}#flyB .fbh{position:absolute;top:2px;right:2px;width:40px;height:34px;border:1px solid #555;border-radius:8px;background:#2a2a2a;color:#fff;font:700 18px/1 system-ui,sans-serif;cursor:pointer;z-index:2}
+#flySb{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(6px + env(safe-area-inset-bottom,0px));z-index:31;min-width:96px;height:44px;border-radius:22px;border:1px solid #666;background:rgba(24,24,24,.9);color:#fff;font:700 16px system-ui,sans-serif;cursor:pointer}#flySb[hidden]{display:none}
+#flyPk .pkalt{display:flex;align-items:center;gap:8px;padding:6px 14px 4px;color:#fff;font:700 16px system-ui,sans-serif}#flyPk .pkalt span:first-child{flex:1;color:#ffd54f}
+#flyPk .pkalt button{width:56px;height:52px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#fff;font:700 26px/1 system-ui,sans-serif}#flyPk .pkalt input{width:96px;height:52px;box-sizing:border-box;text-align:center;font:700 20px system-ui,sans-serif;border-radius:10px;border:1px solid #555;background:#111;color:#fff}
+#mlmenu .mlh{display:none}#map.fly #mlmenu .mlh{display:block;text-align:center;font:700 13px system-ui,sans-serif;color:var(--mute);padding:4px 0 6px;cursor:grab;touch-action:none;border-bottom:1px solid var(--line)}
+#map.fly #mlmenu{min-width:240px;font-size:16px;touch-action:none}#map.fly #mlmenu .chip,#map.fly #mlmenu .b{min-height:44px;font-size:16px}
+#rlplus{display:none}#rulb.rmin>#rlplus{display:inline-flex!important;font-size:22px;font-weight:800;min-width:44px;justify-content:center;align-items:center;margin-left:6px}#map.fly #rulb.rmin>#rlplus{min-height:44px;min-width:52px}
 </style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.7: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
@@ -4906,7 +4915,7 @@ function act(k){switch(k){
  case"coord":{const c=$f("fcur");if(c){c.checked=!CURON;c.dispatchEvent(new Event("change",{bubbles:true}))}try{curUpd()}catch(e){}break}
  case"rrt":{if(PK.k==="rt"&&!PK.hidden){PK.hidden=true;break}closeO(PK);pkRender("rt");PK.hidden=false;break}case"rrtx":{closeO();const lb=$f("lbr");if(lb&&lb.classList.contains("on")){const x=lb.querySelector("[data-lbx]");if(x)x.click();else lb.classList.remove("on")}else try{menuAct("rt-list")}catch(e){}break}
  case"rul":closeO();$f("rl").click();break;
- case"sar":closeO(SW);sarRender();SW.hidden=!SW.hidden;break;case"me":if(!MLP.on){if(SIM&&SIM.on){gpsCenter();break}$f("mlbtn").click()}else gpsCenter();break;
+ case"sar":closeO(SW);sarRender();SW.hidden=!SW.hidden;break;case"me":if(!MLP.on){if(SIM&&SIM.on){gpsCenter();break}$f("mlbtn").click();setTimeout(mlCenter,0)}else gpsCenter();break;
  case"taws":if(PK.k==="tw"&&!PK.hidden){PK.hidden=true;break}closeO(PK);pkRender("tw");PK.hidden=false;break;
  case"hide":flyHide(true);break;
  case"mark":mkAdd();break;case"un":$f("hun").click();break;case"re":$f("hre").click();break;case"zi":$f("zi").click();break;case"zo":$f("zo").click();break}
@@ -5029,13 +5038,14 @@ function pkRender(k){PK.k=k;const bt=(a,t,cls)=>`<button type="button" ${a} clas
  if(k==="rt"){const lb=$f("lbr"),on=!!(lb&&lb.classList.contains("on"));
   h=`<div class="foh"><b>Route</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pr="rt-new"',"➕ New Route")+bt('data-pr="rt-list"',"🗂 Saved Route"+(on?" (เปิดอยู่)":""),on?"on":"")+bt('data-pr="cl-rt"',"🧹 Clear","x")+`</div><div class="fom pkn">Clear = ล้างเส้นทาง Active ออกจากแผนที่ (เส้นทางที่บันทึกไว้ไม่ถูกลบ) ถ้ายังไม่ได้บันทึกต้องแตะยืนยันอีกครั้ง</div>`}
  else{const tw=!!TW.on,fl=!!TW.fl;
-  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+`</div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
+  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+`</div><div class="pkalt"><span>FLT ALTITUDE</span><button type="button" data-pa="-100" aria-label="FLT ALTITUDE −100 ft">−</button><input id="pkAlt" inputmode="numeric" maxlength="5" value="${Math.round(+TW.alt||0)}" aria-label="FLT ALTITUDE (ft)"><button type="button" data-pa="100" aria-label="FLT ALTITUDE +100 ft">+</button><span>ft</span></div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
  PK.innerHTML=h}
 window.pkRender=pkRender;
 PK.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){PK.hidden=true;return}let b;
  if((b=e.target.closest("[data-pr]"))){const g=b.dataset.pr,t0=b.textContent;
   if(g==="rt-list"){PK.hidden=true;act("rrtx");setTimeout(flyUi,0);return}
   try{menuAct(g,b)}catch(x){}if(b.dataset.sure!=="1"){PK.hidden=true;setTimeout(flyUi,0)}return}
+ if((b=e.target.closest("[data-pa]"))){twSet({alt:Math.max(0,(Math.round((+TW.alt||0)/100)*100)+(+b.dataset.pa))});const i=$f("pkAlt");if(i)i.value=Math.round(TW.alt);return}
  if((b=e.target.closest("[data-pt]"))){if(b.dataset.pt==="taws")$f("twb").click();else flSet({fl:!TW.fl});setTimeout(()=>{pkRender("tw");flyUi()},50)}});
 
 /* v4.7.7 b5: (1) กล่องรายละเอียดจุด (#pop) ลากย้ายได้ในโหมดบิน · (3) ซ่อนแถบตัวเลขล่างขณะเปิดกล่องจุดพิกัดในเส้นทาง · (4) ปุ่ม ซ่อนเมนู ในกล่องไม้บรรทัด */
@@ -5048,7 +5058,13 @@ let POPXY=null;
   pe.style.left=x+"px";pe.style.right="auto";pe.style.top=y+"px";pe.style.maxHeight="calc(100% - "+(y+8)+"px)";POPXY={x,y}});
  const up=e=>{if(d&&d.mv){e.stopPropagation();pe.classList.remove("drag")}d=null};pe.addEventListener("pointerup",up);pe.addEventListener("pointercancel",up);
  pe.addEventListener("click",e=>{if(pe.classList.contains("drag"))e.stopPropagation()},true)}
-function editUi(){const m=$f("mpt"),ed=isFly()&&!!M.mpt&&m&&!m.classList.contains("off");if(mp.classList.contains("flyed")===ed&&B.hidden===ed)return;mp.classList.toggle("flyed",ed);B.hidden=ed;setVars();setTimeout(()=>{try{dock();lbTop()}catch(e){}},0)}
+/* b6: ซ่อนแถบ NAV TO ได้เอง (ปุ่ม ▾ มุมขวาบนของช่อง BRG) · ปุ่ม ▴ NAV เรียกกลับ (localStorage heliStripH) */
+let STRIPH=!!lsGet("heliStripH",false);
+const SB=document.createElement("button");SB.id="flySb";SB.type="button";SB.className="fly-ui";SB.hidden=true;SB.textContent="▴ NAV";SB.setAttribute("aria-label","Show NAV strip");SB.title="แสดงแถบ NAV TO / DIS / BRG";mp.appendChild(SB);
+SB.addEventListener("click",e=>{e.stopPropagation();STRIPH=false;lsSet("heliStripH",false);editUi()});
+function editUi(){if(!isFly()){SB.hidden=true;if(mp.classList.contains("flyed"))mp.classList.remove("flyed");return}const m=$f("mpt"),ed=!!M.mpt&&m&&!m.classList.contains("off"),hb=ed||STRIPH,sb=STRIPH&&!ed;if(mp.classList.contains("flyed")!==ed)mp.classList.toggle("flyed",ed);if(B.hidden===hb&&SB.hidden===!sb)return;B.hidden=hb;SB.hidden=!sb;setVars();setTimeout(()=>{try{dock();lbTop()}catch(e){}},0)}
+{const bc=$f("fbB")&&$f("fbB").parentNode;if(bc){bc.classList.add("fbbr");const hb=document.createElement("button");hb.type="button";hb.className="fbh";hb.id="fbHide";hb.textContent="▾";hb.title="ซ่อนแถบ NAV TO / DIS / BRG";hb.setAttribute("aria-label","Hide NAV strip");bc.appendChild(hb);
+ hb.addEventListener("click",e=>{e.stopPropagation();STRIPH=true;lsSet("heliStripH",true);editUi()})}}
 new MutationObserver(editUi).observe($f("mpt"),{attributes:true,attributeFilter:["class"]});new MutationObserver(editUi).observe(mp,{attributes:true,attributeFilter:["class"]});
 {const rb=$f("rulb");if(rb&&!$f("rlhide")){const hb=document.createElement("button");hb.className="b s";hb.id="rlhide";hb.type="button";hb.textContent="▾ ซ่อนเมนู";hb.title="ย่อกล่องไม้บรรทัด (เส้นที่วัดยังอยู่บนแผนที่)";
  const mn=document.createElement("button");mn.className="b s";mn.id="rlmini";mn.type="button";mn.title="แสดงกล่องไม้บรรทัด";mn.setAttribute("aria-label","แสดงกล่องไม้บรรทัด");
@@ -5057,6 +5073,20 @@ new MutationObserver(editUi).observe($f("mpt"),{attributes:true,attributeFilter:
  hb.addEventListener("click",e=>{e.stopPropagation();rb.classList.add("rmin");upd()});mn.addEventListener("click",e=>{e.stopPropagation();rb.classList.remove("rmin")});
  new MutationObserver(()=>{if(rb.hidden)rb.classList.remove("rmin")}).observe(rb,{attributes:true,attributeFilter:["hidden"]});
  const t=$f("rlt");if(t)new MutationObserver(upd).observe(t,{childList:true,characterData:true,subtree:true})}}
+
+/* b6: FLT ALTITUDE พิมพ์ค่าเองในหน้าต่าง TAWS */
+PK.addEventListener("change",e=>{if(e.target.id==="pkAlt"){const v=Math.round((parseFloat(e.target.value)||0)/100)*100;twSet({alt:v});e.target.value=Math.round(TW.alt)}});
+PK.addEventListener("keydown",e=>{if(e.target.id==="pkAlt"&&e.key==="Enter")e.target.blur()});
+/* b6: กล่อง GPS (ใช้ตำแหน่ง/ตามตำแหน่ง/ใช้เข็มทิศ) ในโหมดบิน — เปิดกลางจอ และลากย้ายได้ (แถบจับ ⠿) */
+function mlCenter(){const m=$f("mlmenu");if(!m||m.hidden||!isFly())return;const P=m.offsetParent||mp,pr=P.getBoundingClientRect(),mr=mp.getBoundingClientRect();
+ const x=mr.left-pr.left+(mp.clientWidth-m.offsetWidth)/2,y=mr.top-pr.top+Math.max((T.hidden?0:T.offsetHeight)+8,mp.clientHeight*0.38-m.offsetHeight/2);m.style.left=x+"px";m.style.top=y+"px";m.style.right="auto";m.style.bottom="auto"}
+{const m=$f("mlmenu");if(m&&!m.querySelector(".mlh")){const hd=document.createElement("div");hd.className="mlh";hd.textContent="⠿ GPS / My position";m.insertBefore(hd,m.firstChild);let d=null;
+ m.addEventListener("pointerdown",e=>{if(!isFly()||e.target.closest("button,input,select,label"))return;d={id:e.pointerId,sx:e.clientX,sy:e.clientY,ox:m.offsetLeft,oy:m.offsetTop};try{m.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault();e.stopPropagation()});
+ m.addEventListener("pointermove",e=>{if(!d||e.pointerId!==d.id)return;e.preventDefault();m.style.left=(d.ox+e.clientX-d.sx)+"px";m.style.top=Math.max(0,d.oy+e.clientY-d.sy)+"px";m.style.right="auto";m.style.bottom="auto"});
+ const up=()=>{d=null};m.addEventListener("pointerup",up);m.addEventListener("pointercancel",up)}}
+/* b6: ป้ายไม้บรรทัดที่ย่อ — ปุ่ม + เพิ่มจุดถัดไปที่กลางจอ (ตำแหน่งกากบาท) */
+{const rb=$f("rulb"),mn=$f("rlmini");if(rb&&mn&&!$f("rlplus")){const pb=document.createElement("button");pb.className="b s";pb.id="rlplus";pb.type="button";pb.textContent="+";pb.title="เพิ่มจุดถัดไปที่กลางจอ (กากบาท)";pb.setAttribute("aria-label","เพิ่มจุดไม้บรรทัดที่กลางจอ");rb.appendChild(pb);
+ pb.addEventListener("click",e=>{e.stopPropagation();try{const W=mp.clientWidth,H=mp.clientHeight,t=rulSnap(W/2,H/2,M.cx-W/2,M.cy-H/2,M.z);M.rul.fin=false;M.rul.pts.push({la:t.la,lo:t.lo,n:t.n});M.rul.cur=null;drawMap(false)}catch(x){}})}}
 })();
 </script>
 </body>
