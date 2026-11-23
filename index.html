@@ -4745,6 +4745,14 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 @media (max-width:600px){#flyZ button.zme .i{font-size:24px}#flyZ button.zme small{font-size:9px}}
 /* v4.7.7 b4: หน้าต่าง Route / TAWS */
 #flyPk .fog button{min-height:72px}#flyPk .pkn{font-size:14px;padding:4px 14px 14px}
+/* v4.7.7 b5: ปุ่ม ☰ (ซ่อนเมนู) มุมบนขวา · แถบจับลากกล่องรายละเอียดจุด · กล่องไม้บรรทัดย่อได้ */
+#flyR{left:auto!important;right:calc(8px + env(safe-area-inset-right,0px))}
+#map.fly .pop{padding-top:24px;touch-action:none}#map.fly .pop::before{content:"";position:absolute;top:8px;left:50%;width:44px;height:5px;margin-left:-22px;border-radius:3px;background:var(--mute);opacity:.6}
+#map.fly .pop.drag{opacity:.92;box-shadow:0 6px 20px rgba(0,0,0,.45)}
+#rlmini{display:none}#rulb.rmin{font-size:0;gap:0;padding:4px}#rulb.rmin>*{display:none!important}#rulb.rmin>#rlmini{display:inline-flex!important;font-size:14px;align-items:center;gap:4px}
+#map.fly #rulb.rmin{right:auto!important}#map.fly #rlmini{min-height:44px;font-size:16px}#map.fly #rlhide{min-height:36px}
+#map.fly.flyed #mpt .pb{max-height:calc(100vh - var(--flyt,66px) - 90px)}
+#map.fly #mpt{width:min(470px,calc(100% - 96px))!important;max-width:none}
 </style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.7: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
@@ -5029,6 +5037,26 @@ PK.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){PK.hidden=true
   if(g==="rt-list"){PK.hidden=true;act("rrtx");setTimeout(flyUi,0);return}
   try{menuAct(g,b)}catch(x){}if(b.dataset.sure!=="1"){PK.hidden=true;setTimeout(flyUi,0)}return}
  if((b=e.target.closest("[data-pt]"))){if(b.dataset.pt==="taws")$f("twb").click();else flSet({fl:!TW.fl});setTimeout(()=>{pkRender("tw");flyUi()},50)}});
+
+/* v4.7.7 b5: (1) กล่องรายละเอียดจุด (#pop) ลากย้ายได้ในโหมดบิน · (3) ซ่อนแถบตัวเลขล่างขณะเปิดกล่องจุดพิกัดในเส้นทาง · (4) ปุ่ม ซ่อนเมนู ในกล่องไม้บรรทัด */
+let POPXY=null;
+{const _pp=window.popPlace;if(typeof _pp==="function")window.popPlace=function(){_pp.apply(this,arguments);try{if(isFly()&&!POPXY){const pe=$f("pop"),t=(T.hidden?0:T.offsetHeight)+8,y=Math.max(parseFloat(pe.style.top)||0,t);pe.style.top=y+"px";pe.style.maxHeight="calc(100% - "+(y+(B.hidden?0:B.offsetHeight)+8)+"px)"}if(isFly()&&POPXY){const pe=$f("pop"),W=mp.clientWidth,H=mp.clientHeight,x=Math.max(0,Math.min(POPXY.x,W-pe.offsetWidth)),y=Math.max(0,Math.min(POPXY.y,H-48));pe.style.left=x+"px";pe.style.right="auto";pe.style.top=y+"px";pe.style.maxHeight="calc(100% - "+(y+8)+"px)"}}catch(e){}}}
+{const pe=$f("pop");let d=null;
+ pe.addEventListener("pointerdown",e=>{if(!isFly()||e.target.closest("button,input,select,textarea,a,label"))return;const r=pe.getBoundingClientRect();d={id:e.pointerId,sx:e.clientX,sy:e.clientY,ox:r.left,oy:r.top,mv:false}});
+ pe.addEventListener("pointermove",e=>{if(!d||e.pointerId!==d.id)return;const dx=e.clientX-d.sx,dy=e.clientY-d.sy;if(!d.mv&&Math.hypot(dx,dy)<6)return;if(!d.mv){d.mv=true;try{pe.setPointerCapture(e.pointerId)}catch(x){}pe.classList.add("drag")}
+  e.preventDefault();e.stopPropagation();const m=mp.getBoundingClientRect(),W=mp.clientWidth,H=mp.clientHeight,x=Math.max(0,Math.min(d.ox+dx-m.left,W-pe.offsetWidth)),y=Math.max(0,Math.min(d.oy+dy-m.top,H-48));
+  pe.style.left=x+"px";pe.style.right="auto";pe.style.top=y+"px";pe.style.maxHeight="calc(100% - "+(y+8)+"px)";POPXY={x,y}});
+ const up=e=>{if(d&&d.mv){e.stopPropagation();pe.classList.remove("drag")}d=null};pe.addEventListener("pointerup",up);pe.addEventListener("pointercancel",up);
+ pe.addEventListener("click",e=>{if(pe.classList.contains("drag"))e.stopPropagation()},true)}
+function editUi(){const m=$f("mpt"),ed=isFly()&&!!M.mpt&&m&&!m.classList.contains("off");if(mp.classList.contains("flyed")===ed&&B.hidden===ed)return;mp.classList.toggle("flyed",ed);B.hidden=ed;setVars();setTimeout(()=>{try{dock();lbTop()}catch(e){}},0)}
+new MutationObserver(editUi).observe($f("mpt"),{attributes:true,attributeFilter:["class"]});new MutationObserver(editUi).observe(mp,{attributes:true,attributeFilter:["class"]});
+{const rb=$f("rulb");if(rb&&!$f("rlhide")){const hb=document.createElement("button");hb.className="b s";hb.id="rlhide";hb.type="button";hb.textContent="▾ ซ่อนเมนู";hb.title="ย่อกล่องไม้บรรทัด (เส้นที่วัดยังอยู่บนแผนที่)";
+ const mn=document.createElement("button");mn.className="b s";mn.id="rlmini";mn.type="button";mn.title="แสดงกล่องไม้บรรทัด";mn.setAttribute("aria-label","แสดงกล่องไม้บรรทัด");
+ const x=$f("rlx");rb.insertBefore(hb,x);rb.appendChild(mn);
+ const upd=()=>{if(rb.classList.contains("rmin"))mn.textContent="📏 "+(($f("rlt")||{}).textContent||"")+" ▴"};
+ hb.addEventListener("click",e=>{e.stopPropagation();rb.classList.add("rmin");upd()});mn.addEventListener("click",e=>{e.stopPropagation();rb.classList.remove("rmin")});
+ new MutationObserver(()=>{if(rb.hidden)rb.classList.remove("rmin")}).observe(rb,{attributes:true,attributeFilter:["hidden"]});
+ const t=$f("rlt");if(t)new MutationObserver(upd).observe(t,{childList:true,characterData:true,subtree:true})}}
 })();
 </script>
 </body>

@@ -100,8 +100,8 @@ t('T11 d v4.7.4 กด "บันทึกเส้นทาง": ขึ้น�
 await p.evaluate(()=>$('svno').click());await W(100);
 const sv2=await p.evaluate(async()=>{const n0=store().length;$('save').click();await new Promise(r=>setTimeout(r,150));$('svn').value='เที่ยวบินทดสอบ 1';$('svok').click();await new Promise(r=>setTimeout(r,200));const a=store();return{closed:$('svd').hidden,n:a.length-n0,has:a.some(r=>r.name==='เที่ยวบินทดสอบ 1'),rname:$('rname').value}});
 t('T11 e v4.7.4 ใส่ชื่อแล้วกดบันทึก: บันทึกเส้นทางด้วยชื่อที่ใส่ · กดยกเลิกไม่บันทึก',sv2.closed&&sv2.n===1&&sv2.has&&sv2.rname==='เที่ยวบินทดสอบ 1',sv2);
-await p.tap('#fbW');await W(300);
-t('T11 b v4.7.2 แตะช่อง NAV TO อีกครั้ง: ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
+await p.evaluate(()=>$('mptx').click());await W(300);
+t('T11 b v4.7.2 (b5: แถบ NAV TO ซ่อนขณะแก้เส้นทาง → ปิดด้วย ✕) ปิดแผงแก้เส้นทาง',await p.evaluate(()=>getComputedStyle($('mpt')).display==='none'&&!M.mpt));
 await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="rt-list"]');await W(300);const rr1=await p.evaluate(()=>{const e=$('lbr');return{on:e.classList.contains('on'),vis:e.getClientRects().length>0,top:Math.round(e.getBoundingClientRect().top),tb:Math.round($('flyT').getBoundingClientRect().bottom)}});
 await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="rt-list"]');await W(300);const rr2=await p.evaluate(()=>$('lbr').classList.contains('on'));
 t('T11 c v4.7.1 Rec Route: เปิดกล่องเส้นทางที่บันทึกไว้ (ใต้แถบบน) กดอีกครั้งปิด',rr1.on&&rr1.vis&&rr1.top>=rr1.tb-1&&!rr2,{rr1,rr2});
@@ -305,5 +305,24 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  const t1=await p.evaluate(()=>({tw:!!TW.on,fl:!!TW.fl,b:[...document.querySelectorAll('#flyPk [data-pt]')].map(x=>x.textContent.trim()+(x.classList.contains('on')?'*':'')),open:!$('flyPk').hidden,lit:document.querySelector('#flyT [data-fk="taws"]').classList.contains('on')}));
  await p.tap('#flyPk [data-pt="taws"]');await W(200);await p.tap('#flyPk [data-pt="fl"]');await W(200);const t2=await p.evaluate(()=>({tw:!!TW.on,fl:!!TW.fl}));await p.tap('#flyPk [data-fx]');
  t('T30 b ปุ่ม TAWS มีเมนูย่อย TAWS / FLTA เปิด/ปิดแยกกัน แสดงสถานะ On/Off (ปุ่ม TAWS ติดไฟเมื่อ TAWS เปิด)',t0.join()==='⛰ TAWS: Off,⚠ FLTA: Off'&&t1.tw&&t1.fl&&t1.b.join()==='⛰ TAWS: On*,⚠ FLTA: On*'&&t1.open&&t1.lit&&!t2.tw&&!t2.fl,{t0,t1,t2})}
+// v4.7.7 b5: ลากกล่องรายละเอียดจุด · ☰ มุมบนขวา · ซ่อนแถบล่างขณะแก้เส้นทาง · ซ่อนเมนูไม้บรรทัด
+{const W=n=>p.waitForTimeout(n);
+ await p.evaluate(()=>{if(CURON){const c=$('fcur');c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}))}const k=CATS.find(c=>DB[c.k]&&DB[c.k].length).k,t=DB[k][0],q=wp(t.la,t.lo,M.z);M.cx=q[0];M.cy=q[1];M.pop={c:k,i:0};drawMap(false)});await W(300);
+ const r0=await p.evaluate(()=>{const r=$('pop').getBoundingClientRect(),t=$('flyT').getBoundingClientRect();return{x:r.left,y:r.top,w:r.width,below:r.top>=t.bottom}});
+ const cdp=await ctx.newCDPSession(p);const TE=(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:type==='touchEnd'?[]:[{x,y,id:7}]});
+ await TE('touchStart',r0.x+r0.w/2,r0.y+12);for(let i=1;i<=8;i++)await TE('touchMove',r0.x+r0.w/2-i*25,r0.y+12+i*30);await TE('touchEnd');await W(300);
+ const r1=await p.evaluate(()=>{const r=$('pop').getBoundingClientRect();return{x:r.left,y:r.top,vis:!$('pop').hidden}});await p.evaluate(()=>drawMap(false));await W(200);const r2=await p.evaluate(()=>{const r=$('pop').getBoundingClientRect();return{x:r.left,y:r.top}});
+ t('T31 v4.7.7 b5 โหมดบิน: กล่องรายละเอียดจุดอยู่ใต้แถวปุ่ม ลากย้ายด้วยนิ้วได้ และคงตำแหน่งเมื่อแผนที่วาดใหม่',r0.below&&r1.vis&&Math.abs(r1.x-(r0.x-200))<4&&Math.abs(r1.y-(r0.y+240))<4&&Math.abs(r2.x-r1.x)<1&&Math.abs(r2.y-r1.y)<1,{r0,r1,r2});
+ await p.evaluate(()=>{M.pop=null;drawMap(false)});
+ await p.tap('#flyT [data-fk="hide"]');await W(300);const rb=await p.evaluate(()=>{const r=$('flyR').getBoundingClientRect(),m=mp.getBoundingClientRect();return{vis:!$('flyR').hidden,right:m.right-r.right,top:r.top-m.top}});await p.tap('#flyR');await W(300);
+ t('T31 b ซ่อนเมนูแล้วปุ่ม ☰ อยู่มุมบนขวา',rb.vis&&rb.right<=20&&rb.top<=24,rb);
+ await p.evaluate(()=>{pts.length=0;for(let i=0;i<9;i++)pts.push({name:'P'+i,lat:String(13.8+i*0.05),lon:String(100.2+i*0.05)});drawPts();calc();render()});
+ await p.tap('#fbW');await W(400);const e1=await p.evaluate(()=>({b:$('flyB').hidden,ed:mp.classList.contains('flyed'),fb:getComputedStyle(mp).getPropertyValue('--flyb').trim(),mb:$('mpt').getBoundingClientRect().bottom,h:mp.getBoundingClientRect().bottom}));
+ await p.evaluate(()=>mptShow(false));await W(300);const e2=await p.evaluate(()=>({b:$('flyB').hidden,ed:mp.classList.contains('flyed')}));
+ t('T31 c เปิดกล่องจุดพิกัดในเส้นทาง → ซ่อนแถบ NAV TO/DIS/BRG ด้านล่าง (กล่องใช้พื้นที่ถึงล่างจอ) · ปิดกล่องแล้วแถบกลับมา',e1.b&&e1.ed&&e1.fb==='0px'&&e1.mb<=e1.h&&!e2.b&&!e2.ed,{e1,e2});
+ await p.tap('#flyT [data-fk="rul"]');await W(300);const h0=await p.evaluate(()=>!!$('rlhide')&&$('rlhide').offsetParent!==null);await p.tap('#rlhide');await W(200);
+ const m1=await p.evaluate(()=>({min:$('rulb').classList.contains('rmin'),h:$('rulb').getBoundingClientRect().height,mini:$('rlmini').textContent,on:!!(M.rul&&M.rul.on)}));await p.tap('#rlmini');await W(200);
+ const m2=await p.evaluate(()=>!$('rulb').classList.contains('rmin'));await p.tap('#rlhide');await W(100);await p.tap('#flyT [data-fk="rul"]');await W(300);await p.tap('#flyT [data-fk="rul"]');await W(300);const m3=await p.evaluate(()=>!$('rulb').classList.contains('rmin'));await p.tap('#flyT [data-fk="rul"]');await W(200);
+ t('T31 d กล่องไม้บรรทัดมีปุ่ม ซ่อนเมนู → ย่อเป็นป้าย 📏 (ไม้บรรทัดยังทำงาน) แตะป้ายแสดงกลับ · เปิดไม้บรรทัดใหม่เริ่มแบบเต็ม',h0&&m1.min&&m1.h<70&&/📏/.test(m1.mini)&&m1.on&&m2&&m3,{h0,m1,m2,m3})}
 t('T20 ไม่มี JavaScript error',errs.length===0,errs);
 console.log(`ผล: PASS ${pass} / FAIL ${fail} (${APP})`);await b.close();srv.close();process.exit(fail?1:0)})().catch(e=>{console.log('ERROR',e);srv.close();process.exit(1)});
