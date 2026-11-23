@@ -249,6 +249,18 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  const sv=[NAVON,NAVGS0];NAVON=true;NAVGS0="100";$('gs').value=140;msumRender();const b=q();NAVON=sv[0];NAVGS0=sv[1];$('gs').value=g0;calc();sumShow(s0);
  const m=Math.round(tot/100*60);return{a,b,exp:Math.floor(m/60)+' ชม. '+String(m%60).padStart(2,'0')+' น.'}});
  t('T34 v4.7.7 b8 กล่อง Summary: บรรทัดสุดท้าย Plan ETE = ระยะรวม ÷ GS ในแผน · ขณะ NAV (GS ถูกแทนด้วย GPS) ยังใช้ GS ในแผน',r.a.last&&r.a.t.startsWith('Plan ETE')&&r.a.t.includes(r.exp)&&/@ 100 kt/.test(r.a.t)&&r.b.last&&r.b.t.includes(r.exp),r)}
+// v4.7.7 b9: กันจอดับในโหมดบิน (Screen Wake Lock) — จำลอง navigator.wakeLock
+{const W=n=>p.waitForTimeout(n);
+ const r=await p.evaluate(async()=>{const w={req:0,rel:0};const mk=()=>{const t=new EventTarget();t.released=false;t.release=async()=>{if(t.released)return;t.released=true;w.rel++;t.dispatchEvent(new Event('release'))};return t};
+  Object.defineProperty(navigator,'wakeLock',{value:{request:async()=>{w.req++;w.s=mk();return w.s}},configurable:true});const sl=ms=>new Promise(r=>setTimeout(r,ms));const S=()=>({st:WK.st,h:$('flyWk').hidden,c:$('flyWk').className});
+  wkSet(false);wkSet(true);await sl(100);const a=S(),q1=w.req;
+  await w.s.release();await sl(50);const b=S();document.dispatchEvent(new Event('visibilitychange'));await sl(600);const c=S(),q2=w.req;
+  wkSet(false);await sl(50);const d={...S(),rel:w.rel};wkSet(true);await sl(100);
+  flyOff();await sl(200);const e={...S(),rel:w.rel};flyOn();await sl(300);const g={...S(),req:w.req};
+  delete navigator.wakeLock;return{a,q1,b,c,q2,d,e,g}});
+ t('T35 v4.7.7 b9 โหมดบินขอกันจอดับ (ไอคอนเขียว) · ระบบปล่อยแล้วขอใหม่เมื่อกลับมาที่แอป · ปิดใน Menu = ปล่อย · ออกโหมดบิน = ปล่อย · เข้าใหม่ = ขอใหม่',r.a.st==='on'&&r.a.c.includes('ok')&&!r.a.h&&r.b.st==='off'&&r.c.st==='on'&&r.q2===r.q1+1&&r.d.h&&r.d.st==='off'&&r.e.st==='off'&&r.e.h&&r.g.st==='on'&&!r.g.h,r);
+ await p.evaluate(()=>{document.querySelector('#flyT [data-fk="menu"]').click()});await W(200);const m=await p.evaluate(()=>{const b=$('flyM').querySelector('[data-fm="wk"]');return b&&b.textContent});await p.evaluate(()=>{$('flyM').hidden=true});
+ t('T35 b Menu มีปุ่ม Screen awake แสดงสถานะ On/Off',/Screen awake: (On|Off)/.test(m||''),m)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

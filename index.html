@@ -4764,7 +4764,7 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #mlmenu .mlh{display:none}#map.fly #mlmenu .mlh{display:block;text-align:center;font:700 13px system-ui,sans-serif;color:var(--mute);padding:4px 0 6px;cursor:grab;touch-action:none;border-bottom:1px solid var(--line)}
 #map.fly #mlmenu{min-width:240px;font-size:16px;touch-action:none}#map.fly #mlmenu .chip,#map.fly #mlmenu .b{min-height:44px;font-size:16px}
 #rlplus{display:none}#rulb.rmin>#rlplus{display:inline-flex!important;font-size:22px;font-weight:800;min-width:44px;justify-content:center;align-items:center;margin-left:6px}#map.fly #rulb.rmin>#rlplus{min-height:44px;min-width:52px}
-</style>
+#flyWk{position:absolute;left:104px;bottom:calc(var(--flyb,0px) + 6px);z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}</style>
 <script id="flymode">
 /* ===== v4.7.0–4.7.7: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
 (function(){
@@ -4891,7 +4891,7 @@ function tkRender(){const idx=tkIdx();let h=`<div class="foh"><b>Tracks</b><span
  KL.innerHTML=h}
 function menuRender(){const t=[["rec",TK.on?"■ Stop track":"● Record track",TK.on?"rec":""],["trk","🗂 Tracks / GPX",""],["ac","✈ Aircraft",M.mac?"on":""],["gps","📍 GPS / Position",MLP.on?"on":""],["sum","📋 Summary",M.sum?"on":""],["show",TK.cfg.show?"〰 Track line: On":"〰 Track line: Off",TK.cfg.show?"on":""],
  ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],
- ["fl","⚠ FLTA",TW.fl?"on":""],["prf","📈 Terrain profile",TW.pf?"on":""],["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["mk","🚩 Marks ("+DB.MK.length+")",""],["dl","📥 Download map/TAWS",""],["man","📖 Manual",""],["exit","✕ Exit flight mode","x"]];
+ ["fl","⚠ FLTA",TW.fl?"on":""],["prf","📈 Terrain profile",TW.pf?"on":""],["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["mk","🚩 Marks ("+DB.MK.length+")",""],["dl","📥 Download map/TAWS",""],["man","📖 Manual",""],["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["exit","✕ Exit flight mode","x"]];
  const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div><div class="fom fdi">${esc(fitInfo())}</div>`;
  if(MN.innerHTML!==h)MN.innerHTML=h}
 /* v4.7.3: หน้าต่างตำแหน่งฉัน (GPS) — ใช้ตำแหน่ง · ตามตำแหน่ง · เข็มทิศเครื่อง · กลางแผนที่ (ตัวเดียวกับเมนู 📍 ตำแหน่งฉัน ของหน้าจอปกติ) */
@@ -4947,6 +4947,7 @@ MN.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){MN.hidden=true
  else if(k==="fit"){const L=[100,96,92,88,84];FIT.k=L[(L.indexOf(FIT.k)+1)%L.length];try{localStorage.setItem("heliFit",String(FIT.k))}catch(e){}fitApply()}
  else if(k==="mk"){MN.hidden=true;mkRender();MKW.hidden=false;return}
  else if(k==="dl"){MN.hidden=true;try{$f("twdl").click()}catch(x){}return}
+ else if(k==="wk"){wkSet(!WK.on)}
  else if(k==="man"){MN.hidden=true;try{if(window.manOpen)manOpen();else $f("mnl").click()}catch(x){}return}
  else if(k==="exit"){flyOff();return}
  setTimeout(()=>{menuRender();flyUi()},0)});
@@ -5089,6 +5090,24 @@ function mlCenter(){const m=$f("mlmenu");if(!m||m.hidden||!isFly())return;const 
 /* b6: ป้ายไม้บรรทัดที่ย่อ — ปุ่ม + เพิ่มจุดถัดไปที่กลางจอ (ตำแหน่งกากบาท) */
 {const rb=$f("rulb"),mn=$f("rlmini");if(rb&&mn&&!$f("rlplus")){const pb=document.createElement("button");pb.className="b s";pb.id="rlplus";pb.type="button";pb.textContent="+";pb.title="เพิ่มจุดถัดไปที่กลางจอ (กากบาท)";pb.setAttribute("aria-label","เพิ่มจุดไม้บรรทัดที่กลางจอ");rb.appendChild(pb);
  pb.addEventListener("click",e=>{e.stopPropagation();try{const W=mp.clientWidth,H=mp.clientHeight,t=rulSnap(W/2,H/2,M.cx-W/2,M.cy-H/2,M.z);M.rul.fin=false;M.rul.pts.push({la:t.la,lo:t.lo,n:t.n});M.rul.cur=null;drawMap(false)}catch(x){}})}}
+
+/* v4.7.7 b9: กันจอดับเองระหว่างโหมดบิน (Screen Wake Lock API) — เบราว์เซอร์ปล่อยเองเมื่อสลับแอป จึงขอใหม่เมื่อกลับมา (visibilitychange) และเมื่อแตะจอครั้งถัดไปถ้ายังขอไม่ได้ · ไอคอน #flyWk เขียว = กันจอดับอยู่ เทา = เครื่อง/เบราว์เซอร์ไม่ยอม · ตั้งค่า localStorage heliWake (ค่าเริ่มต้น เปิด) */
+const WK={on:lsGet("heliWake",true)!==false,s:null,st:"off",busy:false};window.WK=WK;
+const WB=document.createElement("button");WB.id="flyWk";WB.type="button";WB.className="fly-ui";WB.hidden=true;host.insertBefore(WB,RB.nextSibling);
+["pointerdown","click","touchstart","contextmenu"].forEach(ev=>WB.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu")x.preventDefault()}));
+function wkUi(){const show=isFly()&&WK.on;WB.hidden=!show;if(!show)return;const ok=WK.st==="on";WB.className="fly-ui "+(ok?"ok":"no");WB.textContent=ok?"☀":"☀̸";WB.title=ok?"Screen awake: จอจะไม่ดับเองระหว่างโหมดบิน":"Screen awake: เครื่องหรือเบราว์เซอร์นี้ไม่ยอมให้กันจอดับ — ตั้ง Auto-Lock ที่ตัวเครื่องแทน";WB.setAttribute("aria-label",WB.title);try{if(!MN.hidden)menuRender()}catch(e){}}
+async function wkGet(){if(WK.busy||!WK.on||!isFly()||document.visibilityState!=="visible")return;if(WK.s&&!WK.s.released){WK.st="on";wkUi();return}
+ if(!("wakeLock" in navigator)){WK.st="na";wkUi();return}
+ WK.busy=true;try{const s=await navigator.wakeLock.request("screen");WK.s=s;WK.st="on";s.addEventListener("release",()=>{if(WK.s===s){WK.s=null;WK.st="off";wkUi()}})}catch(e){WK.st="err"}WK.busy=false;
+ if(!WK.on||!isFly())wkRel();wkUi()}
+function wkRel(){const s=WK.s;WK.s=null;WK.st="off";if(s)try{s.release()}catch(e){}wkUi()}
+function wkSet(on){WK.on=!!on;lsSet("heliWake",WK.on);if(WK.on)wkGet();else wkRel();wkUi()}
+window.wkSet=wkSet;
+WB.addEventListener("click",()=>{if(WK.st!=="on")wkGet();toast(WK.st==="on"?"Screen awake: จอจะไม่ดับเองระหว่างโหมดบิน (ปิดได้ที่ Menu)":"เบราว์เซอร์นี้ไม่ยอมให้กันจอดับ ตั้ง Auto-Lock ที่ตัวเครื่องเป็น Never แทน")});
+let wkFly=isFly();new MutationObserver(()=>{const f=isFly();if(f===wkFly)return;wkFly=f;if(f)wkGet();else wkRel()}).observe(mp,{attributes:true,attributeFilter:["class"]});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")setTimeout(wkGet,300)});
+document.addEventListener("pointerdown",()=>{if(WK.on&&isFly()&&WK.st!=="on"&&WK.st!=="na")wkGet()},true);
+if(wkFly)wkGet();
 })();
 </script>
 </body>
