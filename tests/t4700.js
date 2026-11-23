@@ -232,7 +232,18 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  await p.evaluate(()=>{TUP=__s.TUP;RMODE=__s.RMODE;CPON=__s.CPON;MLP.ch=__s.ch});await W(1300);const h2=await p.evaluate(()=>$('fbTl').textContent);
  t('T27 b HDG up: ช่องล่าง TRK เปลี่ยนเป็น HDG (ค่าหัวเครื่อง) · กลับเป็น TRK เมื่อเลิก',h1.l==='HDG'&&/123/.test(h1.v)&&h2==='TRK',{h1,h2});
  await p.tap('#fbEw');await W(300);const e1=await p.evaluate(()=>({l:$('fbEl').textContent,ls:localStorage.getItem('heliEta')}));await p.tap('#fbEw');await W(300);const e2=await p.evaluate(()=>$('fbEl').textContent);
- t('T27 c แตะ ETE สลับเป็น ETA (จำในเครื่อง) · แตะอีกครั้งกลับ ETE',e1.l==='ETA'&&e1.ls==='true'&&e2==='ETE',{e1,e2});
+ t('T27 c แตะ ETE สลับเป็น ETA (จำในเครื่อง) · แตะอีกครั้งกลับ ETE',e1.l==='ETA DEST'&&e1.ls==='true'&&e2==='ETE DEST',{e1,e2});
+// v4.7.7 b7: ETE/ETA ในแถบล่าง = ถึงปลายทาง (จุดสุดท้าย) ไม่ใช่จุดถัดไป
+{const W=n=>p.waitForTimeout(n);
+ const r=await p.evaluate(async()=>{window.__fm=$("fmt").value;$("fmt").value="dd";pts.length=0;pts.push({name:"AAA",lat:"14.0",lon:"100.3"},{name:"BBB",lat:"14.1",lon:"100.6"},{name:"CCC",lat:"14.3",lon:"100.9"});drawPts();calc();render();
+  MLP.on=true;MLP.la=13.98;MLP.lo=100.25;MLP.sp=120/1.943844;MLP.t=Date.now();directTo("",pts[0]);if(typeof FLYETA!=="undefined"&&localStorage.getItem('heliEta')==='true')$('fbEw').click();
+  await new Promise(r=>setTimeout(r,1500));if(!DT)return{noDT:true,fm:window.__fm,to:$('fbN').textContent,mlp:[MLP.on,MLP.la]};const L=navList();const fm=$('fmt').value,s={la:MLP.la,lo:MLP.lo};let d=leg(s,DT.t).d;for(let i=L.k;i<L.b.length-1;i++)d+=leg(dtLL(L.b[i],fm),dtLL(L.b[i+1],fm)).d;
+  const gs=+$('fbG').textContent,sec=Math.round(d/gs*3600),nx=Math.round(leg(s,DT.t).d/gs*3600);return{l:$('fbEl').textContent,e:$('fbE').textContent,d,gs,sec,nx,k:L.k,n:L.b.length,to:$('fbN').textContent}});
+ const P=s=>{const m=s.match(/^(\d+):(\d+)(?::(\d+))?/);return m?(s.includes('ชม')?(+m[1])*3600+(+m[2])*60:(+m[1])*60+(+m[2])):null};const es=P(r.e);
+ t('T33 v4.7.7 b7 แถบล่าง: ETE DEST = เวลาถึงจุดสุดท้ายของเส้นทาง (รวมขาที่เหลือ) ไม่ใช่เวลาถึงจุดถัดไป',r.l==='ETE DEST'&&es!=null&&Math.abs(es-r.sec)<=90&&r.sec>r.nx+60,{r,es});
+ await p.tap('#fbEw');await W(300);const ea=await p.evaluate(()=>({l:$('fbEl').textContent,e:$('fbE').textContent}));await p.tap('#fbEw');await W(200);
+ const exp=new Date(Date.now()+r.sec*1000),eh=String(exp.getHours()).padStart(2,'0')+':'+String(exp.getMinutes()).padStart(2,'0');
+ t('T33 b แตะสลับเป็น ETA DEST = นาฬิกาเครื่อง + เวลาถึงปลายทาง',ea.l==='ETA DEST'&&Math.abs(P(ea.e)-P(eh))<=2,{ea,eh})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
