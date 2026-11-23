@@ -244,6 +244,11 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  await p.tap('#fbEw');await W(300);const ea=await p.evaluate(()=>({l:$('fbEl').textContent,e:$('fbE').textContent}));await p.tap('#fbEw');await W(200);
  const exp=new Date(Date.now()+r.sec*1000),eh=String(exp.getHours()).padStart(2,'0')+':'+String(exp.getMinutes()).padStart(2,'0');
  t('T33 b แตะสลับเป็น ETA DEST = นาฬิกาเครื่อง + เวลาถึงปลายทาง',ea.l==='ETA DEST'&&Math.abs(P(ea.e)-P(eh))<=2,{ea,eh})}
+// v4.7.7 b8: กล่อง Summary บรรทัดสุดท้าย Plan ETE (ตามแผน ไม่เปลี่ยนตาม GS ของ GPS)
+{const r=await p.evaluate(()=>{const g0=$('gs').value,s0=!!M.sum;$('gs').value=100;calc();sumShow(true);const tot=calcData.legs.reduce((s,l)=>s+l.d,0);const q=()=>{const all=[...document.querySelectorAll('#msb .mg>div')],e=document.querySelector('#msb .mplan');return{t:e&&e.innerText.replace(/\s+/g,' ').trim(),last:!!e&&all[all.length-1]===e}};const a=q();
+ const sv=[NAVON,NAVGS0];NAVON=true;NAVGS0="100";$('gs').value=140;msumRender();const b=q();NAVON=sv[0];NAVGS0=sv[1];$('gs').value=g0;calc();sumShow(s0);
+ const m=Math.round(tot/100*60);return{a,b,exp:Math.floor(m/60)+' ชม. '+String(m%60).padStart(2,'0')+' น.'}});
+ t('T34 v4.7.7 b8 กล่อง Summary: บรรทัดสุดท้าย Plan ETE = ระยะรวม ÷ GS ในแผน · ขณะ NAV (GS ถูกแทนด้วย GPS) ยังใช้ GS ในแผน',r.a.last&&r.a.t.startsWith('Plan ETE')&&r.a.t.includes(r.exp)&&/@ 100 kt/.test(r.a.t)&&r.b.last&&r.b.t.includes(r.exp),r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

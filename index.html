@@ -99,7 +99,7 @@ tfoot td{font-weight:600;border-bottom:0}
 #map.full #msum{display:block}
 #map.full #msum.off{display:none}
 #msum .mh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
-#msum .mg{display:grid;grid-template-columns:auto auto;gap:2px 14px}
+#msum .mg{display:grid;grid-template-columns:auto auto;gap:2px 14px}#msum .mplan{grid-column:1/-1;border-top:1px solid var(--line,rgba(127,127,127,.35));padding-top:4px;margin-top:2px;display:flex;align-items:baseline;gap:8px}#msum .mplan b{font-size:1.15em}#msum .mplan i{font-style:normal;color:var(--mute);font-size:.85em}
 #msum small{color:var(--mute);display:block}
 #msum b{font-variant-numeric:tabular-nums;font-size:13px}
 #msum .mx{border:0;background:none;color:var(--mute);cursor:pointer;font-size:14px;padding:0 2px}
@@ -2417,7 +2417,9 @@ const gs=parseFloat($("gs").value),ff=parseFloat($("ff").value),u=$("unit").valu
 const tot=legs.reduce((a,l)=>a+l.d,0),hr=gs>0?tot/gs:NaN,okF=ff>0&&isFinite(hr);
 const trip=okF?fl(hr*ff,u):["-",""],rv=okF?fl(ff*res/60,u):["-",""];
 let rem="";if(okF&&isFinite(tof)){const a=tof-hr*ff,b=a-ff*res/60,st=x=>x<0?' style="color:#c62828"':"";rem=`<div><small>คงเหลือ</small><b${st(a)}>${fl(a,u)[0]}</b></div><div><small>คงเหลือ - reserved</small><b${st(b)}>${fl(b,u)[0]}</b></div>`}
-el.innerHTML=`<div class="mg"><div><small>ระยะทางรวม</small><b>${tot.toFixed(1)} NM</b></div><div><small>เวลาบิน</small><b>${hm(hr)}</b></div><div><small>เชื้อเพลิงเส้นทาง</small><b>${trip[0]}</b></div><div><small>reserved ${res} นาที</small><b>${rv[0]}</b></div>${rem}${navSumRows()}</div>`}
+el.innerHTML=`<div class="mg"><div><small>ระยะทางรวม</small><b>${tot.toFixed(1)} NM</b></div><div><small>เวลาบิน</small><b>${hm(hr)}</b></div><div><small>เชื้อเพลิงเส้นทาง</small><b>${trip[0]}</b></div><div><small>reserved ${res} นาที</small><b>${rv[0]}</b></div>${rem}${navSumRows()}${planRow(tot,gs)}</div>`}
+/* v4.7.7 b8: บรรทัดสุดท้าย Plan ETE = เวลาบินรวมตามแผน (ระยะรวม ÷ GS ที่ตั้งในแผน; ขณะ NAV ช่อง GS ถูกแทนด้วยค่า GPS จึงใช้ค่าก่อนเปิด NAV `NAVGS0`) */
+function planRow(tot,gs){const g=(NAVON&&NAVGS0!=null)?parseFloat(NAVGS0):gs;return`<div class="mplan"><small>Plan ETE</small><b>${g>0?hm(tot/g):"-"}</b>${g>0?`<i>@ ${Math.round(g)} kt</i>`:""}</div>`}
 function sumShow(on){M.sum=on;setTimeout(dock,0);$("msum").classList.toggle("off",!on);$("sb").classList.toggle("on",on)}
 $("sb").onclick=()=>{sumShow(!M.sum);optSave()};
 $("msum").addEventListener("click",e=>{if(e.target.closest("#msx")){sumShow(false);optSave()}});
