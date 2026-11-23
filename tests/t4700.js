@@ -261,9 +261,9 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  t('T35 v4.7.7 b9 โหมดบินขอกันจอดับ (ไอคอนเขียว) · ระบบปล่อยแล้วขอใหม่เมื่อกลับมาที่แอป · ปิดใน Menu = ปล่อย · ออกโหมดบิน = ปล่อย · เข้าใหม่ = ขอใหม่',r.a.st==='on'&&r.a.c.includes('ok')&&!r.a.h&&r.b.st==='off'&&r.c.st==='on'&&r.q2===r.q1+1&&r.d.h&&r.d.st==='off'&&r.e.st==='off'&&r.e.h&&r.g.st==='on'&&!r.g.h,r);
  await p.evaluate(()=>{document.querySelector('#flyT [data-fk="menu"]').click()});await W(200);const m=await p.evaluate(()=>{const b=$('flyM').querySelector('[data-fm="wk"]');return b&&b.textContent});await p.evaluate(()=>{$('flyM').hidden=true});
  t('T35 b Menu มีปุ่ม Screen awake แสดงสถานะ On/Off',/Screen awake: (On|Off)/.test(m||''),m)}
-// v4.7.7 b10: ยอดเขา (MT0) ตรงกับชีต Mountain 161 แถว — ลบแถวซ้ำ x4462 18.88/99.8 ที่ลบออกจากชีตแล้ว
-{const r=await p.evaluate(()=>({n:MT0.length,dup:MT0.some(a=>a[0]==="x4462"&&a[1]===18.88),k:MT0.some(a=>a[0]==="x4462"&&a[1]===18.8767),db:DB.MT.length}));
- t('T36 v4.7.7 b10 ข้อมูลยอดเขาในไฟล์ = ชีต Mountain (161 แถว ไม่มี x4462 แถวที่ลบแล้ว)',r.n===161&&!r.dup&&r.k&&r.db===161,r)}
+// v4.7.7 b10–b11: ยอดเขา (MT0) ตรงกับชีต Mountain 159 แถว — ลบ x4462 18.88/99.8 (b10), x5702 แถวซ้ำ และ x6017 (b11)
+{const r=await p.evaluate(()=>({n:MT0.length,dup:MT0.some(a=>a[0]==="x4462"&&a[1]===18.88),k:MT0.some(a=>a[0]==="x4462"&&a[1]===18.8767),x5702:MT0.filter(a=>a[0]==="x5702").length,x6017:MT0.some(a=>a[0]==="x6017"),x5839:MT0.some(a=>a[0]==="x5839"),db:DB.MT.length}));
+ t('T36 v4.7.7 b11 ข้อมูลยอดเขาในไฟล์ = ชีต Mountain (159 แถว · x5702 แถวเดียว · ไม่มี x6017 · ไม่มี x4462 แถวที่ลบแล้ว)',r.n===159&&!r.dup&&r.k&&r.x5702===1&&!r.x6017&&r.x5839&&r.db===159,r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
