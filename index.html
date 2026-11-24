@@ -1615,6 +1615,16 @@ M.pop=null;M.touched=true;drawPts();toast("เพิ่มจุดที่ "+f
 var RZ=0;
 var RU=(()=>{try{const u=localStorage.getItem("heliRulUnit");return["nm","km","m","ft"].includes(u)?u:"nm"}catch(e){return"nm"}})();
 function rulF(nm){const u=RU;return u==="km"?(nm*1.852).toFixed(2)+" km":u==="m"?Math.round(nm*1852).toLocaleString("en-US")+" m":u==="ft"?Math.round(nm*6076.11549).toLocaleString("en-US")+" ft":nm.toFixed(1)+" NM"}
+/* v4.7.7 b15: ชั้น ENR Chart — Enroute Chart (ICAO) ของ AIP ไทย แปลงเป็นแผ่นภาพพื้นโปร่งใสในรีโป Tpadenr (GitHub Pages) · ใช้เป็นแผนที่พื้นหลัง (พื้นขาว) หรือซ้อนบนแผนที่อื่น (ENR.on, ความทึบ ENR.op) · meta.json บอก AIRAC/วันที่มีผล/ซูมสูงสุด/กรอบ */
+const ENR={u:"https://ow3652.github.io/Tpadenr/tiles/{z}/{x}/{y}.png",mu:"https://ow3652.github.io/Tpadenr/meta.json",m:{airac:"11/26",effective:"29 OCT 26",zmax:11,bounds:[96.4,5.4,105.7,20.7]},on:false,op:0.85};
+try{const m=JSON.parse(localStorage.getItem("heliEnrMeta")||"null");if(m&&m.airac&&m.bounds&&m.zmax)ENR.m=m}catch(e){}
+try{ENR.on=localStorage.getItem("heliEnrOn")==="1";const o=parseFloat(localStorage.getItem("heliEnrOp"));if(o>=0.2&&o<=1)ENR.op=o}catch(e){}
+function enrIn(z,x,y){const n=2**z,b=ENR.m.bounds,lo0=x/n*360-180,lo1=(x+1)/n*360-180,la=t=>Math.atan(Math.sinh(Math.PI*(1-2*t/n)))*180/Math.PI;return lo1>b[0]&&lo0<b[2]&&la(y)>b[1]&&la(y+1)<b[3]}
+function enrTile(im){im.classList.add("enr");im.onerror=()=>{im.style.visibility="hidden"};if(LAY.k!=="enr")im.style.opacity=ENR.op;const d=Math.max(0,im._z-ENR.m.zmax);
+ if(d){const f=2**d,S=TS*f,sx=(im._x%f)*TS,sy=(im._y%f)*TS;im._d=d;im._sx=sx;im._sy=sy;im.style.width=im.style.height=S+"px";im.style.clipPath="inset("+sy+"px "+(S-sx-TS)+"px "+(S-sy-TS)+"px "+sx+"px)"}
+ im.src=tileSrc(im._u,im._z-d,Math.floor(im._x/2**d),Math.floor(im._y/2**d))}
+function layU(){return ENR.on&&LAY.k!=="enr"?LAY.u.concat([ENR.u]):LAY.u}
+function enrAt(){try{window.enrSync&&window.enrSync()}catch(e){}const a=$("at");if(!a)return;a.innerHTML=LAY.at+((LAY.k==="enr"||ENR.on)?' <span class="enrat">· ENR AIRAC '+esc(ENR.m.airac)+' มีผล '+esc(ENR.m.effective)+' · ใช้ประกอบการวางแผนเท่านั้น</span>':"")}
 const LAYERS=[
 {k:"topo",n:"OpenTopoMap (ภูมิประเทศ)",u:["https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"],at:'แผนที่ © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA) ข้อมูล © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">ผู้ร่วมจัดทำ OpenStreetMap</a>'},
 {k:"cyc",n:"CyclOSM (ถนน + เส้นชั้นความสูง)",u:["https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"],at:'แผนที่ © <a href="https://www.cyclosm.org" target="_blank" rel="noopener">CyclOSM</a> ข้อมูล © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">ผู้ร่วมจัดทำ OpenStreetMap</a>'},
@@ -1624,6 +1634,7 @@ const LAYERS=[
 {k:"etopo",n:"Esri Topo (ภูมิประเทศ)",u:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"],at:'แผนที่ © Esri, HERE, Garmin, USGS, OpenStreetMap contributors และผู้ให้ข้อมูลอื่น'},
 {k:"est",n:"Esri Street (ถนน)",u:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"],at:'แผนที่ © Esri, HERE, Garmin, OpenStreetMap contributors และผู้ให้ข้อมูลอื่น'},
 {k:"hot",n:"OSM Humanitarian (ถนน/ชื่อสถานที่)",u:["https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"],at:'แผนที่ © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">ผู้ร่วมจัดทำ OpenStreetMap</a>, Humanitarian OpenStreetMap Team'},
+{k:"enr",n:"ENR Chart (AIP ไทย · พื้นขาว)",u:[ENR.u],at:'Enroute Chart (ICAO) © Aeronautical Information Services ประเทศไทย',zx:11,bg:"#ffffff"},
 {k:"blank",n:"ว่าง (พื้นหลังสีดำ)",u:[],at:"",lz:99},
 ];
 let RC="#ffffff";
@@ -1672,13 +1683,13 @@ const f=2**d,S=TS*f,sx=(im._x%f)*TS,sy=(im._y%f)*TS,l=parseFloat(im.style.left)|
 im.style.left=(l+im._sx-sx)+"px";im.style.top=(t+im._sy-sy)+"px";im._d=d;im._sx=sx;im._sy=sy;
 im.style.width=im.style.height=S+"px";im.style.clipPath="inset("+sy+"px "+(S-sx-TS)+"px "+(S-sy-TS)+"px "+sx+"px)";
 im.src=tileSrc(im._u,im._z-d,Math.floor(im._x/f),Math.floor(im._y/f))}
-function setLayer(k,keep){LAY=LAYERS.find(l=>l.k===k)||LAYERS[0];$("at").innerHTML=LAY.at;
+function setLayer(k,keep){LAY=LAYERS.find(l=>l.k===k)||LAYERS[0];enrAt();
 for(const[,im]of M.cache)im.remove();M.cache.clear();
 try{if(!keep)localStorage.setItem("heliLayer",LAY.k)}catch(e){}blkUi();drawMap(false)}
 /* map: OpenTopoMap tiles */
 const M={z:10,cx:0,cy:0,touched:false,init:false,cache:new Map(),zt:0},TS=256;
 function wp(la,lo,z){const s=TS*2**z,r=rad(la);return[(lo+180)/360*s,(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*s]}
-function drawMap(fit){requestAnimationFrame(curUpd);try{mp.style.background=LAY.k==="blank"?BLK:""}catch(e){}
+function drawMap(fit){requestAnimationFrame(curUpd);try{mp.style.background=mapBg()}catch(e){}
 const el=$("map"),W=el.clientWidth,H=el.clientHeight;if(!W)return;
 if(M.rul.on&&!M.rul.fin&&crossMode())M.rul.cur={x:W/2,y:H/2};
 const v=calcData.valid;
@@ -1693,9 +1704,9 @@ const RDG=Math.hypot(W,H),RMX=RZ?Math.ceil(RDG/2-W/2):0,RMY=RZ?Math.ceil(RDG/2-H
 for(let ty=Math.floor((oy-RMY)/TS);ty<=Math.floor((oy+H+RMY)/TS);ty++){if(ty<0||ty>=n)continue;
 for(let tx=Math.floor((ox-RMX)/TS);tx<=Math.floor((ox+W+RMX)/TS);tx++){
 const wx=((tx%n)+n)%n;
-LAY.u.forEach((u,ui)=>{const k=LAY.k+ui+"/"+z+"/"+wx+"/"+ty+"/"+tx;want.add(k);
+layU().forEach((u,ui)=>{const en=u===ENR.u;if(en&&!enrIn(z,wx,ty))return;const k=LAY.k+ui+"/"+z+"/"+wx+"/"+ty+"/"+tx;want.add(k);
 let im=M.cache.get(k);
-if(!im){im=new Image();im.alt="";im.draggable=false;im.className="tile";{const L=LAY;im.onerror=()=>tileOz(im,L)}im.style.zIndex=ui;im._u=u;im._z=z;im._x=wx;im._y=ty;im._d=0;im._sx=0;im._sy=0;im.src=tileSrc(u,z,wx,ty);tl.appendChild(im);M.cache.set(k,im)}
+if(!im){im=new Image();im.alt="";im.draggable=false;im.className="tile";{const L=LAY;im.onerror=()=>tileOz(im,L)}im.style.zIndex=ui;im._u=u;im._z=z;im._x=wx;im._y=ty;im._d=0;im._sx=0;im._sy=0;if(en)enrTile(im);else im.src=tileSrc(u,z,wx,ty);tl.appendChild(im);M.cache.set(k,im)}
 im.style.left=(tx*TS-ox-im._sx)+"px";im.style.top=(ty*TS-oy-im._sy)+"px"})}}
 for(const[k,im]of M.cache)if(!want.has(k)){im.remove();M.cache.delete(k)}
 {const wb=$("wx");if(RMX||RMY){wb.style.inset="auto";wb.style.left=-RMX+"px";wb.style.top=-RMY+"px";wb.style.width=(W+2*RMX)+"px";wb.style.height=(H+2*RMY)+"px"}else{wb.style.inset="";wb.style.left=wb.style.top=wb.style.width=wb.style.height=""}}
@@ -1929,7 +1940,7 @@ $("zi").onclick=()=>zoom(1,mp.clientWidth/2,mp.clientHeight/2);
 $("zo").onclick=()=>zoom(-1,mp.clientWidth/2,mp.clientHeight/2);
 $("fit").onclick=()=>{M.touched=false;drawMap(true)};
 addEventListener("resize",()=>drawMap(false));
-$("lay").innerHTML=LAYERS.map(l=>`<option value="${l.k}">${l.n}</option>`).join("");$("lay").value=LAY.k;$("at").innerHTML=LAY.at;
+$("lay").innerHTML=LAYERS.map(l=>`<option value="${l.k}">${l.n}</option>`).join("");$("lay").value=LAY.k;enrAt();
 $("lay").onchange=()=>setLayer($("lay").value);
 const CLKS=["clk","clk2","clk3"];CLKS.forEach(i=>{$(i).onchange=()=>{if($(i).checked)CLKS.forEach(j=>{if(j!==i)$(j).checked=false});mp.classList.toggle("pick",CLKS.some(j=>$(j).checked))}});mp.classList.add("pick");
 $("msz").onchange=()=>{document.querySelector(".grid").dataset.s=$("msz").value};
@@ -2451,7 +2462,8 @@ $("mb").onclick=()=>{macShow(!M.mac);optSave()};
 macShow(true);macSync();
 function setIS(v,ns){IS=[1,.75,.5].includes(v)?v:1;$("isz").value=String(IS);$("isz2").value=String(IS);if(!ns){M.pop=null;drawMap(false);optSave()}}
 $("isz").onchange=()=>setIS(+$("isz").value);
-function setBri(v,ns){v=Math.max(20,Math.min(100,v||100));$("tl").style.filter=v<100?"brightness("+v/100+")":"";$("bri").value=v;$("bri2").value=v;M.bri=v;if(!ns)optSave()}
+/* v4.7.7 b15: พื้นหลังของแผนที่ที่มีพื้นสี (ENR = ขาว) มืดตามความสว่างแผนที่ เหมือนแผ่นภาพ */function mapBg(){if(LAY.k==="blank")return BLK;if(!LAY.bg)return"";const b=(M.bri||100)/100;if(b>=1)return LAY.bg;const n=parseInt(LAY.bg.slice(1),16),c=s=>Math.round(((n>>s)&255)*b);return"rgb("+c(16)+","+c(8)+","+c(0)+")"}
+function setBri(v,ns){v=Math.max(20,Math.min(100,v||100));$("tl").style.filter=v<100?"brightness("+v/100+")":"";$("bri").value=v;$("bri2").value=v;M.bri=v;try{mp.style.background=mapBg()}catch(e){}if(!ns)optSave()}
 $("bri").oninput=()=>setBri(+$("bri").value);
 const PNL=(()=>{try{return JSON.parse(localStorage.getItem("heliPanels")||"{}")}catch(e){return{}}})();let PZ=10;
 function pnlSave(){try{localStorage.setItem("heliPanels",JSON.stringify(PNL))}catch(e){}}
@@ -4776,7 +4788,28 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #mlmenu .mlh{display:none}#map.fly #mlmenu .mlh{display:block;text-align:center;font:700 13px system-ui,sans-serif;color:var(--mute);padding:4px 0 6px;cursor:grab;touch-action:none;border-bottom:1px solid var(--line)}
 #map.fly #mlmenu{min-width:240px;font-size:16px;touch-action:none}#map.fly #mlmenu .chip,#map.fly #mlmenu .b{min-height:44px;font-size:16px}
 #rlplus{display:none}#rulb.rmin>#rlplus{display:inline-flex!important;font-size:22px;font-weight:800;min-width:44px;justify-content:center;align-items:center;margin-left:6px}#map.fly #rulb.rmin>#rlplus{min-height:44px;min-width:52px}
-#flyWk{position:absolute;left:104px;bottom:calc(var(--flyb,0px) + 6px);z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}</style>
+#flyWk{position:absolute;left:104px;bottom:calc(var(--flyb,0px) + 6px);z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}.enrc select{margin-left:4px;padding:1px 2px}.enrc input:disabled+*{opacity:.5}.enrc2{display:flex;align-items:center;gap:6px;margin-top:6px}#at .enrat{color:#b3261e;font-weight:600}</style>
+<script id="enr">
+/* v4.7.7 b15: ตัวควบคุมชั้น ENR Chart — ช่อง "ซ้อน ENR" + ความทึบ (ในแถบชั้นข้อมูลหน้าหลัก และกล่องชั้นข้อมูลเต็มจอ/โหมดบิน) · โหลด meta.json ล่าสุดจาก Tpadenr เมื่อออนไลน์ */
+(function(){
+ const OPS=[1,0.85,0.7,0.5,0.35];
+ function ui(){return`<input type="checkbox" class="enron" aria-label="ซ้อนชาร์ต ENR บนแผนที่"> ซ้อน ENR <select class="enrop" aria-label="ความทึบชาร์ต ENR">${OPS.map(o=>`<option value="${o}">${Math.round(o*100)}%</option>`).join("")}</select>`}
+ function sync(){document.querySelectorAll(".enron").forEach(c=>{c.checked=ENR.on;c.disabled=LAY.k==="enr"});document.querySelectorAll(".enrop").forEach(s=>{s.value=String(OPS.reduce((a,b)=>Math.abs(b-ENR.op)<Math.abs(a-ENR.op)?b:a))})}
+ function place(){
+  const a=$("lay")&&$("lay").closest("label");if(a&&!document.getElementById("enrc1")){const l=document.createElement("label");l.className="chip enrc";l.id="enrc1";l.title="ซ้อนชาร์ต Enroute (AIP ไทย) บนแผนที่ที่เลือก — ใช้ประกอบการวางแผนเท่านั้น";l.innerHTML=ui();a.after(l)}
+  const b=$("lay2")&&$("lay2").closest("label");if(b&&!document.getElementById("enrc2")){const l=document.createElement("label");l.className="enrc enrc2";l.id="enrc2";l.title="ซ้อนชาร์ต Enroute (AIP ไทย) บนแผนที่ที่เลือก";l.innerHTML=ui();b.after(l)}
+  sync()}
+ place();window.enrSync=sync;
+ document.addEventListener("change",e=>{const t=e.target;if(t.classList.contains("enron")){ENR.on=t.checked;try{localStorage.setItem("heliEnrOn",ENR.on?"1":"0")}catch(x){}sync();enrAt();drawMap(false)}
+  else if(t.classList.contains("enrop")){ENR.op=parseFloat(t.value)||0.85;try{localStorage.setItem("heliEnrOp",String(ENR.op))}catch(x){}sync();if(LAY.k!=="enr")document.querySelectorAll("#tl img.enr").forEach(i=>i.style.opacity=ENR.op)}
+  else if(t.id==="lay"||t.id==="lay2")setTimeout(sync,0)});
+ /* ข้อมูลฉบับล่าสุด (AIRAC / วันที่มีผล / ซูมสูงสุด / กรอบ) — ไม่แคชผ่าน service worker (ไม่ใช่แผ่นภาพ) */
+ if(/^https?:$/.test(location.protocol)&&navigator.onLine!==false)setTimeout(()=>{fetch(ENR.mu,{cache:"no-store"}).then(r=>r.ok?r.json():null).then(m=>{
+  if(!m||!m.airac||!Array.isArray(m.bounds)||!(m.zmax>0))return;const ch=m.airac!==ENR.m.airac||m.zmax!==ENR.m.zmax||String(m.bounds)!==String(ENR.m.bounds);
+  ENR.m={airac:m.airac,effective:m.effective||"",zmax:m.zmax,bounds:m.bounds};try{localStorage.setItem("heliEnrMeta",JSON.stringify(ENR.m))}catch(x){}
+  enrAt();if(ch&&(LAY.k==="enr"||ENR.on)){for(const[k,im]of M.cache)if(im.classList.contains("enr")){im.remove();M.cache.delete(k)}drawMap(false)}}).catch(()=>{})},2500);
+})();
+</script>
 <script id="flymode">
 /* ===== v4.7.0–4.7.7: โหมดบิน (ปุ่มใหญ่สำหรับ iPad ขณะบิน) + บันทึก Track ===== */
 (function(){

@@ -8,7 +8,7 @@
  */
 const VERSION = '4.7.7';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b14';
+const BUILD = 'b15';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
 const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
@@ -70,7 +70,9 @@ function isTile(u) {
     // v4.5.0: ข้อมูลความสูงภูมิประเทศ AWS Terrain Tiles (TAWS/กราฟความสูง) ผู้ใช้อนุญาตแล้ว
     (u.hostname === 's3.amazonaws.com' && u.pathname.indexOf('/elevation-tiles-prod/') === 0) || u.hostname === 'elevation-tiles-prod.s3.amazonaws.com' ||
     // v4.5.0 b5: ข้อมูลความสูง Copernicus DEM ที่สร้างเอง (รีโป Tpadterrain บน GitHub Pages)
-    (u.hostname === 'ow3652.github.io' && u.pathname.indexOf('/Tpadterrain/') === 0);
+    (u.hostname === 'ow3652.github.io' && u.pathname.indexOf('/Tpadterrain/') === 0) ||
+    // v4.7.7 b15: แผ่นภาพชาร์ต ENR (รีโป Tpadenr บน GitHub Pages) — เฉพาะ tiles/ (meta.json ไม่แคช)
+    (u.hostname === 'ow3652.github.io' && u.pathname.indexOf('/Tpadenr/tiles/') === 0);
 }
 // คีย์แคช: ตัดโดเมนย่อย a/b/c และพารามิเตอร์ _r ออก (ต้องตรงกับฟังก์ชัน tkey ในหน้าแอป)
 function tkey(u) {

@@ -250,7 +250,7 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  const sv=[NAVON,NAVGS0];NAVON=true;NAVGS0="100";$('gs').value=140;msumRender();const b=q();NAVON=sv[0];NAVGS0=sv[1];$('gs').value=100;
  $('dep').value='';msumRender();const c=q();$('gs').value=g0;$('dep').value=d0;calc();sumShow(s0);
  const m=Math.round(tot/100*60),f=x=>String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0'),n=new Date(),nm=n.getHours()*60+n.getMinutes()+m;
- return{a,b,c,exp:f(540+m),now:[f(nm),f(nm+1)]}});
+ return{a,b,c,exp:f(540+m),now:[f(nm-1),f(nm),f(nm+1)]}});
  t('T34 v4.7.7 b14 กล่อง Summary: บรรทัดสุดท้าย Plan ETA = เวลาออกบิน + เวลาบินตามแผน (ขณะ NAV ยังใช้ GS ในแผน) · ไม่กรอกเวลาออก = นับจากตอนนี้',r.a.last&&r.a.t.startsWith('Plan ETA '+r.exp)&&/ออก 09:00/.test(r.a.t)&&/@ 100 kt/.test(r.a.t)&&r.b.t.startsWith('Plan ETA '+r.exp)&&r.c.last&&/ออกตอนนี้/.test(r.c.t)&&r.now.some(x=>r.c.t.startsWith('Plan ETA '+x)),r)}
 // v4.7.7 b9: กันจอดับในโหมดบิน (Screen Wake Lock) — จำลอง navigator.wakeLock
 {const W=n=>p.waitForTimeout(n);
@@ -276,6 +276,19 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  const r=await p.evaluate(()=>{let n=0;const o=drawMap;drawMap=function(){n++;return o.apply(this,arguments)};const ev=(x,y)=>({clientX:x,clientY:y});const rot=$('rot');
   try{panMove(ev(300,300));const n1=n;for(let i=1;i<=5;i++)panMove(ev(300+i*10,300+i*4));const tf=rot.style.transform,n2=n;panFlush();return{n1,n2,tf,after:rot.style.transform,n3:n,pb:PANB}}finally{drawMap=o}});
  t('T37 b ลากด้วยนิ้ว: ระหว่างรอบวาดใช้ transform เลื่อนภาพ (ไม่วาดใหม่ทุกครั้ง) · ยกนิ้วแล้ววาดจริงและล้าง transform',r.n1===1&&r.n2===1&&/translate\(50\.0px, ?20\.0px\)/.test(r.tf)&&r.after===''&&r.n3===2&&r.pb===null,r)}
+// v4.7.7 b15: ชั้น ENR Chart (Tpadenr) — แผนที่พื้นหลัง (พื้นขาว) และซ้อนบนแผนที่อื่น + ความทึบ · ไม่ขอแผ่นนอกกรอบ · ซูมเกิน zmax ใช้แผ่นแม่ขยาย
+{const W=n=>p.waitForTimeout(n);
+ const r=await p.evaluate(async()=>{const sl=ms=>new Promise(r=>setTimeout(r,ms));const L0=LAY.k,on0=ENR.on,op0=ENR.op,z0=M.z,c0=[M.cx,M.cy];
+  const has=!!LAYERS.find(l=>l.k==='enr');setLayer('enr');let q=wp(13.75,100.6,9);M.z=9;M.cx=q[0];M.cy=q[1];drawMap(false);await sl(200);
+  const base={n:document.querySelectorAll('#tl img.enr').length,bg:mp.style.background!=='',at:/ENR AIRAC/.test($('at').textContent),dis:[...document.querySelectorAll('.enron')].every(c=>c.disabled)};
+  q=wp(13.75,100.6,13);M.z=13;M.cx=q[0];M.cy=q[1];drawMap(false);await sl(100);const im=document.querySelector('#tl img.enr');const oz={z:im&&im._z,d:im&&im._d,src:im&&/\/tiles\/11\//.test(im.src)};
+  setLayer('topo');const c=document.querySelector('.enron');c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}));const s=document.querySelector('.enrop');s.value='0.5';s.dispatchEvent(new Event('change',{bubbles:true}));
+  q=wp(13.75,100.6,9);M.z=9;M.cx=q[0];M.cy=q[1];drawMap(false);await sl(100);
+  const ov={n:document.querySelectorAll('#tl img.enr').length,op:(document.querySelector('#tl img.enr')||{style:{}}).style.opacity,at:/ENR AIRAC/.test($('at').textContent),ls:localStorage.getItem('heliEnrOn')};
+  q=wp(35,140,9);M.cx=q[0];M.cy=q[1];drawMap(false);await sl(50);const out=document.querySelectorAll('#tl img.enr').length;
+  c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}));q=wp(13.75,100.6,9);M.cx=q[0];M.cy=q[1];drawMap(false);await sl(50);const off={n:document.querySelectorAll('#tl img.enr').length,at:/ENR AIRAC/.test($('at').textContent)};
+  ENR.op=op0;setLayer(L0);M.z=z0;M.cx=c0[0];M.cy=c0[1];drawMap(false);return{has,base,oz,ov,out,off}});
+ t('T38 v4.7.7 b15 ชั้น ENR Chart: เป็นแผนที่พื้นหลัง (พื้นขาว ป้าย AIRAC ที่บรรทัดลิขสิทธิ์) · ซ้อนบนแผนที่อื่นได้ ปรับความทึบ · ไม่ขอแผ่นนอกกรอบ · ซูม 13 ใช้แผ่นซูม 11 ขยาย · ปิดแล้วหาย',r.has&&r.base.n>0&&r.base.bg&&r.base.at&&r.base.dis&&r.oz.z===13&&r.oz.d===2&&r.oz.src&&r.ov.n>0&&r.ov.op==='0.5'&&r.ov.at&&r.ov.ls==='1'&&r.out===0&&r.off.n===0&&!r.off.at,r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
