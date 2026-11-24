@@ -56,7 +56,7 @@ tr:nth-child(even) td{background:#fafbfc}
 .step li::before{content:counter(s);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:6px;background:var(--navy);color:var(--gold);font:700 10pt/24px sans-serif;text-align:center}
 .small{font-size:9pt;color:var(--mut)}
 @media screen{html{font-size:16px}body{max-width:880px;margin:0 auto;padding:10px 14px}.cover{height:auto;min-height:70vh;gap:18px}.cover h1{font-size:2rem}.toc{columns:1}img{max-width:100%;height:auto}.fix{width:100%!important}.row2{flex-wrap:wrap}table{display:block;overflow-x:auto}h2{font-size:1.4rem}}
-html{scroll-behavior:smooth}h2[id],h3[id]{scroll-margin-top:14px}.toc a{text-decoration:none}.toc a.tch{color:var(--teal);font-weight:700}.toc .tsub{list-style:none;margin:3px 0 4px;padding-left:16px;font-size:9.3pt;line-height:1.5}.toc .tsub a{color:inherit}@media screen{.toc a:hover{text-decoration:underline}.toc .tsub li{padding:3px 0}#tocb{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;background:#0F6E7C;color:#fff;border-radius:22px;padding:10px 16px;font:700 15px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.35)}}@media print{#tocb{display:none}}</style>
+html{scroll-behavior:smooth}h2[id],h3[id]{scroll-margin-top:14px}.toc a{text-decoration:none}.toc a.tch{color:var(--teal);font-weight:700}.toc .tsub{list-style:none;margin:3px 0 4px;padding-left:16px;font-size:9.3pt;line-height:1.5}.toc .tsub a{color:inherit}@media screen{.toc a:hover{text-decoration:underline}.toc .tsub li{padding:3px 0}#tocb{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;background:#0F6E7C;color:#fff;border-radius:22px;padding:10px 16px;font:700 15px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.35)}}.tochint{color:var(--mut);font-size:9.5pt;margin:2px 0 8px}@media print{#tocb,.tochint{display:none}}</style>
 </head>
 <body>
 
@@ -74,19 +74,10 @@ html{scroll-behavior:smooth}h2[id],h3[id]{scroll-margin-top:14px}.toc a{text-dec
  </div>
 </section>
 
-<!-- ข้อควรรู้ + สารบัญ -->
-<section>
- <h2>ก่อนเริ่มใช้งาน</h2>
- <div class="warn"><b>ใช้ประกอบการวางแผนและฝึกเท่านั้น</b> แอปนี้ไม่ใช่อุปกรณ์นำทางที่ได้รับการรับรอง ตัวเลขระยะ เวลา และเชื้อเพลิงเป็นการคำนวณเบื้องต้น (ระยะคำนวณแบบ great circle, เวลาและเชื้อเพลิงคิดจาก groundspeed ค่าเดียว ไม่ได้คิดลม) ต้องตรวจกับ AIP / NOTAM / สภาพอากาศทางการก่อนบินทุกครั้ง</div>
- <p><b>แอปนี้คืออะไร</b> เป็นหน้าเว็บไฟล์เดียว ใช้วางเส้นทางบนแผนที่ คำนวณระยะ ทิศ เวลาบิน และเชื้อเพลิง สร้างเส้นทางค้นหา (SAR) พิมพ์ Flight Log ดูข้อมูลสนามบิน และฝึกบินตามเส้นทางด้วยเครื่องจำลอง (SIM) พร้อมเครื่องวัด HSI, RMI และตาราง FMS ใช้ได้บนคอมพิวเตอร์ iPad และหน้า Google Sites หรือเปิดผ่านลิงก์เว็บของหน่วย (GitHub Pages)</p>
- <p><b>สิ่งที่ต้องมี</b></p>
- <ul>
-  <li>เบราว์เซอร์ เช่น Chrome หรือ Safari (บน iPad ใช้ผ่านแอปที่หน่วยกำหนดได้)</li>
-  <li>อินเทอร์เน็ต เพื่อโหลดภาพแผนที่พื้นหลัง (หรือดาวน์โหลดแผนที่ไว้ล่วงหน้า ดูหัวข้อ 1.3) กดดู METAR/TAF หรือเครื่องบิน (ADS-B) และซิงก์ข้อมูลส่วนตัวกับชีต</li>
-  <li>ถ้าต้องการให้จุดของฉัน เส้นทาง และพื้นที่ SAR ตามไปทุกเครื่อง ให้ขอ “รหัสซิงก์” ของตนเองจากผู้ดูแล (หัวข้อ 10.6) ถ้าไม่มีรหัส แอปยังใช้ได้ครบ แต่ข้อมูลส่วนตัวเก็บในเครื่องนี้เท่านั้น</li>
-  <li>ข้อมูลอ้างอิงในแอป (สนามบิน TPAD VOR จุดรายงาน พื้นที่หวงห้าม ยอดเขา ฯลฯ รวม 774 รายการ) ฝังมากับไฟล์ ใช้ได้แม้ไม่ต่อชีตกลาง</li>
- </ul>
- <h3 id="toc">สารบัญ (แตะหัวข้อเพื่อไปที่หน้านั้น)</h3>
+<!-- สารบัญ (b14) -->
+<section class="tocs">
+ <h2 id="toc">สารบัญ</h2>
+ <p class="tochint">แตะชื่อบทหรือหัวข้อย่อยเพื่อไปที่หน้านั้น · ปุ่ม ☰ สารบัญ มุมล่างขวาพากลับมาหน้านี้</p>
  <div class="toc">
   <div><a class="tch" href="#sec1">1 เริ่มต้นใช้งาน</a><span>หน้าหลัก แท็บทั้ง 6 ติดตั้งลงหน้าจอโฮม ใช้ออฟไลน์ การอัปเดต และแผนที่ออฟไลน์</span><ul class="tsub"><li><a href="#sec1_1">1.1 ติดตั้งลงหน้าจอโฮม และใช้งานออฟไลน์ (iPad / iPhone)</a></li><li><a href="#sec1_2">1.2 การอัปเดตเวอร์ชัน (ผู้ใช้เลือกเอง)</a></li><li><a href="#sec1_3">1.3 แผนที่ออฟไลน์ (เก็บภาพแผนที่พื้นหลังไว้ใช้ตอนไม่มีอินเทอร์เน็ต)</a></li></ul></div>
   <div><a class="tch" href="#sec2">2 วางเส้นทางและใส่จุดพิกัด</a><span>พิมพ์รหัสจุด สูตรทิศ/ระยะ ค้นหาจุด</span><ul class="tsub"><li><a href="#sec2_1">2.1 ใส่จุดในช่อง “จุดพิกัดในเส้นทาง”</a></li><li><a href="#sec2_2">2.2 ชื่อจุดแบบสูตร</a></li><li><a href="#sec2_3">2.3 ค้นหาจุดจากฐานข้อมูล</a></li><li><a href="#sec2_4">2.4 วิธีเพิ่ม/แก้จุดบนแผนที่</a></li></ul></div>
@@ -103,6 +94,21 @@ html{scroll-behavior:smooth}h2[id],h3[id]{scroll-margin-top:14px}.toc a{text-dec
   <div><a class="tch" href="#sec13">13 Track, Mark และ GPX</a><span>บันทึกเส้นทางบิน สร้างจุดจากตำแหน่งปัจจุบัน</span><ul class="tsub"><li><a href="#sec13_1">13.1 บันทึก Track</a></li><li><a href="#sec13_2">13.2 Mark (สร้างจุดจากตำแหน่งปัจจุบัน)</a></li></ul></div>
   <div><a class="tch" href="#sec14">14 ปัญหาที่พบบ่อย</a><span>และข้อมูลเก็บไว้ที่ไหน</span></div>
  </div>
+</section>
+
+<!-- ข้อควรรู้ + สารบัญ -->
+<section>
+ <h2>ก่อนเริ่มใช้งาน</h2>
+ <div class="warn"><b>ใช้ประกอบการวางแผนและฝึกเท่านั้น</b> แอปนี้ไม่ใช่อุปกรณ์นำทางที่ได้รับการรับรอง ตัวเลขระยะ เวลา และเชื้อเพลิงเป็นการคำนวณเบื้องต้น (ระยะคำนวณแบบ great circle, เวลาและเชื้อเพลิงคิดจาก groundspeed ค่าเดียว ไม่ได้คิดลม) ต้องตรวจกับ AIP / NOTAM / สภาพอากาศทางการก่อนบินทุกครั้ง</div>
+ <p><b>แอปนี้คืออะไร</b> เป็นหน้าเว็บไฟล์เดียว ใช้วางเส้นทางบนแผนที่ คำนวณระยะ ทิศ เวลาบิน และเชื้อเพลิง สร้างเส้นทางค้นหา (SAR) พิมพ์ Flight Log ดูข้อมูลสนามบิน และฝึกบินตามเส้นทางด้วยเครื่องจำลอง (SIM) พร้อมเครื่องวัด HSI, RMI และตาราง FMS ใช้ได้บนคอมพิวเตอร์ iPad และหน้า Google Sites หรือเปิดผ่านลิงก์เว็บของหน่วย (GitHub Pages)</p>
+ <p><b>สิ่งที่ต้องมี</b></p>
+ <ul>
+  <li>เบราว์เซอร์ เช่น Chrome หรือ Safari (บน iPad ใช้ผ่านแอปที่หน่วยกำหนดได้)</li>
+  <li>อินเทอร์เน็ต เพื่อโหลดภาพแผนที่พื้นหลัง (หรือดาวน์โหลดแผนที่ไว้ล่วงหน้า ดูหัวข้อ 1.3) กดดู METAR/TAF หรือเครื่องบิน (ADS-B) และซิงก์ข้อมูลส่วนตัวกับชีต</li>
+  <li>ถ้าต้องการให้จุดของฉัน เส้นทาง และพื้นที่ SAR ตามไปทุกเครื่อง ให้ขอ “รหัสซิงก์” ของตนเองจากผู้ดูแล (หัวข้อ 10.6) ถ้าไม่มีรหัส แอปยังใช้ได้ครบ แต่ข้อมูลส่วนตัวเก็บในเครื่องนี้เท่านั้น</li>
+  <li>ข้อมูลอ้างอิงในแอป (สนามบิน TPAD VOR จุดรายงาน พื้นที่หวงห้าม ยอดเขา ฯลฯ รวม 774 รายการ) ฝังมากับไฟล์ ใช้ได้แม้ไม่ต่อชีตกลาง</li>
+ </ul>
+ 
  <div class="note"><b>วิธีอ่านภาพประกอบ</b> ตัวเลขวงกลมสีชมพูบนภาพ คือจุดที่อธิบายในรายการใต้ภาพนั้น พื้นหลังแผนที่ในภาพบางภาพเป็นสีเทาเรียบ เพราะภาพถ่ายในสภาพแวดล้อมที่โหลดแผนที่ไม่ได้ ในการใช้งานจริงจะเห็นแผนที่เต็ม</div>
 </section>
 
@@ -546,7 +552,7 @@ html{scroll-behavior:smooth}h2[id],h3[id]{scroll-margin-top:14px}.toc a{text-dec
 <h3 id="sec12_6">12.6 กล่อง Aircraft และ Summary</h3>
 <div class="row2"><figure class="fix" style="width:36%"><img src="img/fly_panels.jpg" alt="กล่อง Aircraft และ Summary ในโหมดบิน"><figcaption>ภาพที่ 32 กล่อง Aircraft และ Summary ในโหมดบิน</figcaption></figure><ol class="lg"><li><b>✕ ปิด Aircraft</b> ปิดกล่อง Aircraft (เปิดกลับที่ Menu → Aircraft)</li><li><b>✕ ปิด Summary</b> ปิดกล่อง Summary</li></ol></div>
 <p>ในโหมดบินกล่องทั้งสองใหญ่ขึ้น ตัวอักษรใหญ่ ปุ่ม + / − และปุ่มปิดขนาด 44 px และวางหลบคอลัมน์ปุ่มขวา ปุ่ม ▾ ใช้ย่อกล่อง ตั้งแต่ v4.7.6 ชื่อ "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary และใน v4.7.7 "ข้อมูลอากาศยาน" เปลี่ยนเป็น Aircraft ทั้งแอป</p>
-<p>บรรทัดสุดท้ายของกล่อง Summary คือ Plan ETE เวลาบินรวมตามแผนของเส้นทาง (ระยะทางรวม ÷ GS ที่ตั้งในแผน แสดง @ ความเร็ว kt) ค่านี้ไม่เปลี่ยนตามความเร็ว GPS ขณะนำทาง ต่างจากช่องเวลาบินและ ETE DEST ในแถบล่างซึ่งคิดตามความเร็วจริง</p>
+<p>บรรทัดสุดท้ายของกล่อง Summary คือ Plan ETA เวลาที่จะถึงปลายทางตามนาฬิกา = เวลาออกบิน (ช่อง “เวลาออกบิน” ในหน้าหลัก หรือ “Take off time” ในกล่อง Aircraft) + เวลาบินตามแผน (ระยะทางรวม ÷ GS ที่ตั้งในแผน) ถ้าไม่ได้กรอกเวลาออกบิน จะนับจากเวลาปัจจุบัน (แสดง “ออกตอนนี้”) ใต้ค่ามีเวลาบินและ GS ที่ใช้คำนวณ ค่านี้ไม่เปลี่ยนตามความเร็ว GPS ขณะนำทาง ใช้เทียบกับ ETA DEST ในแถบล่างซึ่งคิดตามความเร็วจริง</p>
 <h3 id="sec12_7">12.7 ซูม หมุน และการใช้หลายอุปกรณ์</h3>
 <ul><li>ซูมสองนิ้ว ภาพย่อ/ขยายต่อเนื่องตามนิ้ว เมื่อยกนิ้วแผนที่จะเข้าระดับซูมที่ใกล้ที่สุดแล้วโหลดภาพคมชัด ระหว่างนั้นภาพเดิมค้างไว้จึงไม่กะพริบ</li><li>กล่องรายละเอียดจุด แตะจุดบนแผนที่จะขึ้นกล่องรายละเอียดและเมนู ใช้นิ้วจับแถบด้านบนหรือพื้นที่ที่ไม่ใช่ปุ่มแล้วลากเพื่อย้ายกล่อง ตำแหน่งที่ย้ายไว้คงอยู่จนปิดแอป</li><li>หมุนแผนที่ บิดสองนิ้วเกิน 12° หรือใช้ปุ่ม N↑ / TRK↑ / HDG↑</li><li>โทรศัพท์ Android ถ้าจอแสดงเกินขอบ แอปจะปรับให้พอดีส่วนที่มองเห็นเอง ถ้ายังเกินให้ตั้ง Menu → Screen fit · ถ้าเปิดด้วย Samsung Internet ในโหมดมืด สีแผนที่และตัวหนังสืออาจผิดเพี้ยน แนะนำให้เปิดด้วย Chrome หรือปิดโหมดมืดของเบราว์เซอร์</li></ul><h3 id="sec12_8">12.8 เมนูย่อย Route, TAWS และ SAR</h3>
 <p>ปุ่ม Route, TAWS และ SAR ในแถวบนเปิดหน้าต่างเมนูย่อย แตะปุ่มเดิมอีกครั้งหรือ ✕ เพื่อปิด</p>

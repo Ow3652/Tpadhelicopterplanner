@@ -8,7 +8,7 @@
  */
 const VERSION = '4.7.7';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b13';
+const BUILD = 'b14';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
 const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
@@ -133,7 +133,10 @@ async function docFetch(e) {
   const c = await caches.open('manual-docs'), hit = await c.match(e.request.url);
   const fresh = e.request.cache === 'reload' || e.request.cache === 'no-cache';   // หน้าแอปขอฉบับล่าสุด (ตอนเก็บล่วงหน้า): เน็ตก่อน
   const net = fetch(e.request.url).then((r) => { if (r && r.ok) c.put(e.request.url, r.clone()); return r; }).catch(() => null);
-  if (fresh) return (await net) || hit || Response.error();
-  if (hit) { e.waitUntil(net); return hit; }
-  return (await net) || Response.error();
+  // v4.7.7 b14: ออนไลน์ = เน็ตก่อน (รอไม่เกิน 4 วินาที) เพื่อให้เห็นคู่มือฉบับใหม่ทันที · ออฟไลน์/ช้า = ใช้ที่เก็บไว้
+  if (fresh || !hit) return (await net) || hit || Response.error();
+  const slow = new Promise((ok) => setTimeout(() => ok(null), 4000));
+  const r = await Promise.race([net, slow]);
+  if (r && r.ok) return r;
+  e.waitUntil(net); return hit;
 }

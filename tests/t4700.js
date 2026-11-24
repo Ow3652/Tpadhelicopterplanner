@@ -244,11 +244,14 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  await p.tap('#fbEw');await W(300);const ea=await p.evaluate(()=>({l:$('fbEl').textContent,e:$('fbE').textContent}));await p.tap('#fbEw');await W(200);
  const exp=new Date(Date.now()+r.sec*1000),eh=String(exp.getHours()).padStart(2,'0')+':'+String(exp.getMinutes()).padStart(2,'0');
  t('T33 b แตะสลับเป็น ETA DEST = นาฬิกาเครื่อง + เวลาถึงปลายทาง',ea.l==='ETA DEST'&&Math.abs(P(ea.e)-P(eh))<=2,{ea,eh})}
-// v4.7.7 b8: กล่อง Summary บรรทัดสุดท้าย Plan ETE (ตามแผน ไม่เปลี่ยนตาม GS ของ GPS)
-{const r=await p.evaluate(()=>{const g0=$('gs').value,s0=!!M.sum;$('gs').value=100;calc();sumShow(true);const tot=calcData.legs.reduce((s,l)=>s+l.d,0);const q=()=>{const all=[...document.querySelectorAll('#msb .mg>div')],e=document.querySelector('#msb .mplan');return{t:e&&e.innerText.replace(/\s+/g,' ').trim(),last:!!e&&all[all.length-1]===e}};const a=q();
- const sv=[NAVON,NAVGS0];NAVON=true;NAVGS0="100";$('gs').value=140;msumRender();const b=q();NAVON=sv[0];NAVGS0=sv[1];$('gs').value=g0;calc();sumShow(s0);
- const m=Math.round(tot/100*60);return{a,b,exp:Math.floor(m/60)+' ชม. '+String(m%60).padStart(2,'0')+' น.'}});
- t('T34 v4.7.7 b8 กล่อง Summary: บรรทัดสุดท้าย Plan ETE = ระยะรวม ÷ GS ในแผน · ขณะ NAV (GS ถูกแทนด้วย GPS) ยังใช้ GS ในแผน',r.a.last&&r.a.t.startsWith('Plan ETE')&&r.a.t.includes(r.exp)&&/@ 100 kt/.test(r.a.t)&&r.b.last&&r.b.t.includes(r.exp),r)}
+// v4.7.7 b8→b14: กล่อง Summary บรรทัดสุดท้าย Plan ETA = เวลาออกบิน (#dep) + เวลาบินตามแผน (GS ในแผน · ขณะ NAV ใช้ NAVGS0) · ไม่กรอกเวลาออก = นับจากตอนนี้
+{const r=await p.evaluate(()=>{const g0=$('gs').value,d0=$('dep').value,s0=!!M.sum;$('gs').value=100;$('dep').value='09:00';calc();sumShow(true);const tot=calcData.legs.reduce((s,l)=>s+l.d,0);
+ const q=()=>{const all=[...document.querySelectorAll('#msb .mg>div')],e=document.querySelector('#msb .mplan');return{t:e&&e.innerText.replace(/\s+/g,' ').trim(),last:!!e&&all[all.length-1]===e}};const a=q();
+ const sv=[NAVON,NAVGS0];NAVON=true;NAVGS0="100";$('gs').value=140;msumRender();const b=q();NAVON=sv[0];NAVGS0=sv[1];$('gs').value=100;
+ $('dep').value='';msumRender();const c=q();$('gs').value=g0;$('dep').value=d0;calc();sumShow(s0);
+ const m=Math.round(tot/100*60),f=x=>String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0'),n=new Date(),nm=n.getHours()*60+n.getMinutes()+m;
+ return{a,b,c,exp:f(540+m),now:[f(nm),f(nm+1)]}});
+ t('T34 v4.7.7 b14 กล่อง Summary: บรรทัดสุดท้าย Plan ETA = เวลาออกบิน + เวลาบินตามแผน (ขณะ NAV ยังใช้ GS ในแผน) · ไม่กรอกเวลาออก = นับจากตอนนี้',r.a.last&&r.a.t.startsWith('Plan ETA '+r.exp)&&/ออก 09:00/.test(r.a.t)&&/@ 100 kt/.test(r.a.t)&&r.b.t.startsWith('Plan ETA '+r.exp)&&r.c.last&&/ออกตอนนี้/.test(r.c.t)&&r.now.some(x=>r.c.t.startsWith('Plan ETA '+x)),r)}
 // v4.7.7 b9: กันจอดับในโหมดบิน (Screen Wake Lock) — จำลอง navigator.wakeLock
 {const W=n=>p.waitForTimeout(n);
  const r=await p.evaluate(async()=>{const w={req:0,rel:0};const mk=()=>{const t=new EventTarget();t.released=false;t.release=async()=>{if(t.released)return;t.released=true;w.rel++;t.dispatchEvent(new Event('release'))};return t};
