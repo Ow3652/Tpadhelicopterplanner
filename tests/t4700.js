@@ -289,6 +289,17 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}));q=wp(13.75,100.6,9);M.cx=q[0];M.cy=q[1];drawMap(false);await sl(50);const off={n:document.querySelectorAll('#tl img.enr').length,at:/ENR AIRAC/.test($('at').textContent)};
   ENR.op=op0;setLayer(L0);M.z=z0;M.cx=c0[0];M.cy=c0[1];drawMap(false);return{has,base,oz,ov,out,off}});
  t('T38 v4.7.7 b15 ชั้น ENR Chart: เป็นแผนที่พื้นหลัง (พื้นขาว ป้าย AIRAC ที่บรรทัดลิขสิทธิ์) · ซ้อนบนแผนที่อื่นได้ ปรับความทึบ · ไม่ขอแผ่นนอกกรอบ · ซูม 13 ใช้แผ่นซูม 11 ขยาย · ปิดแล้วหาย',r.has&&r.base.n>0&&r.base.bg&&r.base.at&&r.base.dis&&r.oz.z===13&&r.oz.d===2&&r.oz.src&&r.ov.n>0&&r.ov.op==='0.5'&&r.ov.at&&r.ov.ls==='1'&&r.out===0&&r.off.n===0&&!r.off.at,r)}
+// v4.7.7 b17: แตะเส้นทาง Active → เมนูมีปุ่ม ⇄ Reverse · กลับลำดับจุด · ขณะ NAV = Direct to จุดก่อนหน้าของจุดที่กำลังไป · Undo ได้
+{const W=n=>p.waitForTimeout(n);
+ const r=await p.evaluate(async()=>{const sl=ms=>new Promise(r=>setTimeout(r,ms));$("fmt").value="dd";if(DT){DT=null}
+  pts.length=0;pts.push({name:"AAA",lat:"14.0",lon:"100.3"},{name:"BBB",lat:"14.1",lon:"100.6"},{name:"CCC",lat:"14.3",lon:"100.9"},{name:"",lat:"",lon:""});drawPts();calc();render();await sl(800);
+  ctmOpen({k:"act"});await sl(100);const btn=[...document.querySelectorAll('#mselb button[data-c="rev"],#ctm button[data-c="rev"]')];const has=btn.length>0&&/Reverse/.test(btn[0].textContent);
+  btn[0].click();await sl(900);const a=pts.map(p=>p.name);
+  $('hun').click();await sl(200);const u=pts.map(p=>p.name);
+  MLP.on=true;MLP.la=14.05;MLP.lo=100.45;MLP.sp=100/1.943844;MLP.t=Date.now();directTo("",pts[1]);await sl(300);const dt0=DT&&DT.b&&DT.b.name;
+  routeReverse();await sl(300);const b={names:pts.filter(p=>p.name).map(p=>p.name),to:DT&&DT.t&&DT.t.n,b:DT&&DT.b&&DT.b.name,orig:DT&&DT.orig?DT.orig.filter(p=>p.name&&p.name!=='MY POS').map(p=>p.name):null};
+  DT=null;return{has,a,u,dt0,b}});
+ t('T39 v4.7.7 b17 เมนูเส้นทาง Active มี ⇄ Reverse: กลับลำดับจุด (แถวว่างอยู่ท้าย) · Undo คืนลำดับเดิม · ขณะ Direct to BBB (จุดที่ 2) → Reverse = Direct to AAA (จุดเริ่มต้นเดิม) · เส้นทางเต็มเป็น CCC → BBB → AAA',r.has&&r.a.join()==='CCC,BBB,AAA,'&&r.u.join()==='AAA,BBB,CCC,'&&r.dt0==='BBB'&&r.b.b==='AAA'&&r.b.names.join()==='MY POS,AAA'&&r.b.orig&&r.b.orig.join()==='CCC,BBB,AAA',r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

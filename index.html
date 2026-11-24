@@ -3093,8 +3093,18 @@ function cornerNames(c){const n=c.length,cla=c.reduce((a,q)=>a+q.la,0)/n,clo=c.r
 const quad=c.map(q=>(q.la>=cla?"N":"S")+(q.lo>=clo?"E":"W"));if(new Set(quad).size===n)return quad;
 const D=["N","NE","E","SE","S","SW","W","NW"],o=c.map(q=>D[Math.round(((Math.atan2((q.lo-clo)*k,q.la-cla)*180/Math.PI)+360)%360/45)%8]);
 return new Set(o).size===n?o:o.map((x,j)=>x+(o.indexOf(x)!==o.lastIndexOf(x)?"("+(j+1)+")":""))}
+/* v4.7.7 b17: Reverse เส้นทาง Active — กลับลำดับจุด (จุดสุดท้าย → จุดเริ่มต้น) · ถ้ากำลัง NAV/Direct to: กลับลำดับเส้นทางเดิม (ไม่รวม MY POS) แล้ว Direct to จุดก่อนหน้าของจุดที่กำลังไป (= ย้อนกลับทางเดิม) · ย้อนกลับได้ด้วย Undo */
+function routeReverse(){const nb=q=>q&&(q.name||q.lat||q.lon),nav=!!(DT&&DT.b);
+ const base=((nav&&DT.orig&&DT.orig.length)?DT.orig:pts.filter(nb)).filter(q=>nb(q)&&q.name!=="MY POS");
+ if(base.length<2){toast("ต้องมีอย่างน้อย 2 จุดจึงจะ Reverse ได้");return}
+ let back=null;if(nav){const k=base.indexOf(DT.b);back=k>0?base[k-1]:base[0]}
+ const blanks=Math.max(0,pts.length-pts.filter(nb).length),rv=base.slice().reverse();
+ if(nav)DT=null;pts=rv.concat(Array.from({length:blanks},()=>({name:"",lat:"",lon:""})));
+ M.pop=null;selClear();drawPts();calc();render();
+ if(nav&&back){try{directTo("",back)}catch(e){}}
+ toast("Reverse แล้ว: "+(rv[0].name||"จุดที่ 1")+" → "+(rv[rv.length-1].name||"จุดที่ "+rv.length)+(nav&&back?" · Direct to “"+(back.name||"จุด")+"”":"")+" (Undo เพื่อย้อนกลับ)")}
 function selObj0(t){
-if(t.k==="act"){const v=calcData.valid;if(v.length<2)return null;const o=selMk($("rname").value.trim()||"เส้นทาง Active","เส้นทาง Active",v.map(p=>({la:p.la,lo:p.lo,n:p.name||""})),RC);o.act=false;o.save=actDirty();return o}
+if(t.k==="act"){const v=calcData.valid;if(v.length<2)return null;const o=selMk($("rname").value.trim()||"เส้นทาง Active","เส้นทาง Active",v.map(p=>({la:p.la,lo:p.lo,n:p.name||""})),RC);o.act=false;o.save=actDirty();o.rev=true;return o}
 if(t.k==="ro"){const r=roFind(t.src,t.name);return r?selMk(r.name,t.src==="sar"?"เส้นทางค้นหาที่เก็บไว้":"เส้นทางที่เก็บไว้",r.pts,r.col):null}
 if(t.k==="pv"){const g=SAR.prev;if(SAR.hide||!g||g.err)return null;const o=selMk("ตัวอย่าง "+(SP[g.p]?SP[g.p].n:g.p),"ตัวอย่างเส้นทางค้นหา · ยังไม่ได้บันทึก",g.ll.map(q=>({la:q.la,lo:q.lo,n:q.n||""})),"#7b1fa2");(g.kv||[]).forEach(r=>{if(!o.L.some(x=>x[0]===r[0]))o.L.push(r)});o.nocol=1;o.bt=[["pvsave","บันทึกเส้นทางค้นหา"],["pvmove",M.pvMove?"ย้าย (กำลังลาก…)":"✥ ย้าย"],["pvact","ใส่เป็น Active"],["pvhide","ซ่อนตัวอย่าง"]];return o}
 const x=SAR.list.find(y=>y.n===t.name);if(!x)return null;const A=sarArea(x),L=[["รูปแบบ",esc(SP[x.p]?SP[x.p].n:x.p)],["ขนาดพื้นที่","<b>"+A.toFixed(1)+" NM²</b> (≈ "+(A*3.4299).toFixed(1)+" ตร.กม.)"]];
@@ -3148,7 +3158,7 @@ exportGpx($("rname").value.trim()||"route",calcData.valid,sarFlat())}
 function selObj(t){const o=selObj0(t);if(!o||!["act","ro","sa"].includes(t.k))return o;o.mvb=1;o.key=selKey(t);o.undo=!!(SMV&&SMV.key===o.key);
 if(t.k==="ro"){const r=roFind(t.src,t.name);if(r&&r.mvd){o.rsave=1;o.title+=" *"}}return o}
 function selHtml(o,full){let bt=[["hide","ซ่อน"],["unload","unload"]];if(o.save)bt.unshift(["save","บันทึก"]);if(o.act)bt.push(["active","active"]);if(o.bt)bt=o.bt;
-if(o.mvb){if(o.rsave)bt.unshift(["ssave","บันทึก"]);bt.push(["smove",o.key.startsWith("sa:")?(M.selMove?"ย้าย (ลากบนแผนที่…)":"✥ ย้าย"):(M.roEd&&M.roEd.key===o.key?"✓ เสร็จสิ้นแก้ไข":"✎ แก้ไข")]);if(o.undo)bt.push(["sundo","↩ ย้อนกลับ"]);bt.push(["sasn","บันทึกเป็นใหม่"],["sgpx","ส่งออก .gpx"])}
+if(o.rev)bt.push(["rev","⇄ Reverse"]);if(o.mvb){if(o.rsave)bt.unshift(["ssave","บันทึก"]);bt.push(["smove",o.key.startsWith("sa:")?(M.selMove?"ย้าย (ลากบนแผนที่…)":"✥ ย้าย"):(M.roEd&&M.roEd.key===o.key?"✓ เสร็จสิ้นแก้ไข":"✎ แก้ไข")]);if(o.undo)bt.push(["sundo","↩ ย้อนกลับ"]);bt.push(["sasn","บันทึกเป็นใหม่"],["sgpx","ส่งออก .gpx"])}
 const sf=o.mvb&&SAS&&SAS.key===o.key?`<div class="sasf" style="margin:0 0 6px"><label style="display:block;font-size:.85em">ชื่อใหม่<input class="sasn" type="text" value="${esc(SAS.name)}" style="width:100%;box-sizing:border-box"></label><div class="bar" style="margin:4px 0 0"><button class="b s p" data-c="sasok" type="button">บันทึก</button><button class="b s" data-c="sascancel" type="button">ยกเลิก</button></div></div>`:"";
 return sf+`<div class="bar" style="margin:0 0 6px">${bt.map(b=>`<button class="b s" data-c="${b[0]}" type="button">${b[1]}</button>`).join("")}${full&&!o.nocol?`<label class="selcl">เปลี่ยนสี <input type="color" class="selc" value="${o.col}" aria-label="เปลี่ยนสี"></label>`:""}</div><div class="ct"><b>${esc(o.title)}</b><small>${o.tag}</small></div><div class="sdt">${o.L.map(r=>`<span>${r[0]}</span><span>${r[1]}</span>`).join("")}</div>${full?o.tbl:""}`}
 function selRender(){const m=$("msel");if(!m)return;if(!SEL){m.classList.remove("on");return}
@@ -3183,6 +3193,7 @@ if(a==="sasn"){SAS={key:selKey(t),name:(t.name||$("rname").value.trim()||"เส
 if(a==="sascancel"){SAS=null;selRender();if(!$("ctm").hidden)$("ctm").innerHTML=selHtml(selObj(t),false);return}
 if(a==="sasok"){const box=b.closest("#mselb,#ctm"),i=box&&box.querySelector(".sasn");if(i&&smSaveAs(t,i.value)){SAS=null;selClear();lbAll()}return}
 if(t.k==="pv"){if(a==="pvmove"){pvToggle();return}if(a==="pvsave"){srSave();return}if(a==="pvact"){$("sgo").onclick();selClear();lbAll();return}if(a==="pvhide"){SAR.hide=true;selClear();drawMap(false);toast("ซ่อนตัวอย่างแล้ว (แก้ค่าในกล่อง “รูปแบบ SAR” เพื่อแสดงอีกครั้ง)");return}return}
+if(t.k==="act"&&a==="rev"){routeReverse();return}
 if(t.k==="act"){if(a==="save"){svOpen();return}if(a==="hide"){ACT.hid=true;toast("ซ่อนเส้นทาง Active แล้ว (ยังไม่ได้ลบ — เมนู เส้นทาง → รายการ เพื่อแสดงกลับ)")}
 else if(a==="unload"){if(actDirty()&&!sure2(b,"ยืนยัน? ยังไม่ได้เก็บ"))return;actUnload();toast("unload เส้นทาง Active แล้ว")}}
 else if(t.k==="ro"){const r=roFind(t.src,t.name);if(!r){selClear();return}
