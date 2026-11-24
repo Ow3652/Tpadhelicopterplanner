@@ -264,6 +264,15 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
 // v4.7.7 b10–b11: ยอดเขา (MT0) ตรงกับชีต Mountain 159 แถว — ลบ x4462 18.88/99.8 (b10), x5702 แถวซ้ำ และ x6017 (b11)
 {const r=await p.evaluate(()=>({n:MT0.length,dup:MT0.some(a=>a[0]==="x4462"&&a[1]===18.88),k:MT0.some(a=>a[0]==="x4462"&&a[1]===18.8767),x5702:MT0.filter(a=>a[0]==="x5702").length,x6017:MT0.some(a=>a[0]==="x6017"),x5839:MT0.some(a=>a[0]==="x5839"),db:DB.MT.length}));
  t('T36 v4.7.7 b11 ข้อมูลยอดเขาในไฟล์ = ชีต Mountain (159 แถว · x5702 แถวเดียว · ไม่มี x6017 · ไม่มี x4462 แถวที่ลบแล้ว)',r.n===159&&!r.dup&&r.k&&r.x5702===1&&!r.x6017&&r.x5839&&r.db===159,r)}
+// v4.7.7 b12: ปุ่ม ▴ INFO ชิดขอบล่าง · ลากแผนที่ด้วยนิ้ว = เลื่อนชั้น #rot ด้วย transform ระหว่างรอบวาด แล้ววาดจริงเมื่อยกนิ้ว
+{const W=n=>p.waitForTimeout(n);
+ await p.evaluate(()=>{document.querySelector('#fbHide').click()});await W(300);
+ const ib=await p.evaluate(()=>{const r=$('flySb').getBoundingClientRect(),m=mp.getBoundingClientRect();return{t:$('flySb').textContent,vis:!$('flySb').hidden,gap:Math.round(m.bottom-r.bottom),cx:Math.round(r.left+r.width/2-(m.left+m.width/2))}});
+ await p.evaluate(()=>{$('flySb').click()});await W(200);
+ t('T37 v4.7.7 b12 ซ่อนแถบข้อมูลแล้วปุ่ม "▴ INFO" อยู่กลางและชิดขอบล่างสุดของจอ',ib.vis&&ib.t==='▴ INFO'&&ib.gap===0&&Math.abs(ib.cx)<=2,ib);
+ const r=await p.evaluate(()=>{let n=0;const o=drawMap;drawMap=function(){n++;return o.apply(this,arguments)};const ev=(x,y)=>({clientX:x,clientY:y});const rot=$('rot');
+  try{panMove(ev(300,300));const n1=n;for(let i=1;i<=5;i++)panMove(ev(300+i*10,300+i*4));const tf=rot.style.transform,n2=n;panFlush();return{n1,n2,tf,after:rot.style.transform,n3:n,pb:PANB}}finally{drawMap=o}});
+ t('T37 b ลากด้วยนิ้ว: ระหว่างรอบวาดใช้ transform เลื่อนภาพ (ไม่วาดใหม่ทุกครั้ง) · ยกนิ้วแล้ววาดจริงและล้าง transform',r.n1===1&&r.n2===1&&/translate\(50\.0px, ?20\.0px\)/.test(r.tf)&&r.after===''&&r.n3===2&&r.pb===null,r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
