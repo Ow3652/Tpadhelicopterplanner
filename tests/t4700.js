@@ -267,9 +267,9 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
 // v4.7.7 b12: ปุ่ม ▴ INFO ชิดขอบล่าง · ลากแผนที่ด้วยนิ้ว = เลื่อนชั้น #rot ด้วย transform ระหว่างรอบวาด แล้ววาดจริงเมื่อยกนิ้ว
 {const W=n=>p.waitForTimeout(n);
  await p.evaluate(()=>{document.querySelector('#fbHide').click()});await W(300);
- const ib=await p.evaluate(()=>{const r=$('flySb').getBoundingClientRect(),m=mp.getBoundingClientRect();return{t:$('flySb').textContent,vis:!$('flySb').hidden,gap:Math.round(m.bottom-r.bottom),cx:Math.round(r.left+r.width/2-(m.left+m.width/2))}});
+ const ib=await p.evaluate(()=>{const r=$('flySb').getBoundingClientRect(),m=mp.getBoundingClientRect();return{t:$('flySb').textContent,vis:!$('flySb').hidden,gap:Math.round(m.bottom-r.bottom),cx:Math.round(r.left+r.width/2-(m.left+m.width/2)),h:Math.round(r.height),ub:$('ubadge')&&!$('ubadge').hidden?Math.round($('ubadge').getBoundingClientRect().height):null}});
  await p.evaluate(()=>{$('flySb').click()});await W(200);
- t('T37 v4.7.7 b12 ซ่อนแถบข้อมูลแล้วปุ่ม "▴ INFO" อยู่กลางและชิดขอบล่างสุดของจอ',ib.vis&&ib.t==='▴ INFO'&&ib.gap===0&&Math.abs(ib.cx)<=2,ib);
+ t('T37 v4.7.7 b12–b13 ซ่อนแถบข้อมูลแล้วปุ่ม "▴ INFO" อยู่กลาง ชิดขอบล่างสุด สูงไม่เกิน 32 px (ใกล้เคียงป้ายผู้ใช้)',ib.vis&&ib.t==='▴ INFO'&&ib.gap===0&&Math.abs(ib.cx)<=2&&ib.h<=32&&(ib.ub==null||Math.abs(ib.h-ib.ub)<=6),ib);
  const r=await p.evaluate(()=>{let n=0;const o=drawMap;drawMap=function(){n++;return o.apply(this,arguments)};const ev=(x,y)=>({clientX:x,clientY:y});const rot=$('rot');
   try{panMove(ev(300,300));const n1=n;for(let i=1;i<=5;i++)panMove(ev(300+i*10,300+i*4));const tf=rot.style.transform,n2=n;panFlush();return{n1,n2,tf,after:rot.style.transform,n3:n,pb:PANB}}finally{drawMap=o}});
  t('T37 b ลากด้วยนิ้ว: ระหว่างรอบวาดใช้ transform เลื่อนภาพ (ไม่วาดใหม่ทุกครั้ง) · ยกนิ้วแล้ววาดจริงและล้าง transform',r.n1===1&&r.n2===1&&/translate\(50\.0px, ?20\.0px\)/.test(r.tf)&&r.after===''&&r.n3===2&&r.pb===null,r)}
