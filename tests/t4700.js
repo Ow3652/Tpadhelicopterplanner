@@ -300,6 +300,17 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   routeReverse();await sl(300);const b={names:pts.filter(p=>p.name).map(p=>p.name),to:DT&&DT.t&&DT.t.n,b:DT&&DT.b&&DT.b.name,orig:DT&&DT.orig?DT.orig.filter(p=>p.name&&p.name!=='MY POS').map(p=>p.name):null};
   DT=null;return{has,a,u,dt0,b}});
  t('T39 v4.7.7 b17 เมนูเส้นทาง Active มี ⇄ Reverse: กลับลำดับจุด (แถวว่างอยู่ท้าย) · Undo คืนลำดับเดิม · ขณะ Direct to BBB (จุดที่ 2) → Reverse = Direct to AAA (จุดเริ่มต้นเดิม) · เส้นทางเต็มเป็น CCC → BBB → AAA',r.has&&r.a.join()==='CCC,BBB,AAA,'&&r.u.join()==='AAA,BBB,CCC,'&&r.dt0==='BBB'&&r.b.b==='AAA'&&r.b.names.join()==='MY POS,AAA'&&r.b.orig&&r.b.orig.join()==='CCC,BBB,AAA',r)}
+ // v4.7.8: ประสิทธิภาพ — GPS ขยับ < 1 px ไม่วาดใหม่ · ระหว่างลากนิ้ว (PANB) TAWS ไม่คำนวณสีใหม่ · curUpd ไม่อ่าน getBoundingClientRect · FLTA วาดเฉพาะชั้นพัด
+ {const r=await p.evaluate(async()=>{const sl=ms=>new Promise(r=>setTimeout(r,ms));let n=0;const o=drawMap;drawMap=function(){n++;return o.apply(this,arguments)};
+  MLP.on=true;MLP.la=14.0;MLP.lo=100.5;MLP.hd=90;MLP.t=Date.now();gpsDraw(false,true);n=0;
+  MLP.la+=1e-7;const a=gpsDraw(false);const n1=n;MLP.la+=0.01;const b=gpsDraw(false);const n2=n;MLP.hd=95;const c=gpsDraw(false);
+  const g=Element.prototype.getBoundingClientRect;let gb=0;Element.prototype.getBoundingClientRect=function(){gb++;return g.apply(this,arguments)};
+  const fc0=$('fcur');const was=CURON;if(!was){fc0.checked=true;fc0.dispatchEvent(new Event('change',{bubbles:true}))}await sl(50);gb=0;curUpd();const gbc=gb;
+  const cll=ctrLL(),r0=mp.getBoundingClientRect(),xll=xy2ll(r0.left+mp.clientWidth/2,r0.top+mp.clientHeight/2);Element.prototype.getBoundingClientRect=g;
+  if(!was){fc0.checked=false;fc0.dispatchEvent(new Event('change',{bubbles:true}))}
+  const tw0=TW.on;if(!TW.on)$('twb').click();await sl(400);drawMap(false);await sl(50);const t0=TWS.t;PANB={bx:0,by:0,lx:0,ly:0,t:0};M.cx+=30;drawMap(false);const t1=TWS.t;PANB=null;M.cx-=30;drawMap(false);const t2=TWS.t;
+  drawMap=o;if(!tw0)$('twb').click();MLP.on=false;return{a,b,c,n1,n2,n,gbc,dll:Math.abs(cll[0]-xll[0])+Math.abs(cll[1]-xll[1]),panHold:t1===t0,after:t2!==t1||TWS.k!==undefined}});
+ t('T40 v4.7.8 ประสิทธิภาพ: GPS ขยับไม่ถึง 1 px ไม่วาดแผนที่ใหม่ (ขยับจริง/หัวเปลี่ยน วาด) · curUpd ไม่อ่านผังหน้า (getBoundingClientRect = 0) และพิกัดกลางจอเท่าเดิม · ระหว่างลากนิ้ว TAWS ไม่คำนวณสีใหม่',r.a===false&&r.n1===0&&r.b===true&&r.n2===1&&r.c===true&&r.gbc===0&&r.dll<1e-6&&r.panHold&&r.after,r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
