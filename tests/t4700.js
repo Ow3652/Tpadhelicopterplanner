@@ -327,15 +327,15 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   await p.tap('#wxmin');await W(200);const m1=await p.evaluate(()=>({min:$('wxb').classList.contains('min'),ls:localStorage.getItem('heliWxMin'),rowHidden:getComputedStyle(document.querySelector('#wxb .r')).display==='none'}));
   await p.tap('#wxmin');await W(200);const m2=await p.evaluate(()=>({min:$('wxb').classList.contains('min'),ls:localStorage.getItem('heliWxMin')}));await p.evaluate(()=>{wxSet("off")});
   t('T44 v4.7.9 b3 Layers (โหมดบิน): ปุ่ม ✕/▾ ≥ 44 px, ช่องเลือก ≥ 44 px, ✕ ปิดได้ · เรดาร์ฝน: คำอธิบายมีเหลือง/ส้ม/แดง · ปุ่มย่อ/ขยายกล่องชั้นฝน (จำค่า)',a.open&&a.x>=44&&a.c>=44&&a.chip>=44&&closed&&/#ffee00/.test(l.lg)&&/#ff4400/.test(l.lg)&&/#c10000/.test(l.lg)&&l.head==='เรดาร์ฝน'&&m1.min&&m1.ls==='1'&&m1.rowHidden&&!m2.min&&m2.ls==='0',{a,closed,head:l.head,m1,m2})}
- // v4.7.9 b4: หมวด OSM Helipad/Airport (OH) + OSM Peak (OP) — ปุ่มเปิด/ปิด (ค่าเริ่มต้นปิด) · แสดงเมื่อซูม ≥ 9/10 · popup มีความสูงและที่มา OSM · ค้นหาได้
- {const r=await p.evaluate(()=>{const o={oh:DB.OH.length,op:DB.OP.length,def:[$('c_OH').checked,$('c_OP').checked],fp:!!$('f_OH')&&!!$('f_OP')};
-  const keep=[M.z,M.cx,M.cy];const go=(la,lo,z)=>{const c=wp(la,lo,z);M.z=z;M.cx=c[0];M.cy=c[1];drawMap(false)};
-  $('c_OH').checked=true;$('c_OP').checked=true;go(18.70,98.75,8);o.n8=document.querySelectorAll('#ov [data-poi^="OP:"],#ov [data-poi^="OH:"]').length;
-  go(18.70,98.75,11);o.op11=document.querySelectorAll('#ov [data-poi^="OP:"]').length;o.oh11=document.querySelectorAll('#ov [data-poi^="OH:"]').length;
+ // v4.7.9 b4–b5: หมวด OSM Airport (OH, เฉพาะ aerodrome/airstrip ไอคอนเครื่องบินสีดำ) + OSM Peak (OP, ไม่มีชื่อ = x,xxx ft) — ปุ่มเปิด/ปิด (ค่าเริ่มต้นปิด) · แสดงเมื่อซูม ≥ 7/10 · popup ความสูงและที่มา OSM · ค้นหาได้
+ {const r=await p.evaluate(()=>{const o={oh:DB.OH.length,op:DB.OP.length,def:[$('c_OH').checked,$('c_OP').checked],fp:!!$('f_OH')&&!!$('f_OP'),types:[...new Set(DB.OH.map(x=>x.t))].sort().join(''),icon:SHAPE.OH===SHAPE.AP,col:CATS.find(t=>t.k==='OH').c,name:CATS.find(t=>t.k==='OH').n};
+  o.unnamed=OP0.map((r,k)=>r[0]?null:DB.OP[k].n).filter(x=>x!==null);o.nUn=o.unnamed.length;o.badUn=o.unnamed.filter(n=>!/^\d{1,3}(,\d{3})* ft$/.test(n)).length;o.un0=o.unnamed[0];
+  const keep=[M.z,M.cx,M.cy];const go=(la,lo,z)=>{const c=wp(la,lo,z);M.z=z;M.cx=c[0];M.cy=c[1];drawMap(false)};const cnt=k=>document.querySelectorAll('#ov [data-poi^="'+k+':"]').length;
+  $('c_OH').checked=true;$('c_OP').checked=true;go(18.77,98.96,6);o.z6=cnt('OH')+cnt('OP');go(18.77,98.96,8);o.oh8=cnt('OH');o.op8=cnt('OP');go(18.77,98.96,11);o.op11=cnt('OP');
   const i=DB.OP.findIndex(x=>/อินทนนท์/.test(x.n));o.pop=popHtml("OP",i);const j=DB.OH.findIndex(x=>x.c==="VTSW");o.poh=j>=0?popHtml("OH",j):"";
   $('q').value='อินทนนท์';qrender();o.q=$('qn').textContent;$('q').value='';qrender();
-  $('c_OH').checked=false;$('c_OP').checked=false;M.z=keep[0];M.cx=keep[1];M.cy=keep[2];drawMap(false);return o});
- t('T45 v4.7.9 b4 หมวด OSM Helipad/Airport (477) + OSM Peak (1,858) ค่าเริ่มต้นปิด มีปุ่มในกล่องชั้นข้อมูล · ซูม 8 ไม่แสดง ซูม 11 แสดง · popup ความสูง/ที่มา OSM · ค้นหาเจอ',r.oh===477&&r.op===1858&&!r.def[0]&&!r.def[1]&&r.fp&&r.n8===0&&r.op11>0&&r.oh11>0&&/2,565 m/.test(r.pop)&&/OpenStreetMap/.test(r.pop)&&/data-add="OP:/.test(r.pop)&&/Aerodrome/.test(r.poh)&&/1 จุด/.test(r.q),{...r,pop:r.pop.length,poh:r.poh.length})}
+  $('c_OH').checked=false;$('c_OP').checked=false;M.z=keep[0];M.cx=keep[1];M.cy=keep[2];drawMap(false);delete o.unnamed;return o});
+ t('T45 v4.7.9 b5 OSM Airport (101 แห่ง เฉพาะ A/S ไอคอนเครื่องบินสีดำ) + OSM Peak (1,858 ไม่มีชื่อ = x,xxx ft) ค่าเริ่มต้นปิด มีปุ่มในกล่องชั้นข้อมูล · ซูม 6 ไม่แสดง · ซูม 8 แสดงสนามบินแต่ยังไม่แสดงยอดเขา · ซูม 11 แสดงยอดเขา · popup/ค้นหา',r.oh===101&&r.op===1858&&r.types==='AS'&&r.icon&&r.col==='#000000'&&r.name==='OSM Airport'&&r.badUn===0&&!r.def[0]&&!r.def[1]&&r.fp&&r.z6===0&&r.oh8>0&&r.op8===0&&r.op11>0&&/2,565 m/.test(r.pop)&&/OpenStreetMap/.test(r.pop)&&/data-add="OP:/.test(r.pop)&&/Aerodrome/.test(r.poh)&&/1 จุด/.test(r.q),{...r,pop:r.pop.length,poh:r.poh.length})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
