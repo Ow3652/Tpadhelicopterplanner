@@ -314,6 +314,10 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  // v4.7.8 b2: update sheet to code — ชีต Point เพิ่ม CRMA (14°17.85' N 101°09.98' E) · ชีต TPAD ชื่อ Tpadจันทบุรี
  {const r=await p.evaluate(()=>{const c=DB.PT.find(x=>x.n==='CRMA');return{n:DB.PT.length,c:c?[+c.la.toFixed(4),+c.lo.toFixed(4)]:null,tp:DB.TP.some(x=>x.n==='Tpadจันทบุรี'),old:DB.TP.some(x=>x.n==='TPADจันทบุรี')}});
  t('T41 v4.7.8 b2 ข้อมูลตรงชีต: Point 10 จุด (มี CRMA 14.2975/101.1663) · TPAD ชื่อ Tpadจันทบุรี',r.n===10&&r.c&&r.c[0]===14.2975&&r.c[1]===101.1663&&r.tp&&!r.old,r)}
+ // v4.7.9: ระหว่างลากนิ้ว (PANB) ไม่สร้าง SVG #ov ใหม่ — เลื่อนภาพเดิม (transform) · ยกนิ้ว (panFlush) สร้างใหม่และล้าง transform · จอสัมผัสวาดจุดเกินขอบ 256 px
+ {const r=await p.evaluate(()=>{drawMap(false);const ov=$('ov');let w=0;const d=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');Object.defineProperty(ov,'innerHTML',{set(v){w++;d.set.call(this,v)},get(){return d.get.call(this)},configurable:true});
+  PANB={bx:0,by:0,lx:0,ly:0,t:0};const cx=M.cx,cy=M.cy;M.cx+=40;M.cy-=25;drawMap(false);const w1=w,tf=ov.style.transform;panFlush();const w2=w,tf2=ov.style.transform;M.cx=cx;M.cy=cy;drawMap(false);delete ov.innerHTML;return{w1,tf,w2,tf2,cull:CULL}});
+ t('T42 v4.7.9 ลากนิ้ว: ไม่สร้าง SVG ใหม่ (เลื่อนภาพเดิม -40,+25 px) · ยกนิ้วสร้างใหม่ 1 ครั้งและล้าง transform · จอสัมผัส CULL 256',r.w1===0&&/translate\(-40(\.0)?px, 25(\.0)?px\)/.test(r.tf)&&r.w2===1&&r.tf2===''&&r.cull===256,r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

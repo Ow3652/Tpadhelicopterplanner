@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.8</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.9</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -489,7 +489,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.8</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.9</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -1712,13 +1712,16 @@ im.style.left=(tx*TS-ox-im._sx)+"px";im.style.top=(ty*TS-oy-im._sy)+"px"})}}
 for(const[k,im]of M.cache)if(!want.has(k)){im.remove();M.cache.delete(k)}
 {const wb=$("wx");if(RMX||RMY){wb.style.inset="auto";wb.style.left=-RMX+"px";wb.style.top=-RMY+"px";wb.style.width=(W+2*RMX)+"px";wb.style.height=(H+2*RMY)+"px"}else{wb.style.inset="";wb.style.left=wb.style.top=wb.style.width=wb.style.height=""}}
 wxDraw(W+2*RMX,H+2*RMY,ox-RMX,oy-RMY,z);if(typeof twsDraw==="function")try{twsDraw(W+2*RMX,H+2*RMY,ox-RMX,oy-RMY,z,-RMX,-RMY)}catch(e){}
+/* v4.7.9: ระหว่างลากด้วยนิ้ว (PANB) ไม่สร้างชั้น SVG (#ov: เส้นทาง จุด ป้ายชื่อ เขตแดน ฯลฯ) ใหม่ — เลื่อนภาพเดิมตามระยะที่แผนที่เลื่อน แล้วสร้างใหม่ครั้งเดียวเมื่อยกนิ้ว (panFlush) */
+{const ovb=$("ov");if(typeof PANB!=="undefined"&&PANB&&OVB&&OVB.z===z&&OVB.W===W&&OVB.H===H&&OVB.rz===RZ){ovb.style.transform=`translate(${(OVB.ox-ox).toFixed(1)}px,${(OVB.oy-oy).toFixed(1)}px)`;return}
+OVB={ox,oy,z,W,H,rz:RZ};if(ovb.style.transform)ovb.style.transform=""}
 const sv=v.map(p=>{const q=wp(p.la,p.lo,z);return[q[0]-ox,q[1]-oy]});let s="";
 if(sv.length>1){const pp=sv.map(a=>a[0].toFixed(1)+","+a[1].toFixed(1)).join(" ");s+=`<polyline class="rc" points="${pp}"/><polyline class="rl" style="stroke:${RC}" points="${pp}"/>`}
 if($("rb").checked)calcData.legs.forEach((l,i)=>{if(M.mdrag&&M.mvi!=null&&(i===M.mvi-1||i===M.mvi))return;const a=sv[i],c=sv[i+1];{let ang=Math.atan2(c[1]-a[1],c[0]-a[0])*180/Math.PI;{let q=ang+RZ;q=((q%360)+540)%360-180;if(q>90)q-=180;else if(q<-90)q+=180;ang=q-RZ}
 s+=`<text class="lt" transform="translate(${((a[0]+c[0])/2).toFixed(1)} ${((a[1]+c[1])/2).toFixed(1)}) rotate(${ang.toFixed(1)})" x="0" y="-7" text-anchor="middle">${String(Math.round(l.brg)%360).padStart(3,"0")}° / ${l.d.toFixed(1)} NM</text>`}});
 v.forEach((p,i)=>{s+=`<g class="hit" data-rp="${i}"><circle class="rp" cx="${sv[i][0].toFixed(1)}" cy="${sv[i][1].toFixed(1)}" r="6"/><circle cx="${sv[i][0].toFixed(1)}" cy="${sv[i][1].toFixed(1)}" r="13" fill="transparent"/></g><text class="pl" x="${(sv[i][0]+15*((z>=11?1.15:z>=8?1:.75)*IS)+2).toFixed(1)}" y="${(sv[i][1]+5).toFixed(1)}">${esc(p.name)}</text>`});
 let m="";const isc=(z>=11?1.15:z>=8?1:.75)*IS;
-(mp.classList.contains("full")?CATS.map((c,i)=>[c,i]).sort((u,v)=>((({IFR:1,RP:2,AP:3,TP:4})[u[0].k]||0)-(({IFR:1,RP:2,AP:3,TP:4})[v[0].k]||0))||u[1]-v[1]).map(q=>q[0]):CATS).forEach(ct=>{if(!$("c_"+ct.k).checked)return;DB[ct.k].forEach((p,i)=>{const q=wp(p.la,p.lo,z),x=q[0]-ox,y=q[1]-oy;if(x<-40||y<-40||x>W+40||y>H+40)return;
+(mp.classList.contains("full")?CATS.map((c,i)=>[c,i]).sort((u,v)=>((({IFR:1,RP:2,AP:3,TP:4})[u[0].k]||0)-(({IFR:1,RP:2,AP:3,TP:4})[v[0].k]||0))||u[1]-v[1]).map(q=>q[0]):CATS).forEach(ct=>{if(!$("c_"+ct.k).checked)return;DB[ct.k].forEach((p,i)=>{const q=wp(p.la,p.lo,z),x=q[0]-ox,y=q[1]-oy;if(x<-CULL||y<-CULL||x>W+CULL||y>H+CULL)return;
 m+=`<g class="hit" data-poi="${ct.k}:${i}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${isc})">${SHAPE[ct.k](ct.c)}<circle r="17" fill="transparent"/></g>`;
 if(z>=ct.lz)m+=`<text class="ml${ct.k==="MT"?" mt":""}" x="${(x+15*isc+2).toFixed(1)}" y="${(y+5).toFixed(1)}">${esc(p.c||p.n)}</text>`})});
 let npin="";const pe=$("pop");
@@ -1769,8 +1772,8 @@ let gx="";if(M.gpx){const G=M.gpx.pts.map(p=>{const q=wp(p.la,p.lo,z);return[q[0
 if(M.gpx.kind!=="wpt"&&G.length>1){const pp=G.map(a=>a[0].toFixed(1)+","+a[1].toFixed(1)).join(" ");gx+=`<polyline points="${pp}" fill="none" stroke="#fff" stroke-width="6" opacity=".7" stroke-linejoin="round"/><polyline points="${pp}" fill="none" stroke="#c2185b" stroke-width="3" stroke-dasharray="9 6" stroke-linejoin="round"/>`}
 G.forEach(a=>{gx+=`<circle cx="${a[0].toFixed(1)}" cy="${a[1].toFixed(1)}" r="4.5" fill="#c2185b" stroke="#fff" stroke-width="1.5"/>`;if(a[2].n&&G.length<=80)gx+=`<text class="ml" style="fill:#c2185b" x="${(a[0]+8).toFixed(1)}" y="${(a[1]-6).toFixed(1)}">${esc(a[2].n)}</text>`});gx+="</g>"}
 let ar="";const toS=q=>{const w=wp(q.la,q.lo,z);return(w[0]-ox).toFixed(1)+","+(w[1]-oy).toFixed(1)};
-let rzs="";if($("c_RS").checked)DB.RS.forEach(p=>{if(p.poly){const P=p.poly.map(q=>{const w=wp(q.la,q.lo,z);return[w[0]-ox,w[1]-oy]});let a=1e9,b=-1e9,c=1e9,d=-1e9;P.forEach(q=>{a=Math.min(a,q[0]);b=Math.max(b,q[0]);c=Math.min(c,q[1]);d=Math.max(d,q[1])});if(b<-20||d<-20||a>W+20||c>H+20)return;rzs+=`<polygon class="rz" points="${P.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ")}"/>`}
-else if(p.r>0){const w=wp(p.la,p.lo,z),x=w[0]-ox,y=w[1]-oy,rp=p.r*1852/(156543.03392*Math.cos(p.la*Math.PI/180)/Math.pow(2,z));if(x+rp<-20||y+rp<-20||x-rp>W+20||y-rp>H+20)return;rzs+=`<circle class="rz${p.c==="VTR1"?" z0":""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rp.toFixed(1)}"/>`}});
+let rzs="";if($("c_RS").checked)DB.RS.forEach(p=>{if(p.poly){const P=p.poly.map(q=>{const w=wp(q.la,q.lo,z);return[w[0]-ox,w[1]-oy]});let a=1e9,b=-1e9,c=1e9,d=-1e9;P.forEach(q=>{a=Math.min(a,q[0]);b=Math.max(b,q[0]);c=Math.min(c,q[1]);d=Math.max(d,q[1])});if(b<-CULL||d<-CULL||a>W+CULL||c>H+CULL)return;rzs+=`<polygon class="rz" points="${P.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ")}"/>`}
+else if(p.r>0){const w=wp(p.la,p.lo,z),x=w[0]-ox,y=w[1]-oy,rp=p.r*1852/(156543.03392*Math.cos(p.la*Math.PI/180)/Math.pow(2,z));if(x+rp<-CULL||y+rp<-CULL||x-rp>W+CULL||y-rp>H+CULL)return;rzs+=`<circle class="rz${p.c==="VTR1"?" z0":""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rp.toFixed(1)}"/>`}});
 sarFlat().forEach(a=>{ar+=a.o?`<polyline class="sa sv" points="${a.c.map(toS).join(" ")}"${a.col?` style="stroke:${a.col}"`:""}/>`:`<polygon class="sa" points="${a.c.map(toS).join(" ")}"${a.col?` style="stroke:${a.col};fill:${a.col};fill-opacity:.14"`:""}/>`});
 SAR.list.forEach(x=>{if(x.hid)return;const g=x.a.find(a=>!a.o);if(!g)return;let sx=0,sy=0;g.c.forEach(q=>{const w=wp(q.la,q.lo,z);sx+=w[0]-ox;sy+=w[1]-oy});ar+=`<text class="sal"${x.col?` style="fill:${x.col}"`:""} text-anchor="middle" x="${(sx/g.c.length).toFixed(1)}" y="${(sy/g.c.length+4).toFixed(1)}">${esc(x.n)} · ${esc(x.p)}</text>`});
 SAR.list.forEach((x,xi)=>{if(x.hid||!x.ds)return;const dk=sarDark(x.col||SAC),P=[x.ds,x.de].filter(Boolean).map(q=>{const w=wp(q.la,q.lo,z);return[w[0]-ox,w[1]-oy]});
@@ -1790,6 +1793,9 @@ P.forEach((a,i)=>{const e=i===0||i===P.length-1;rv+=`<circle cx="${a[0].toFixed(
 const mi=P[Math.floor(P.length/2)];rv+=`<text class="sal" style="fill:${r.col}" text-anchor="middle" x="${mi[0].toFixed(1)}" y="${(mi[1]-12).toFixed(1)}">${esc(r.name)}</text></g>`});
 if(ACT.hid){s="";lh=""}
 $("ov").innerHTML=rtx(pvLayer(z,ox,oy,W,H)+bdLayer(z,ox,oy,W,H)+tdLayer(z,ox,oy,W,H)+rzs+rv+gx+lh+m+ar+s+dg+npin+edHandles(z,ox,oy)+acLayer(z,ox,oy,W,H)+myLeg(z,ox,oy)+(typeof courseLayer==="function"?courseLayer(z,ox,oy):"")+(typeof simLayer==="function"?simLayer(z,ox,oy,W,H,"g"):"")+gpsLayer(z,ox,oy)+(typeof simLayer==="function"?simLayer(z,ox,oy,W,H,"p"):""));if($("qv").checked){clearTimeout(M.qt);M.qt=setTimeout(qrender,250)}}
+var OVB=null;
+/* v4.7.9: ระยะวาดเกินขอบจอของจุด/พื้นที่ห้ามบิน — จอสัมผัส 256 px เพื่อให้ขอบที่เลื่อนเข้ามาระหว่างลาก (ไม่สร้าง SVG ใหม่) ยังมีจุดให้เห็น · เมาส์ 40 px เท่าเดิม */
+var CULL=40;try{if(matchMedia("(pointer:coarse)").matches)CULL=256}catch(e){}
 const mp=$("map");let dr=null;
 mp.addEventListener("dragstart",e=>e.preventDefault(),true);mp.addEventListener("selectstart",e=>e.preventDefault());
 M.rul={on:false,pts:[],cur:null};M.hov=null;
@@ -2607,7 +2613,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.8 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.9 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4491,7 +4497,7 @@ flSync();FL.tm=setInterval(()=>{try{flTick()}catch(e){}},1000);
 try{if(window.speechSynthesis)speechSynthesis.getVoices()}catch(e){}})();
 </script>
 <script id="pwa">
-/* PWA (v4.7.8; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.7.9; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
