@@ -4942,6 +4942,16 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 /* จอแคบ: คงชื่อ + ละติจูด + ลองจิจูดแถวเดียว (v4.7.5 b3) ปุ่ม ↑↓× แถวล่างเต็มกว้าง */#map.fly #mpt .pt{grid-template-columns:26px minmax(0,1fr) minmax(0,1fr) minmax(0,1.08fr);padding:6px 5px;gap:4px}#map.fly #mpt .pt .n{width:24px;height:24px;font-size:12px;grid-row:1;margin-top:11px}
 #map.fly #mpt .pt input{height:46px;font-size:15px;padding:0 4px}#map.fly #mpt .pt .nm{grid-column:2}#map.fly #mpt .pt [data-k=lat]{grid-column:3;grid-row:1}#map.fly #mpt .pt [data-k=lon]{grid-column:4;grid-row:1}#map.fly #mpt .pt .acts{grid-column:2/-1;grid-row:2;gap:6px}#map.fly #mpt .pt .acts .b{max-width:none;height:44px;font-size:18px}
 #map.fly #mpt .bar .b,#map.fly #lbr .b{min-height:46px;font-size:15px;padding:0 10px}#map.fly #lbr .qrow>div:first-child{flex-basis:100%}#map.fly #lbr .qrow>.bar{flex:1;justify-content:flex-end}}
+
+/* v4.7.9 b12: หน้าต่าง Flight log */
+#flyLg.flyw{width:min(600px,94%)}
+#flyLg .lgf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 14px;overflow:auto;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 210px)}
+#flyLg .lgf label{display:flex;flex-direction:column;gap:4px;font:600 14px system-ui,sans-serif;color:#ccc;min-width:0}#flyLg .lgf label.w{grid-column:1/-1}
+#flyLg .lgf input{height:50px;box-sizing:border-box;width:100%;min-width:0;padding:4px 12px;border-radius:10px;border:1px solid #555;background:#111;color:#fff;font:600 18px system-ui,sans-serif;color-scheme:dark}
+#flyLg .lgf input:focus{outline:2px solid #64b5f6;border-color:#64b5f6}#flyLg .lgf input::placeholder{color:#777;font-weight:400;font-size:14px}
+#flyLg .lgb{padding:4px 14px 6px}#flyLg .lgb button{width:100%;min-height:56px;border-radius:10px;border:1px solid #2e7d32;background:#1b5e20;color:#fff;font:700 18px system-ui,sans-serif}
+#flyLg .fom{padding:6px 14px 12px;font-size:13px}
+@media (max-width:600px){#flyLg .lgf{grid-template-columns:minmax(0,1fr);gap:8px;padding:8px 10px}#flyLg .lgf input{height:48px;font-size:17px}#flyLg .lgb{padding:4px 10px 6px}}
 </style>
 <script id="enr">
 /* v4.7.7 b15: ตัวควบคุมชั้น ENR Chart — ช่อง "ซ้อน ENR" + ความทึบ (ในแถบชั้นข้อมูลหน้าหลัก และกล่องชั้นข้อมูลเต็มจอ/โหมดบิน) · โหลด meta.json ล่าสุดจาก Tpadenr เมื่อออนไลน์ */
@@ -5048,9 +5058,10 @@ const GP=document.createElement("div");GP.id="flyG";GP.className="fly-ui flyo fl
 const PK=document.createElement("div");PK.id="flyPk";PK.className="fly-ui flyo flyw";PK.hidden=true;PK.k="";
 const SW=document.createElement("div");SW.id="flySar";SW.className="fly-ui flyo flyw";SW.hidden=true;
 const MKW=document.createElement("div");MKW.id="flyMk";MKW.className="fly-ui flyo flyw";MKW.hidden=true;
+const LG=document.createElement("div");LG.id="flyLg";LG.className="fly-ui flyo flyw";LG.hidden=true;
 const RB=document.createElement("button");RB.id="flyRec";RB.type="button";RB.className="fly-ui";RB.hidden=true;RB.setAttribute("aria-label","Track recording — open Tracks");RB.textContent="● REC";
-[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK].forEach(e=>host.appendChild(e));
-["pointerdown","pointerup","click","dblclick","touchstart","touchend","wheel","contextmenu","mousedown"].forEach(ev=>[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK].forEach(e=>e.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu"||ev==="dblclick")x.preventDefault()},ev==="wheel"?{passive:true}:false)));
+[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK,LG].forEach(e=>host.appendChild(e));
+["pointerdown","pointerup","click","dblclick","touchstart","touchend","wheel","contextmenu","mousedown"].forEach(ev=>[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK,LG].forEach(e=>e.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu"||ev==="dblclick")x.preventDefault()},ev==="wheel"?{passive:true}:false)));
 function setVars(){const t=T.hidden?0:T.offsetHeight,b=B.hidden?0:B.offsetHeight;mp.style.setProperty("--flyt",t+"px");mp.style.setProperty("--flyb",b+"px");mp.style.setProperty("--flyzw",(Z.hidden?0:Z.offsetWidth)+"px")}
 function closeO(except){[MN,DL,KL,GP,MKW,SW,PK].forEach(o=>{if(o!==except)o.hidden=true})}
 function flyOn(){if(!mp.classList.contains("full"))fsToggle();if(mp.classList.contains("uih"))try{$f("uis").click()}catch(e){}
@@ -5088,9 +5099,12 @@ function tkRender(){const idx=tkIdx();let h=`<div class="foh"><b>Tracks</b><span
   h+=`<div class="fok"><div class="fki"><b>${esc(x.name)}${rec?' <span class="rd">● กำลังบันทึก</span>':""}</b><small>${x.n} จุด · ${(+x.d).toFixed(1)} NM · ${Math.floor(dur/60)} ชม. ${p2(dur%60)} น.</small></div>
   <button type="button" data-kg="${x.id}">GPX</button><button type="button" data-kv="${x.id}" class="${v||rec?"on":""}">${rec?"Shown":v?"Hide":"Show"}</button><button type="button" data-kd="${x.id}" class="d">Delete</button></div>`});
  KL.innerHTML=h}
-function menuRender(){const t=[["rec",TK.on?"■ Stop track":"● Record track",TK.on?"rec":""],["trk","🗂 Tracks / GPX",""],["ac","✈ Aircraft",M.mac?"on":""],["gps","📍 GPS / Position",MLP.on?"on":""],["sum","📋 Summary",M.sum?"on":""],["show",TK.cfg.show?"〰 Track line: On":"〰 Track line: Off",TK.cfg.show?"on":""],
- ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],
- ["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["mk","🚩 Marks ("+DB.MK.length+")",""],["ref","🔄 Refresh map",""],["dl","📥 Download map/TAWS",""],["man","📖 Manual",""],["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["exit","✕ Exit flight mode","x"]];
+function menuRender(){/* v4.7.9 b12: ลำดับตามผู้ใช้ 6 แถว × 3 */const t=[["gps","📍 GPS / Position",MLP.on?"on":""],["ac","✈ Aircraft",M.mac?"on":""],["sum","📋 Summary",M.sum?"on":""],
+ ["rec",TK.on?"■ Stop track":"● Record track",TK.on?"rec":""],["trk","🗂 Tracks / GPX",""],["show",TK.cfg.show?"〰 Track line: On":"〰 Track line: Off",TK.cfg.show?"on":""],
+ ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],
+ ["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],["log","📝 Flight log",""],["mk","🚩 Marks ("+DB.MK.length+")",""],
+ ["ref","🔄 Refresh map",""],["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["dl","📥 Download map/TAWS",""],
+ ["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["man","📖 Manual",""],["exit","✕ Exit flight mode","x"]];
  const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div><div class="fom fdi">${esc(fitInfo())}</div>`;
  if(MN.innerHTML!==h)MN.innerHTML=h}
 /* v4.7.3: หน้าต่างตำแหน่งฉัน (GPS) — ใช้ตำแหน่ง · ตามตำแหน่ง · เข็มทิศเครื่อง · กลางแผนที่ (ตัวเดียวกับเมนู 📍 ตำแหน่งฉัน ของหน้าจอปกติ) */
@@ -5145,6 +5159,7 @@ MN.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){MN.hidden=true
  else if(k==="fl")flSet({fl:!TW.fl});else if(k==="prf")$f("pfb").click();
  else if(k==="fit"){const L=[100,96,92,88,84];FIT.k=L[(L.indexOf(FIT.k)+1)%L.length];try{localStorage.setItem("heliFit",String(FIT.k))}catch(e){}fitApply()}
  else if(k==="mk"){MN.hidden=true;mkRender();MKW.hidden=false;return}
+ else if(k==="log"){MN.hidden=true;lgRender();LG.hidden=false;return}
  else if(k==="ref"){MN.hidden=true;try{mapRefresh()}catch(x){}/* v4.7.9 b11: ข้อมูลความสูงที่เคยโหลดไม่สำเร็จ ให้ลองใหม่ด้วย */try{TR.bad.clear();trPump();trChanged()}catch(x){}return}
  else if(k==="dl"){MN.hidden=true;try{$f("twdl").click()}catch(x){}return}
  else if(k==="wk"){wkSet(!WK.on)}
@@ -5215,6 +5230,18 @@ MKW.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){MKW.hidden=tr
  else if((b=e.target.closest("[data-mx]"))){if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="Confirm?";setTimeout(()=>{if(b.isConnected){b.dataset.sure="";b.textContent="Delete"}},3000);return}mkDel(+b.dataset.mx)}});
 MKW.addEventListener("change",e=>{const t=e.target.closest("[data-mn]");if(!t)return;const p=DB.MK[+t.dataset.mn],v=t.value.trim().slice(0,40);if(!p||!v){if(p)t.value=p.n;return}p.n=v;mkSave();const c=$f("cn_MK");M.pop=null;drawMap(false)});
 MKW.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-mn]"))e.target.blur()});
+
+/* v4.7.9 b12: Flight log — ช่องกรอกชุดเดียวกับการ์ด "Flight Log สำหรับพิมพ์" หน้าแรก (เขียนกลับช่องเดิมทันที) ปุ่มใหญ่สำหรับ iPad/มือถือ */
+const LGF=[["lpic","Pilot in Command (PIC)","text"],["lreg","Aircraft registration","text"],["ldate","Date","date"],["lfob","Fuel on board (U)","number"],["ltx","Taxi fuel (U)","number"],["lnote","Remarks","text"],["mv","Magnetic variation (°) E + / W −","number"]];
+function lgRender(){const u=($f("unit")&&$f("unit").value)||"lbs";let h=`<div class="foh"><b>Flight log</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="lgf">`;
+ LGF.forEach(f=>{const o=$f(f[0]);if(!o)return;h+=`<label class="${f[0]==="lnote"||f[0]==="mv"?"w":""}"><span>${esc(f[1].replace("(U)","("+u+")"))}</span><input data-lg="${f[0]}" type="${f[2]}"${f[2]==="number"?' inputmode="decimal" step="any"':""} value="${esc(o.value)}" placeholder="${esc(o.placeholder||"")}" autocomplete="off"></label>`});
+ h+=`</div><div class="lgb"><button type="button" data-lgp="1" class="p">🖨 Create Flight Log</button></div><div class="fom">ข้อมูลชุดเดียวกับ Flight Log หน้าแรก · Fuel on board ว่าง = ใช้ Take off fuel อัตโนมัติ</div>`;LG.innerHTML=h}
+function lgSave(){try{localStorage.setItem("heliLogInfo",JSON.stringify({pic:$f("lpic").value,reg:$f("lreg").value}))}catch(e){}}
+LG.addEventListener("input",e=>{const t=e.target.closest("[data-lg]");if(!t)return;const o=$f(t.dataset.lg);if(!o)return;o.value=t.value;o.dispatchEvent(new Event("input",{bubbles:true}));if(t.dataset.lg==="lpic"||t.dataset.lg==="lreg")lgSave()});
+LG.addEventListener("change",e=>{const t=e.target.closest("[data-lg]");if(!t)return;const o=$f(t.dataset.lg);if(o){o.value=t.value;o.dispatchEvent(new Event("change",{bubbles:true}))}});
+LG.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-lg]"))e.target.blur()});
+LG.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){LG.hidden=true;return}if(e.target.closest("[data-lgp]")){lgSave();LG.hidden=true;try{$f("logbtn").click()}catch(x){}}});
+window.lgRender=lgRender;
 
 /* v4.7.7: กัน #map ถูกเลื่อน (scroll) เองเมื่อแตะ/โฟกัสช่องกรอกในหน้าต่าง (ชั้น TAWS วาดกว้างกว่าจอทำให้เลื่อนได้) — หน้าต่าง/ปุ่มจะไม่หลุดจอ */
 mp.addEventListener("scroll",()=>{if(mp.scrollLeft||mp.scrollTop){mp.scrollLeft=0;mp.scrollTop=0}});
