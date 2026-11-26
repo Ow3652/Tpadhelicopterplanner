@@ -67,6 +67,7 @@ def main():
     summ["pbf_bytes"] = os.path.getsize("thailand.osm.pbf")
     rows = []
     for (ty, oid, t, la, lo) in features("nwr/aeroway=helipad,heliport,aerodrome,airstrip", "air"):
+        if t.get("aeroway") not in ("helipad", "heliport", "aerodrome", "airstrip"): continue  # ตัดวัตถุที่ติดมาเป็นส่วนประกอบของ relation (terminal/apron ฯลฯ)
         em = ele_m(t.get("ele"))
         rows.append([t.get("name", "") or t.get("name:th", "") or t.get("name:en", ""), t.get("name:en", ""), t.get("aeroway", ""),
                      t.get("icao", ""), t.get("iata", ""), dm(la, True), dm(lo, False), "" if em is None else round(em / 0.3048),
@@ -80,6 +81,7 @@ def main():
     # ยอดเขา
     P = features("n/natural=peak", "peak"); rows = []
     for (ty, oid, t, la, lo) in P:
+        if t.get("natural") != "peak": continue
         nm = t.get("name", "") or t.get("name:th", "") or t.get("name:en", ""); em = ele_m(t.get("ele"))
         if not nm and em is None: continue
         rows.append([nm, t.get("name:en", ""), "" if em is None else round(em), "" if em is None else round(em / 0.3048),
