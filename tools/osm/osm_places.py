@@ -11,6 +11,31 @@ def run(cmd):
     print("+", cmd, flush=True)
     if os.system(cmd) != 0: raise SystemExit("คำสั่งล้มเหลว: " + cmd)
 
+TH_POLY = None
+def th_boundary():
+    """เส้นเขตแดนประเทศไทย (relation boundary=administrative, admin_level=2, ISO3166-1=TH) จากไฟล์เดียวกัน → shapely (multi)polygon"""
+    global TH_POLY
+    from shapely.geometry import shape
+    from shapely.prepared import prep
+    run("osmium tags-filter thailand.osm.pbf r/admin_level=2 -o adm2.pbf --overwrite")
+    run("osmium export adm2.pbf -f geojsonseq -o adm2.geojsonseq --overwrite --geometry-types=polygon -x print_record_separator=false")
+    best = None
+    for line in open("adm2.geojsonseq", encoding="utf-8"):
+        line = line.strip().lstrip("\x1e")
+        if not line: continue
+        g = json.loads(line); p = g.get("properties", {})
+        if p.get("boundary") == "administrative" and str(p.get("admin_level")) == "2" and (p.get("ISO3166-1") == "TH" or p.get("ISO3166-1:alpha2") == "TH" or p.get("name:en") == "Thailand"):
+            geo = shape(g["geometry"])
+            if best is None or geo.area > best.area: best = geo
+    if best is None or best.area < 30:  # ไทย ≈ 43 ตร.องศา (รวมทะเลอาณาเขต) — ถ้าเล็กผิดปกติ แสดงว่าเขตแดนไม่ครบ: หยุด ไม่เผยแพร่
+        raise SystemExit("หาเส้นเขตแดนประเทศไทยไม่พบหรือไม่ครบ (area=%s)" % (best.area if best else None))
+    TH_POLY = prep(best)
+    return best.area
+
+def in_th(la, lo):
+    from shapely.geometry import Point
+    return TH_POLY.contains(Point(lo, la))
+
 def features(expr, name):
     """osmium tags-filter → export GeoJSON Sequence → รายการ (type,id,tags,lat,lon) จุดกลางของเส้น/พื้นที่ = ค่าเฉลี่ยพิกัด"""
     run(f"osmium tags-filter thailand.osm.pbf {expr} -o {name}.pbf --overwrite")
@@ -30,6 +55,7 @@ def features(expr, name):
         if not pts: continue
         lo = sum(p[0] for p in pts) / len(pts); la = sum(p[1] for p in pts) / len(pts)
         if not (TH[0] <= la <= TH[2] and TH[1] <= lo <= TH[3]): continue
+        if TH_POLY is not None and not in_th(la, lo): continue  # อยู่นอกเขตแดนประเทศไทย (ลาว/พม่า/กัมพูชา/มาเลเซีย)
         t = {k: v for k, v in pr.items() if not k.startswith("@")}
         out.append((pr.get("@type", "n")[:1], pr.get("@id", ""), t, la, lo))
     # osmium export ให้ทั้งเส้นและพื้นที่ของ way เดียวกันได้ → ตัดซ้ำตาม (type,id)
@@ -65,6 +91,7 @@ def main():
     # ลานจอด ฮ./สนามบิน
     run(f"curl -sSfL --retry 3 -o thailand.osm.pbf {PBF_URL}")
     summ["pbf_bytes"] = os.path.getsize("thailand.osm.pbf")
+    summ["th_area_deg2"] = round(th_boundary(), 2)
     rows = []
     for (ty, oid, t, la, lo) in features("nwr/aeroway=helipad,heliport,aerodrome,airstrip", "air"):
         if t.get("aeroway") not in ("helipad", "heliport", "aerodrome", "airstrip"): continue  # ตัดวัตถุที่ติดมาเป็นส่วนประกอบของ relation (terminal/apron ฯลฯ)
