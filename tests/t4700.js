@@ -108,7 +108,7 @@ t('T11 c v4.7.1 Rec Route: เปิดกล่องเส้นทางท�
 // Menu กระเบื้อง
 await p.tap('#flyT [data-fk="menu"]');await W(200);
 const mn=await p.evaluate(()=>({open:!$('flyM').hidden,tiles:[...document.querySelectorAll('#flyM .fog button')].map(e=>({t:e.textContent.trim(),h:Math.round(e.getBoundingClientRect().height)}))}));
-t('T12 Menu กระเบื้องปุ่มใหญ่ (≥ 80 px) ภาษาอังกฤษ: Record track, Tracks/GPX, Aircraft, GPS / Position, Summary, HSI, FMS, SIM, FLTA, Exit · ไม่มีปุ่มเก็บจุดทุก…',mn.open&&mn.tiles.length>=12&&mn.tiles.every(x=>x.h>=80&&!/[\u0E00-\u0E7F]/.test(x.t))&&['track','Tracks / GPX','Aircraft','GPS / Position','Summary','HSI','FMS','SIM','FLTA','Exit flight mode'].every(k=>mn.tiles.some(x=>x.t.includes(k)))&&!mn.tiles.some(x=>/Interval|เก็บจุด/.test(x.t)),mn.tiles.map(x=>x.t+'('+x.h+')').join(' | '));
+t('T12 Menu กระเบื้องปุ่มใหญ่ (≥ 80 px) ภาษาอังกฤษ: Record track, Tracks/GPX, Aircraft, GPS / Position, Summary, HSI, FMS, SIM, Exit · ไม่มีปุ่มเก็บจุดทุก… · v4.7.9 b2 ไม่มี FLTA/Terrain profile (ย้ายไปหน้าต่าง TAWS)',mn.open&&mn.tiles.length>=12&&mn.tiles.every(x=>x.h>=80&&!/[\u0E00-\u0E7F]/.test(x.t))&&['track','Tracks / GPX','Aircraft','GPS / Position','Summary','HSI','FMS','SIM','Exit flight mode'].every(k=>mn.tiles.some(x=>x.t.includes(k)))&&!mn.tiles.some(x=>/Interval|เก็บจุด|FLTA|Terrain profile/.test(x.t)),mn.tiles.map(x=>x.t+'('+x.h+')').join(' | '));
 // v4.7.1: Aircraft
 const ac0=await p.evaluate(()=>M.mac);await p.tap('#flyM [data-fm="ac"]');await W(200);const ac1=await p.evaluate(()=>({mac:M.mac,on:document.querySelector('#flyM [data-fm="ac"]').classList.contains('on')}));
 await p.tap('#flyM [data-fm="ac"]');await W(200);const ac2=await p.evaluate(()=>M.mac);
@@ -383,13 +383,26 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  await p.tap('#flyPk [data-pr="cl-rt"]');await W(200);const c1=await p.evaluate(()=>({txt:document.querySelector('#flyPk [data-pr="cl-rt"]').textContent,open:!$("flyPk").hidden,n:pts.filter(q=>q.name).length}));
  await p.tap('#flyPk [data-pr="cl-rt"]');await W(300);const c2=await p.evaluate(()=>({n:pts.filter(q=>q.name).length,closed:$('flyPk').hidden}));
  await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="rt-new"]');await W(400);const nw=await p.evaluate(()=>({mpt:!!M.mpt,closed:$('flyPk').hidden}));await p.evaluate(()=>{try{mptShow(false)}catch(e){}});
- t('T30 v4.7.7 b4 ปุ่ม Route มีเมนูย่อย New Route / Saved Route / Clear · Clear ต้องยืนยันเมื่อยังไม่บันทึก · New Route เปิดกล่องจุดพิกัด',r.vis&&r.b.length===3&&/New Route/.test(r.b[0])&&/Saved Route/.test(r.b[1])&&/Clear/.test(r.b[2])&&c1.open&&c1.n===2&&/ยืนยัน/.test(c1.txt)&&c2.n===0&&c2.closed&&nw.mpt&&nw.closed,{r,c1,c2,nw});
+ t('T30 v4.7.7 b4 ปุ่ม Route มีเมนูย่อย New Route / Saved Route / Clear · Clear ต้องยืนยันเมื่อยังไม่บันทึก · New Route เปิดกล่องจุดพิกัด',r.vis&&r.b.length===4&&/New Route/.test(r.b[0])&&/Saved Route/.test(r.b[1])&&/GPX/.test(r.b[2])&&/Clear/.test(r.b[3])&&c1.open&&c1.n===2&&/ยืนยัน/.test(c1.txt)&&c2.n===0&&c2.closed&&nw.mpt&&nw.closed,{r,c1,c2,nw});
  await p.evaluate(()=>{if(TW.on)$('twb').click();if(TW.fl)flSet({fl:false})});await W(200);
  await p.tap('#flyT [data-fk="taws"]');await W(300);const t0=await p.evaluate(()=>[...document.querySelectorAll('#flyPk [data-pt]')].map(x=>x.textContent.trim()));
  await p.tap('#flyPk [data-pt="taws"]');await W(300);await p.tap('#flyPk [data-pt="fl"]');await W(300);
  const t1=await p.evaluate(()=>({tw:!!TW.on,fl:!!TW.fl,b:[...document.querySelectorAll('#flyPk [data-pt]')].map(x=>x.textContent.trim()+(x.classList.contains('on')?'*':'')),open:!$('flyPk').hidden,lit:document.querySelector('#flyT [data-fk="taws"]').classList.contains('on')}));
  await p.tap('#flyPk [data-pt="taws"]');await W(200);await p.tap('#flyPk [data-pt="fl"]');await W(200);const t2=await p.evaluate(()=>({tw:!!TW.on,fl:!!TW.fl}));await p.tap('#flyPk [data-fx]');
- t('T30 b ปุ่ม TAWS มีเมนูย่อย TAWS / FLTA เปิด/ปิดแยกกัน แสดงสถานะ On/Off (ปุ่ม TAWS ติดไฟเมื่อ TAWS เปิด)',t0.join()==='⛰ TAWS: Off,⚠ FLTA: Off'&&t1.tw&&t1.fl&&t1.b.join()==='⛰ TAWS: On*,⚠ FLTA: On*'&&t1.open&&t1.lit&&!t2.tw&&!t2.fl,{t0,t1,t2})}
+ t('T30 b ปุ่ม TAWS มีเมนูย่อย TAWS / FLTA เปิด/ปิดแยกกัน แสดงสถานะ On/Off (ปุ่ม TAWS ติดไฟเมื่อ TAWS เปิด)',t0.slice(0,2).join()==='⛰ TAWS: Off,⚠ FLTA: Off'&&t1.tw&&t1.fl&&t1.b.slice(0,2).join()==='⛰ TAWS: On*,⚠ FLTA: On*'&&t1.open&&t1.lit&&!t2.tw&&!t2.fl,{t0,t1,t2})}
+ // v4.7.9 b2: หน้าต่าง TAWS มี Terrain profile ใต้ปุ่ม TAWS · Route มี GPX → Import / Export
+ {await p.tap('#flyT [data-fk="taws"]');await W(300);
+  const g=await p.evaluate(()=>{const a=document.querySelector('#flyPk [data-pt="taws"]').getBoundingClientRect(),b=document.querySelector('#flyPk [data-pt="prf"]').getBoundingClientRect();return{under:Math.abs(a.left-b.left)<2&&b.top>a.bottom-1,pf:!!TW.pf}});
+  await p.tap('#flyPk [data-pt="prf"]');await W(300);const g2=await p.evaluate(()=>({pf:!!TW.pf,txt:document.querySelector('#flyPk [data-pt="prf"]').textContent}));
+  await p.tap('#flyPk [data-pt="prf"]');await W(300);const g3=await p.evaluate(()=>!!TW.pf);await p.tap('#flyPk [data-fx]');await W(150);
+  await p.evaluate(()=>{window.__gp={imp:0,exp:0};$('fimp').click=()=>{window.__gp.imp++};$('gpx').onclick=()=>{window.__gp.exp++}});
+  await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="gpx"]');await W(200);
+  const w=await p.evaluate(()=>({open:!$('flyPk').hidden,b:[...document.querySelectorAll('#flyPk [data-pg]')].map(x=>x.textContent.trim())}));
+  await p.tap('#flyPk [data-pg="imp"]');await W(200);const c1=await p.evaluate(()=>({...window.__gp,closed:$('flyPk').hidden}));
+  await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="gpx"]');await W(200);await p.tap('#flyPk [data-pg="exp"]');await W(200);const c2=await p.evaluate(()=>({...window.__gp,closed:$('flyPk').hidden}));
+  await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.tap('#flyPk [data-pr="gpx"]');await W(200);await p.tap('#flyPk [data-pg="back"]');await W(200);const bk=await p.evaluate(()=>!!document.querySelector('#flyPk [data-pr="rt-new"]'));await p.tap('#flyPk [data-fx]');
+  await p.evaluate(()=>{delete $('fimp').click;$('gpx').onclick=()=>exportGpx($("rname").value.trim()||"route",calcData.valid,sarFlat())});
+  t('T43 v4.7.9 b2 TAWS: ปุ่ม Terrain profile อยู่ใต้ปุ่ม TAWS เปิด/ปิดได้ · Route → GPX: Import (เลือกไฟล์) / Export / ◀ Route',g.under&&g2.pf!==g.pf&&/Terrain profile: (On|Off)/.test(g2.txt)&&g3===g.pf&&w.open&&/Import/.test(w.b[0])&&/Export/.test(w.b[1])&&c1.imp===1&&c1.closed&&c2.exp===1&&c2.closed&&bk,{g,g2,g3,w,c1,c2,bk})}
 // v4.7.7 b5: ลากกล่องรายละเอียดจุด · ☰ มุมบนขวา · ซ่อนแถบล่างขณะแก้เส้นทาง · ซ่อนเมนูไม้บรรทัด
 {const W=n=>p.waitForTimeout(n);
  await p.evaluate(()=>{if(CURON){const c=$('fcur');c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}))}const k=CATS.find(c=>DB[c.k]&&DB[c.k].length).k,t=DB[k][0],q=wp(t.la,t.lo,M.z);M.cx=q[0];M.cy=q[1];M.pop={c:k,i:0};drawMap(false)});await W(300);

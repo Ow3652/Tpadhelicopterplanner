@@ -4970,7 +4970,7 @@ function tkRender(){const idx=tkIdx();let h=`<div class="foh"><b>Tracks</b><span
  KL.innerHTML=h}
 function menuRender(){const t=[["rec",TK.on?"■ Stop track":"● Record track",TK.on?"rec":""],["trk","🗂 Tracks / GPX",""],["ac","✈ Aircraft",M.mac?"on":""],["gps","📍 GPS / Position",MLP.on?"on":""],["sum","📋 Summary",M.sum?"on":""],["show",TK.cfg.show?"〰 Track line: On":"〰 Track line: Off",TK.cfg.show?"on":""],
  ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],
- ["fl","⚠ FLTA",TW.fl?"on":""],["prf","📈 Terrain profile",TW.pf?"on":""],["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["mk","🚩 Marks ("+DB.MK.length+")",""],["dl","📥 Download map/TAWS",""],["man","📖 Manual",""],["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["exit","✕ Exit flight mode","x"]];
+ ["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["mk","🚩 Marks ("+DB.MK.length+")",""],["dl","📥 Download map/TAWS",""],["man","📖 Manual",""],["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["exit","✕ Exit flight mode","x"]];
  const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div><div class="fom fdi">${esc(fitInfo())}</div>`;
  if(MN.innerHTML!==h)MN.innerHTML=h}
 /* v4.7.3: หน้าต่างตำแหน่งฉัน (GPS) — ใช้ตำแหน่ง · ตามตำแหน่ง · เข็มทิศเครื่อง · กลางแผนที่ (ตัวเดียวกับเมนู 📍 ตำแหน่งฉัน ของหน้าจอปกติ) */
@@ -5115,20 +5115,24 @@ SW.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){SW.hidden=true
  if((b=e.target.closest("[data-sg]"))){try{menuAct(b.dataset.sg,b)}catch(x){}
   if(b.dataset.sure!=="1")SW.hidden=true}});
 
-/* v4.7.7 b4: ปุ่ม Route → New Route / Saved Route / Clear · ปุ่ม TAWS → TAWS / FLTA (หน้าต่าง #flyPk) */
+/* v4.7.7 b4: ปุ่ม Route → New Route / Saved Route / Clear · ปุ่ม TAWS → TAWS / FLTA (หน้าต่าง #flyPk) · v4.7.9 b2: Route + GPX (Import/Export) · TAWS + Terrain profile (ย้ายจาก Menu) */
 function pkRender(k){PK.k=k;const bt=(a,t,cls)=>`<button type="button" ${a} class="${cls||""}">${t}</button>`;let h;
  if(k==="rt"){const lb=$f("lbr"),on=!!(lb&&lb.classList.contains("on"));
-  h=`<div class="foh"><b>Route</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pr="rt-new"',"➕ New Route")+bt('data-pr="rt-list"',"🗂 Saved Route"+(on?" (เปิดอยู่)":""),on?"on":"")+bt('data-pr="cl-rt"',"🧹 Clear","x")+`</div><div class="fom pkn">Clear = ล้างเส้นทาง Active ออกจากแผนที่ (เส้นทางที่บันทึกไว้ไม่ถูกลบ) ถ้ายังไม่ได้บันทึกต้องแตะยืนยันอีกครั้ง</div>`}
+  h=`<div class="foh"><b>Route</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pr="rt-new"',"➕ New Route")+bt('data-pr="rt-list"',"🗂 Saved Route"+(on?" (เปิดอยู่)":""),on?"on":"")+bt('data-pr="gpx"',"📄 GPX")+bt('data-pr="cl-rt"',"🧹 Clear","x")+`</div><div class="fom pkn">GPX = นำเข้า/ส่งออกไฟล์ .gpx · Clear = ล้างเส้นทาง Active ออกจากแผนที่ (เส้นทางที่บันทึกไว้ไม่ถูกลบ) ถ้ายังไม่ได้บันทึกต้องแตะยืนยันอีกครั้ง</div>`}
+ else if(k==="gpx"){h=`<div class="foh"><b>GPX</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pg="imp"',"📂 Import GPX")+bt('data-pg="exp"',"💾 Export GPX")+bt('data-pg="back"',"◀ Route")+`</div><div class="fom pkn">Import = เปิดไฟล์ .gpx แล้วเลือก “ใช้เป็นเส้นทาง Active” ในกล่องที่ขึ้นบนแผนที่ · Export = บันทึกเส้นทาง Active (และพื้นที่ SAR) เป็นไฟล์ .gpx</div>`}
  else{const tw=!!TW.on,fl=!!TW.fl;
-  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+`</div><div class="pkalt"><span>FLT ALTITUDE</span><button type="button" data-pa="-100" aria-label="FLT ALTITUDE −100 ft">−</button><input id="pkAlt" inputmode="numeric" maxlength="5" value="${Math.round(+TW.alt||0)}" aria-label="FLT ALTITUDE (ft)"><button type="button" data-pa="100" aria-label="FLT ALTITUDE +100 ft">+</button><span>ft</span></div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
+  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+bt('data-pt="prf"',"📈 Terrain profile: "+(TW.pf?"On":"Off"),TW.pf?"on":"")+`</div><div class="pkalt"><span>FLT ALTITUDE</span><button type="button" data-pa="-100" aria-label="FLT ALTITUDE −100 ft">−</button><input id="pkAlt" inputmode="numeric" maxlength="5" value="${Math.round(+TW.alt||0)}" aria-label="FLT ALTITUDE (ft)"><button type="button" data-pa="100" aria-label="FLT ALTITUDE +100 ft">+</button><span>ft</span></div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
  PK.innerHTML=h}
 window.pkRender=pkRender;
 PK.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){PK.hidden=true;return}let b;
+ /* v4.7.9 b2: หน้าต่าง GPX — Import = ปุ่ม "นำเข้า .gpx" (#imp → เลือกไฟล์) · Export = ปุ่ม "ส่งออก .gpx" (#gpx) ของหน้าจอปกติ (ต้องเรียกในจังหวะแตะ เพื่อให้ iOS เปิดหน้าต่างเลือกไฟล์ได้) */
+ if((b=e.target.closest("[data-pg]"))){const g=b.dataset.pg;if(g==="back"){pkRender("rt");return}PK.hidden=true;if(g==="imp")$f("imp").click();else $f("gpx").click();setTimeout(flyUi,0);return}
  if((b=e.target.closest("[data-pr]"))){const g=b.dataset.pr,t0=b.textContent;
   if(g==="rt-list"){PK.hidden=true;act("rrtx");setTimeout(flyUi,0);return}
+  if(g==="gpx"){pkRender("gpx");return}
   try{menuAct(g,b)}catch(x){}if(b.dataset.sure!=="1"){PK.hidden=true;setTimeout(flyUi,0)}return}
  if((b=e.target.closest("[data-pa]"))){twSet({alt:Math.max(0,(Math.round((+TW.alt||0)/100)*100)+(+b.dataset.pa))});const i=$f("pkAlt");if(i)i.value=Math.round(TW.alt);return}
- if((b=e.target.closest("[data-pt]"))){if(b.dataset.pt==="taws")$f("twb").click();else flSet({fl:!TW.fl});setTimeout(()=>{pkRender("tw");flyUi()},50)}});
+ if((b=e.target.closest("[data-pt]"))){if(b.dataset.pt==="taws")$f("twb").click();else if(b.dataset.pt==="prf")$f("pfb").click();else flSet({fl:!TW.fl});setTimeout(()=>{pkRender("tw");flyUi()},50)}});
 
 /* v4.7.7 b5: (1) กล่องรายละเอียดจุด (#pop) ลากย้ายได้ในโหมดบิน · (3) ซ่อนแถบตัวเลขล่างขณะเปิดกล่องจุดพิกัดในเส้นทาง · (4) ปุ่ม ซ่อนเมนู ในกล่องไม้บรรทัด */
 let POPXY=null;
