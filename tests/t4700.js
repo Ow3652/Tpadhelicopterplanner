@@ -336,6 +336,26 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   $('q').value='อินทนนท์';qrender();o.q=$('qn').textContent;$('q').value='';qrender();
   $('c_OH').checked=false;$('c_OP').checked=false;M.z=keep[0];M.cx=keep[1];M.cy=keep[2];drawMap(false);delete o.unnamed;return o});
  t('T45 v4.7.9 b9 (ลบ AD-40142/House · ยอดเขา x อยู่บน OSM Peak · ยอดเขาชื่อเป็นเลขเมตร → ft) OSM Airport (43 แห่ง ลบ/เปลี่ยนชื่อตามผู้ใช้ เฉพาะ A/S ไม่ซ้ำหมวด Airport ไอคอนเครื่องบินสีดำ) + OSM Peak (1,857 ไม่มีชื่อ = x,xxx ft) ค่าเริ่มต้นปิด มีปุ่มในกล่องชั้นข้อมูล · ซูม 6 ไม่แสดง · ซูม 8 แสดงสนามบินแต่ยังไม่แสดงยอดเขา · ซูม 11 แสดงยอดเขา · popup/ค้นหา',r.oh===43&&r.b9&&r.fix&&r.dupAP===0&&r.op===1857&&r.types==='AS'&&r.icon&&r.col==='#000000'&&r.name==='OSM Airport'&&r.badUn===0&&r.numM===0&&r.n1770==='5,807 ft'&&r.n1335==='4,380 ft'&&!r.def[0]&&!r.def[1]&&r.fp&&r.z6===0&&r.oh8>0&&r.op8===0&&r.op11>0&&/2,565 m/.test(r.pop)&&/OpenStreetMap/.test(r.pop)&&/data-add="OP:/.test(r.pop)&&/Aerodrome/.test(r.poh)&&r.vtbhGone&&r.fixLive&&r.mtTop&&/1 จุด/.test(r.q),{...r,pop:r.pop.length,poh:r.poh.length})}
+ // v4.7.9 b11: โหมดบิน — Menu เป็นหน้าต่างลอย + Refresh map · ไม้บรรทัด / กล่องจุดพิกัดในเส้นทาง / กล่องเส้นทางที่เก็บไว้ ปุ่มใหญ่ ไม่ทับคอลัมน์ปุ่มขวา
+ {await p.evaluate(()=>{try{mptShow(false)}catch(e){}if($('flyT').hidden)$('flyR').click()});await W(200);
+  await p.tap('#flyT [data-fk="menu"]');await W(300);
+  const m=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),M0=g($('flyM')),mp0=g(mp),t=[...document.querySelectorAll('#flyM .fog button')];return{flyw:$('flyM').classList.contains('flyw'),w:Math.round(M0.width),mw:Math.round(mp0.width),h:Math.round(M0.height),mh:Math.round(mp0.height),minH:Math.min(...t.map(x=>Math.round(g(x).height))),ref:t.some(x=>x.dataset.fm==='ref'&&/Refresh map/.test(x.textContent)),r0:RFS}});
+  await p.tap('#flyM [data-fm="ref"]');await W(300);const r1=await p.evaluate(()=>({closed:$('flyM').hidden,rfs:RFS}));
+  t('T46 a v4.7.9 b11 Menu เป็นหน้าต่างลอย (ไม่เต็มจอ) กระเบื้อง ≥ 80 px มีปุ่ม Refresh map กดแล้วโหลดภาพแผนที่ใหม่และปิดหน้าต่าง',m.flyw&&m.w<m.mw-40&&m.h<m.mh-200&&m.minH>=80&&m.ref&&r1.closed&&r1.rfs>m.r0,{m,r1});
+  await p.tap('#flyT [data-fk="rul"]');await W(400);
+  const ru=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),R=g($('rulb')),Z=g($('flyZ')),bs=[...$('rulb').querySelectorAll('.b,select,input[type=color]')].filter(e=>e.getClientRects().length).map(e=>Math.round(g(e).height));return{vis:!$('rulb').hidden,r:Math.round(R.right),zl:Math.round(Z.left),minH:Math.min(...bs),fs:parseFloat(getComputedStyle($('rulb')).fontSize)}});
+  await p.evaluate(()=>{if(!$('rulb').hidden)$('rlx').click()});await W(200);
+  t('T46 b ไม้บรรทัดโหมดบิน: ปุ่ม/เมนู ≥ 48 px ตัวอักษร ≥ 16 px ไม่ทับคอลัมน์ปุ่มขวา',ru.vis&&ru.minH>=48&&ru.fs>=16&&ru.r<=ru.zl-4,ru);
+  await p.tap('#fbW');await W(400);
+  const ed=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),m=$('mpt'),R=g(m),Z=g($('flyZ')),inp=[...m.querySelectorAll('.pt input')].map(e=>({h:Math.round(g(e).height),f:parseFloat(getComputedStyle(e).fontSize)})),ac=[...m.querySelectorAll('.pt .acts .b')].map(e=>Math.round(g(e).height)),r0=m.querySelector('.pt'),nm=g(r0.querySelector('.nm')),la=g(r0.querySelector('[data-k=lat]'));
+   return{r:Math.round(R.right),zl:Math.round(Z.left),n:inp.length,inH:Math.min(...inp.map(x=>x.h)),inF:Math.min(...inp.map(x=>x.f)),acH:Math.min(...ac),two:la.top>=nm.bottom-1,x:Math.round(g(m.querySelector('#mptx')).height)}});
+  await p.evaluate(()=>{try{mptShow(false)}catch(e){}});await W(300);
+  t('T46 c กล่องจุดพิกัดในเส้นทาง (แตะ NAV TO): ช่องกรอก ≥ 46 px ตัวอักษร ≥ 16 px ปุ่ม ↑↓× ≥ 46 px ชื่อแถวบน พิกัดแถวล่าง ปุ่มปิด ≥ 44 px ไม่ทับคอลัมน์ขวา',ed.n>=6&&ed.inH>=46&&ed.inF>=16&&ed.acH>=46&&ed.two&&ed.x>=44&&ed.r<=ed.zl-4,ed);
+  await p.evaluate(()=>{const a=store();if(!a.length){putStore([{name:"T46 test",fmt:$("fmt").value,pts:pts.map(x=>({...x})),t:Date.now()}]);drawList()}});
+  await p.tap('#flyT [data-fk="rrt"]');await W(300);await p.evaluate(()=>{const b=[...document.querySelectorAll('#flyPk [data-pr]')].find(x=>/Saved/i.test(x.textContent));b&&b.click()});await W(400);
+  const sv=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),l=$('lbr'),R=g(l),Z=g($('flyZ')),bs=[...l.querySelectorAll('.qrow .b,.sptl .b')].map(e=>Math.round(g(e).height));return{on:l.classList.contains('on'),r:Math.round(R.right),zl:Math.round(Z.left),n:bs.length,minH:Math.min(...bs),b:parseFloat(getComputedStyle(l.querySelector('.qrow b')).fontSize)}});
+  await p.evaluate(()=>{const l=$('lbr'),x=l.querySelector('[data-lbx]');if(l.classList.contains('on')&&x)x.click();const a=store().filter(r=>r.name!=="T46 test");putStore(a);drawList()});await W(200);
+  t('T46 d กล่องเส้นทางที่เก็บไว้ (Route → Saved): ปุ่ม ≥ 46 px ชื่อเส้นทาง ≥ 17 px ไม่ทับคอลัมน์ขวา',sv.on&&sv.n>=3&&sv.minH>=46&&sv.b>=17&&sv.r<=sv.zl-4,sv)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
