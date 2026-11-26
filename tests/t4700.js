@@ -318,6 +318,15 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
  {const r=await p.evaluate(()=>{drawMap(false);const ov=$('ov');let w=0;const d=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');Object.defineProperty(ov,'innerHTML',{set(v){w++;d.set.call(this,v)},get(){return d.get.call(this)},configurable:true});
   PANB={bx:0,by:0,lx:0,ly:0,t:0};const cx=M.cx,cy=M.cy;M.cx+=40;M.cy-=25;drawMap(false);const w1=w,tf=ov.style.transform;panFlush();const w2=w,tf2=ov.style.transform;M.cx=cx;M.cy=cy;drawMap(false);delete ov.innerHTML;return{w1,tf,w2,tf2,cull:CULL}});
  t('T42 v4.7.9 ลากนิ้ว: ไม่สร้าง SVG ใหม่ (เลื่อนภาพเดิม -40,+25 px) · ยกนิ้วสร้างใหม่ 1 ครั้งและล้าง transform · จอสัมผัส CULL 256',r.w1===0&&/translate\(-40(\.0)?px, 25(\.0)?px\)/.test(r.tf)&&r.w2===1&&r.tf2===''&&r.cull===256,r)}
+ // v4.7.9 b3: หน้าต่างชั้นข้อมูลในโหมดบิน ปุ่มปิด/ย่อ ≥ 44 px · คำอธิบายเรดาร์ฝนไล่ถึงส้ม/แดง · ปุ่มย่อกล่องชั้นฝน
+ {const W=n=>p.waitForTimeout(n);await p.tap('#flyT [data-fk="lay"]');await W(400);
+  const a=await p.evaluate(()=>{const x=$('fpx').getBoundingClientRect(),c=document.querySelector('#fp .ph .pc').getBoundingClientRect(),ch=document.querySelector('#fp .chip').getBoundingClientRect();return{open:!$('fp').hidden,x:Math.round(Math.min(x.width,x.height)),c:Math.round(Math.min(c.width,c.height)),chip:Math.round(ch.height)}});
+  await p.tap('#fpx');await W(200);const closed=await p.evaluate(()=>$('fp').hidden);
+  await p.evaluate(()=>{wxSet("radar")});await W(300);
+  const l=await p.evaluate(()=>({lg:$('wxl').innerHTML,head:$('wxh').textContent}));
+  await p.tap('#wxmin');await W(200);const m1=await p.evaluate(()=>({min:$('wxb').classList.contains('min'),ls:localStorage.getItem('heliWxMin'),rowHidden:getComputedStyle(document.querySelector('#wxb .r')).display==='none'}));
+  await p.tap('#wxmin');await W(200);const m2=await p.evaluate(()=>({min:$('wxb').classList.contains('min'),ls:localStorage.getItem('heliWxMin')}));await p.evaluate(()=>{wxSet("off")});
+  t('T44 v4.7.9 b3 Layers (โหมดบิน): ปุ่ม ✕/▾ ≥ 44 px, ช่องเลือก ≥ 44 px, ✕ ปิดได้ · เรดาร์ฝน: คำอธิบายมีเหลือง/ส้ม/แดง · ปุ่มย่อ/ขยายกล่องชั้นฝน (จำค่า)',a.open&&a.x>=44&&a.c>=44&&a.chip>=44&&closed&&/#ffee00/.test(l.lg)&&/#ff4400/.test(l.lg)&&/#c10000/.test(l.lg)&&l.head==='เรดาร์ฝน'&&m1.min&&m1.ls==='1'&&m1.rowHidden&&!m2.min&&m2.ls==='0',{a,closed,head:l.head,m1,m2})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

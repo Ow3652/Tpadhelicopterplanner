@@ -154,6 +154,12 @@ tfoot td{font-weight:600;border-bottom:0}
 #wxc{position:absolute;left:0;top:0;filter:blur(5px)}
 #wxb{position:absolute;left:8px;bottom:26px;z-index:6;max-width:min(560px,calc(100% - 16px));background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:default}
 #wxb .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#wxb .wh{display:flex;align-items:center;gap:8px;margin:-2px 0 4px}
+#wxb .wh span{flex:1;min-width:0;color:var(--mute);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#wxb .wh .pc{margin-left:auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;min-width:30px;min-height:26px;padding:0 6px}
+#wxb.min>:not(.wh){display:none}
+#wxb.min .wh{margin:0}
+#wxb:not(.min) #wxt3{display:none}
 #wxb input[type=range]{flex:1;min-width:120px;margin:0}
 #wxb .lg{display:flex;gap:2px;align-items:center;flex-wrap:wrap;margin-top:4px}
 #wxb .lg i{display:inline-block;width:22px;height:10px}
@@ -618,7 +624,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 <div class="mr"><span>Ground speed (kt)</span><span class="st"><button data-t="gs" data-d="-5" aria-label="ลด">−</button><input id="mgs" type="number" min="1" step="any"><button data-t="gs" data-d="5" aria-label="เพิ่ม">+</button></span></div>
 <div class="mr"><span>Reserved fuel (นาที)</span><span class="st"><button data-t="res" data-d="-5" aria-label="ลด">−</button><input id="mres" type="number" min="0" step="1"><button data-t="res" data-d="5" aria-label="เพิ่ม">+</button></span></div>
 <div class="mr"><span>Take off fuel (<span class="lu">lbs</span>)</span><span class="st"><button data-t="tof" data-d="-10" aria-label="ลด">−</button><input id="mtof" type="number" min="0" step="any" placeholder="-"><button data-t="tof" data-d="10" aria-label="เพิ่ม">+</button></span></div><div class="mr"><span>Take off time</span><span class="st"><input id="mdep" type="text" inputmode="numeric" maxlength="5" placeholder="HH:MM" pattern="[0-2][0-9]:[0-5][0-9]" style="width:96px;text-align:center" aria-label="เวลาออกบิน 24 ชั่วโมง"></span></div></div></div>
-<div id="wxb" hidden><div class="r"><button class="b s" id="wxp" aria-label="เล่น/หยุด">▶</button><input type="range" id="wxs" min="0" max="0" value="0" aria-label="เลื่อนเวลา"><b id="wxt2"></b></div><div class="r">ความโปร่งใสชั้นฝน <input type="range" id="wxo" min="20" max="100" value="75" aria-label="ความเข้มชั้นฝน"></div><div class="lg" id="wxl"></div><div class="nt" id="wxn"></div></div>
+<div id="wxb" hidden><div class="wh"><b id="wxh">ชั้นฝน</b><span id="wxt3"></span><button class="pc" id="wxmin" type="button" aria-label="ย่อ/ขยายกล่องชั้นฝน" title="ย่อ/ขยาย">▾</button></div><div class="r"><button class="b s" id="wxp" aria-label="เล่น/หยุด">▶</button><input type="range" id="wxs" min="0" max="0" value="0" aria-label="เลื่อนเวลา"><b id="wxt2"></b></div><div class="r">ความโปร่งใสชั้นฝน <input type="range" id="wxo" min="20" max="100" value="75" aria-label="ความเข้มชั้นฝน"></div><div class="lg" id="wxl"></div><div class="nt" id="wxn"></div></div>
 <div class="at" id="at"></div><div id="acst" hidden></div><div id="acd" hidden></div></div>
 <div class="chips" id="mopts"><div class="chip grp"><b>Double click สร้าง</b><label><input type="checkbox" id="clk" checked>จุดในเส้นทาง</label><label><input type="checkbox" id="clk2">จุดร่วม</label><label><input type="checkbox" id="clk3">จุดของฉัน</label></div><label class="chip">ขนาดแผนที่ <select id="msz"><option value="m">ปกติ</option><option value="l">ใหญ่ (เต็มความกว้าง)</option><option value="xl">ใหญ่มาก</option></select></label><label class="chip">ชนิดแผนที่ <select id="lay"></select><input type="color" class="blkc" hidden value="#000000" aria-label="สีพื้นหลังแผนที่ว่าง" title="สีพื้นหลังแผนที่ว่าง" style="width:34px;height:26px;padding:0;margin:0 0 0 6px;border:1px solid var(--line);background:none;vertical-align:middle"></label><label class="chip" title="แสดง/ซ่อนทิศทาง / ระยะทาง (Range Bearing) บนเส้นทาง Active"><input type="checkbox" id="rb" checked>R/B</label><label class="chip">ขนาดไอคอน <select id="isz"><option value="1">100%</option><option value="0.75">75%</option><option value="0.5">50%</option></select></label><label class="chip">☀ ความสว่างแผนที่ <input type="range" id="bri" min="20" max="100" value="100" style="width:110px" aria-label="ความสว่างแผนที่"></label><label class="chip">🌧 ชั้นฝน <select id="wxm"><option value="off">ปิด</option><option value="radar">ฝนจริง</option><option value="fc">ฝนพยากรณ์</option></select></label><label class="chip" title="ระบายสีภูมิประเทศเทียบกับความสูงบิน (TAWS)"><input type="checkbox" id="twon">⛰ TAWS</label><label class="chip" title="เตือนภูมิประเทศข้างหน้า (FLTA) ตามทิศ/ความเร็วจาก GPS หรือ SIM"><input type="checkbox" id="flon">⚠ FLTA</label><label class="chip">ความสูงบิน <input type="number" id="twalt" min="0" max="25000" step="100" inputmode="numeric" style="width:86px;margin:0 4px"> ft</label><div class="chip" style="flex-wrap:wrap;cursor:default">สีเส้นทาง Active <input type="color" class="rcol" aria-label="เลือกสีเส้นทาง"><span class="sws"></span></div></div>
 <div class="hint">ลากจากเส้นทางบนแผนที่ไปยังตำแหน่งที่ต้องการ เพื่อเพิ่มจุดแทรกระหว่างจุดเดิม ถ้าลากไปใกล้จุดข้อมูลที่แสดงอยู่ (สนามบิน VOR TPAD BPP RP) จะดูดติดและเพิ่มจุดนั้นให้ · คลิกที่จุดของเส้นทางแล้วกด “ลบจุดนี้” เพื่อลบจุด</div>
@@ -1995,6 +2001,8 @@ $("wxm").onchange=()=>wxSet($("wxm").value);
 $("wxs").oninput=()=>{WX.idx=+$("wxs").value;wxLabel();drawMap(false)};
 $("wxo").oninput=()=>{$("wx").style.opacity=$("wxo").value/100};
 $("wxp").onclick=()=>wxPlay(!WX.play);
+$("wxmin").onclick=e=>{e.stopPropagation();wxMinSet(!$("wxb").classList.contains("min"))};
+try{if(localStorage.getItem("heliWxMin")==="1")wxMinSet(true)}catch(e){}
 $("wxb").addEventListener("wheel",e=>e.stopPropagation())}
 function wxClear(){for(const[,im]of WX.img)im.remove();WX.img.clear();const c=$("wxc");if(c)c.getContext("2d").clearRect(0,0,c.width,c.height)}
 function wxPlay(on){clearInterval(WX.play);WX.play=null;$("wxp").textContent="▶";if(!on)return;
@@ -2016,10 +2024,14 @@ wxLabel();drawMap(false)}
 function wxLabel(){const el=$("wxt2"),nt=$("wxn");if(WX.mode==="off")return;let t="";
 if(WX.mode==="radar"){const f=WX.frames[WX.idx];if(f){const mn=Math.max(0,Math.round((Date.now()/1000-f.time)/60));t=wxTh(f.time*1000)+" น. · "+(WX.idx===WX.frames.length-1?"ล่าสุด":mn+" นาทีที่แล้ว")}else t=WX.err?"":"กำลังโหลด…"}
 else t=(WX.idx===0?"ตอนนี้ ":"+"+WX.idx+" ชม. ")+"· "+wxTh(WX.base+WX.idx*3600e3)+" น.";
-el.textContent=t;
+el.textContent=t;wxHead();
 const er=WX.err||WX.msg;
 nt.innerHTML=(er?'<div class="er">'+esc(er)+'</div>':"")+(WX.mode==="radar"?'เรดาร์ฝนที่ตรวจวัดจริง ย้อนหลัง ~2 ชม. (ทุก 10 นาที) ไม่ใช่พยากรณ์ · ซูมเกิน 7 จะขยายภาพ · ข้อมูล © <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>':'พยากรณ์ฝนรายชั่วโมงจากแบบจำลองสภาพอากาศความละเอียดต่ำ (ตารางจุด) ใช้เป็นภาพรวมเท่านั้น · ข้อมูล © <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a>')+'<br>ใช้ประกอบการวางแผนเท่านั้น ไม่ใช่ข้อมูลอุตุนิยมวิทยาการบินอย่างเป็นทางการ โปรดตรวจสอบกับกรมอุตุนิยมวิทยา (<a href="https://weather.tmd.go.th/" target="_blank" rel="noopener">TMD</a>) ก่อนทำการบิน'}
-function wxLegend(){$("wxl").innerHTML=WX.mode==="radar"?'เบา <i style="background:#bcd9ff"></i><i style="background:#6aa6f2"></i><i style="background:#2f6fd6"></i><i style="background:#14419a"></i> หนัก (สีฟ้า→น้ำเงินเข้ม)':'ฝน (มม./ชม.) '+WXC.map(([t,k])=>'<i style="background:'+k+'"></i>'+(t<1?"":"")).join("")+' <span style="color:var(--mute)">0.1 · 0.5 · 1 · 2.5 · 5 · 10 · 20+</span>'}
+/* v4.7.9 b3: ย่อ/ขยายกล่องชั้นฝน (จำค่าใน localStorage heliWxMin) · ตอนย่อแสดงชื่อชั้นและเวลาในแถวหัว */
+function wxMinSet(v){const b=$("wxb");b.classList.toggle("min",!!v);$("wxmin").textContent=v?"▸":"▾";try{localStorage.setItem("heliWxMin",v?"1":"0")}catch(e){}}
+function wxHead(){try{$("wxh").textContent=WX.mode==="radar"?"เรดาร์ฝน":WX.mode==="fc"?"พยากรณ์ฝน":"ชั้นฝน";$("wxt3").textContent=$("wxt2").textContent}catch(e){}}
+function wxLegend(){wxHead();/* v4.7.9 b3: สีตามชุด Universal Blue ของ RainViewer (ฝน 15–60 dBZ) — ฟ้าอ่อน → น้ำเงินเข้ม → เหลือง → ส้ม → แดง → ชมพู (เดิมแสดงเฉพาะโทนฟ้า ซึ่งเป็นสีของหิมะ) */
+$("wxl").innerHTML=WX.mode==="radar"?'เบา '+["#88ddee","#00a3e0","#0077aa","#005588","#ffee00","#ffaa00","#ff4400","#c10000","#ffaaff"].map(k=>'<i style="background:'+k+'"></i>').join("")+' หนักมาก <span style="color:var(--mute)">(ฟ้า → น้ำเงิน → เหลือง → ส้ม → แดง → ชมพู)</span>':'ฝน (มม./ชม.) '+WXC.map(([t,k])=>'<i style="background:'+k+'"></i>'+(t<1?"":"")).join("")+' <span style="color:var(--mute)">0.1 · 0.5 · 1 · 2.5 · 5 · 10 · 20+</span>'}
 function wxGrid(W,H,ox,oy,z){const a=wxLL(ox,oy,z),b=wxLL(ox+W,oy+H,z);
 const la1=Math.min(a[0],b[0]),la2=Math.max(a[0],b[0]),lo1=Math.min(a[1],b[1]),lo2=Math.max(a[1],b[1]);
 for(const st of[.1,.2,.25,.5,1,2,5]){const r0=Math.floor(la1/st)-1,r1=Math.ceil(la2/st)+1,c0=Math.floor(lo1/st)-1,c1=Math.ceil(lo2/st)+1;
@@ -2047,7 +2059,7 @@ for(let ty=Math.floor(oy/ts);ty<=Math.floor((oy+H)/ts);ty++){if(ty<0||ty>=n)cont
 for(let tx=Math.floor(ox/ts);tx<=Math.floor((ox+W)/ts);tx++){const w=((tx%n)+n)%n,p=zr+"/"+w+"/"+ty+"/"+tx;want.add(p);
 WX.frames.forEach((fr,fi)=>{if(fi!==WX.idx&&!WX.pre)return;const k=fr.time+"|"+p;let im=WX.img.get(k);
 if(!im){im=new Image();im.className="wt";im.alt="";im.draggable=false;im.dataset.p=p;im.dataset.t=fr.time;
-im.src=WX.host+fr.path+"/256/"+zr+"/"+w+"/"+ty+"/2/1_1.png";tb.appendChild(im);WX.img.set(k,im)}
+im.src=WX.host+fr.path+"/256/"+zr+"/"+w+"/"+ty+"/2/1_0.png";tb.appendChild(im);WX.img.set(k,im)}
 im.style.left=(tx*ts-ox)+"px";im.style.top=(ty*ts-oy)+"px";im.style.width=im.style.height=ts+"px";im.style.display=fi===WX.idx?"":"none"})}}
 for(const[k,im]of WX.img)if(!want.has(im.dataset.p)||!times.has(im.dataset.t)){im.remove();WX.img.delete(k)}
 return}
@@ -4822,7 +4834,34 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #mlmenu .mlh{display:none}#map.fly #mlmenu .mlh{display:block;text-align:center;font:700 13px system-ui,sans-serif;color:var(--mute);padding:4px 0 6px;cursor:grab;touch-action:none;border-bottom:1px solid var(--line)}
 #map.fly #mlmenu{min-width:240px;font-size:16px;touch-action:none}#map.fly #mlmenu .chip,#map.fly #mlmenu .b{min-height:44px;font-size:16px}
 #rlplus{display:none}#rulb.rmin>#rlplus{display:inline-flex!important;font-size:22px;font-weight:800;min-width:44px;justify-content:center;align-items:center;margin-left:6px}#map.fly #rulb.rmin>#rlplus{min-height:44px;min-width:52px}
-#flyWk{position:absolute;left:104px;bottom:calc(var(--flyb,0px) + 6px);z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}.enrc select{margin-left:4px;padding:1px 2px}.enrc input:disabled+*{opacity:.5}.enrc2{grid-column:1/-1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin-top:2px;white-space:nowrap}.enrc2 input[type=checkbox]{width:22px;height:22px;margin:0}.enrc2 .enrop{flex:0 0 auto;width:auto!important;min-width:84px;min-height:34px;font-size:15px;margin-left:4px}#at .enrat{color:#b3261e;font-weight:600}</style>
+#flyWk{position:absolute;left:104px;bottom:calc(var(--flyb,0px) + 6px);z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}.enrc select{margin-left:4px;padding:1px 2px}.enrc input:disabled+*{opacity:.5}.enrc2{grid-column:1/-1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin-top:2px;white-space:nowrap}.enrc2 input[type=checkbox]{width:22px;height:22px;margin:0}.enrc2 .enrop{flex:0 0 auto;width:auto!important;min-width:84px;min-height:34px;font-size:15px;margin-left:4px}#at .enrat{color:#b3261e;font-weight:600}
+/* v4.7.9 b3: หน้าต่างชั้นข้อมูล (#fp) ในโหมดบิน — ปุ่มปิด/ย่อ 44 px และตัวเลือกใหญ่สำหรับ iPad/มือถือ (แนวเดียวกับกล่อง Aircraft) */
+#map.fly .fp{font-size:16px;padding:10px 12px;min-width:min(420px,calc(100% - 16px))}
+#map.fly .fp .ph{margin:-2px 0 10px}
+#map.fly .fp .ph b{font-size:18px}
+#map.fly .fp .ph span{display:flex;gap:8px;align-items:center}
+#map.fly .fp .ph .pc,#map.fly .fp .ph .mx{min-width:44px;min-height:44px;font-size:22px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0 8px;line-height:1}
+#map.fly .fp label{font-size:15px}
+#map.fly .fp label:not(.chip){margin-bottom:10px}
+#map.fly .fp select,#map.fly .fp input[type=number],#map.fly .fp input[type=text],#map.fly .fp input:not([type]){font-size:16px;min-height:44px;box-sizing:border-box}
+#map.fly .fp .chip{min-height:44px;padding:8px 12px!important;font-size:16px;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box}
+#map.fly .fp input[type=checkbox]{width:22px;height:22px;flex:0 0 22px;margin:0}
+#map.fly .fp input[type=range]{min-height:32px}
+#map.fly .fp .b{min-height:44px;font-size:16px;padding:6px 12px}
+#map.fly .fp .fgrp{gap:8px 14px}
+#map.fly .fp .fgrp label{min-height:40px;font-size:16px}
+#map.fly .fp .lrow .blkc{flex:0 0 44px;width:44px;height:44px}
+#map.fly .fp .fp2.fp3{grid-template-columns:minmax(0,1fr) 140px}
+@media (max-width:600px){#map.fly .fp .fpl{grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch}#map.fly .fp .fpl .chip{min-width:0;overflow:hidden;text-overflow:ellipsis}#map.fly .fp{min-width:0;font-size:15px;padding:8px 10px}#map.fly .fp .chip{font-size:15px;padding:8px 10px!important}#map.fly .fp .fp2.fp3{grid-template-columns:minmax(0,1fr) 120px}}
+/* v4.7.9 b3: กล่องชั้นฝนในโหมดบิน — ปุ่มใหญ่ขึ้น */
+#map.fly #wxb{font-size:14px;padding:8px 10px}
+#map.fly #wxb .wh b{font-size:16px}
+#map.fly #wxb .wh span{font-size:13px}
+#map.fly #wxb .wh .pc{min-width:44px;min-height:44px;font-size:20px;border-radius:8px}
+#map.fly #wxb #wxp{min-width:44px;min-height:44px;font-size:18px}
+#map.fly #wxb input[type=range]{min-height:32px}
+#map.fly #wxb .lg i{width:24px;height:14px}
+</style>
 <script id="enr">
 /* v4.7.7 b15: ตัวควบคุมชั้น ENR Chart — ช่อง "ซ้อน ENR" + ความทึบ (ในแถบชั้นข้อมูลหน้าหลัก และกล่องชั้นข้อมูลเต็มจอ/โหมดบิน) · โหลด meta.json ล่าสุดจาก Tpadenr เมื่อออนไลน์ */
 (function(){
