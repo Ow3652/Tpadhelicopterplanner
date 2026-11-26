@@ -1,9 +1,11 @@
-# ดึงลานจอด ฮ./สนามบิน และยอดเขา (ประเทศไทย) จาก OpenStreetMap เป็น CSV (artifact) — ไม่เขียนลงรีโปหรือหน้าเว็บ
+# ดึงลานจอด ฮ./สนามบิน และยอดเขา (ประเทศไทย) จาก OpenStreetMap เป็น CSV → artifact + กิ่ง osm-data (แยกจาก main ไม่กระทบหน้าเว็บ)
 name: OSM places
 on:
   workflow_dispatch:
   push:
     paths: ["tools/osm/**"]
+permissions:
+  contents: write
 jobs:
   extract:
     runs-on: ubuntu-latest
@@ -20,3 +22,11 @@ jobs:
           name: osm-places
           path: tools/osm/out/
           retention-days: 30
+      - name: Publish CSV to branch osm-data
+        working-directory: tools/osm/out
+        run: |
+          git init -q . && git checkout -q -b osm-data
+          git config user.name "github-actions[bot]" && git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          printf 'ข้อมูล © OpenStreetMap contributors สัญญาอนุญาต ODbL https://www.openstreetmap.org/copyright\n' > SOURCE.txt
+          git add -A && git commit -q -m "OSM places $(date -u +%F)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" osm-data
