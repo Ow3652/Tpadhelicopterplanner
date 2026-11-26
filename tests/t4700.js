@@ -311,6 +311,9 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   const tw0=TW.on;if(!TW.on)$('twb').click();await sl(400);drawMap(false);await sl(50);const t0=TWS.t;PANB={bx:0,by:0,lx:0,ly:0,t:0};M.cx+=30;drawMap(false);const t1=TWS.t;PANB=null;M.cx-=30;drawMap(false);const t2=TWS.t;
   drawMap=o;if(!tw0)$('twb').click();MLP.on=false;return{a,b,c,n1,n2,n,gbc,dll:Math.abs(cll[0]-xll[0])+Math.abs(cll[1]-xll[1]),panHold:t1===t0,after:t2!==t1||TWS.k!==undefined}});
  t('T40 v4.7.8 ประสิทธิภาพ: GPS ขยับไม่ถึง 1 px ไม่วาดแผนที่ใหม่ (ขยับจริง/หัวเปลี่ยน วาด) · curUpd ไม่อ่านผังหน้า (getBoundingClientRect = 0) และพิกัดกลางจอเท่าเดิม · ระหว่างลากนิ้ว TAWS ไม่คำนวณสีใหม่',r.a===false&&r.n1===0&&r.b===true&&r.n2===1&&r.c===true&&r.gbc===0&&r.dll<1e-6&&r.panHold&&r.after,r)}
+ // v4.7.8 b2: update sheet to code — ชีต Point เพิ่ม CRMA (14°17.85' N 101°09.98' E) · ชีต TPAD ชื่อ Tpadจันทบุรี
+ {const r=await p.evaluate(()=>{const c=DB.PT.find(x=>x.n==='CRMA');return{n:DB.PT.length,c:c?[+c.la.toFixed(4),+c.lo.toFixed(4)]:null,tp:DB.TP.some(x=>x.n==='Tpadจันทบุรี'),old:DB.TP.some(x=>x.n==='TPADจันทบุรี')}});
+ t('T41 v4.7.8 b2 ข้อมูลตรงชีต: Point 10 จุด (มี CRMA 14.2975/101.1663) · TPAD ชื่อ Tpadจันทบุรี',r.n===10&&r.c&&r.c[0]===14.2975&&r.c[1]===101.1663&&r.tp&&!r.old,r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
