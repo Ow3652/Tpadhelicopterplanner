@@ -3667,7 +3667,10 @@ function ohDup(r){const ic=String(r[3]||"").trim().toUpperCase(),la=r[5],lo=r[6]
 var OHX=new Set(["n5433827755", "w1466440822", "w381570985", "w1257425162"]),OHN={"w316900230": "คลอง15", "w316902630": "คลอง16", "n3226084563": "เบสท์โอเชียน", "w806579162": "โคกสำราญ"};
 function ohBuild(a){DB.OH=a.filter(r=>(r[2]==="A"||r[2]==="S")&&!ohDup(r)&&!OHX.has(r[7])).map(r=>({n:OHN[r[7]]||r[0]||((r[2]==="H"||r[2]==="P"?"HP-":"AD-")+String(r[7]||"").slice(-5)),c:r[3]||"",en:r[1]||"",t:r[2],ef:r[4],la:r[5],lo:r[6],osm:r[7]||""}));const e=$("cn_OH");if(e)e.textContent=DB.OH.length}
 /* v4.7.9 b5: ยอดเขาไม่มีชื่อ = ความสูงเป็นฟุตแบบ x,xxx ft */
-function opBuild(a){DB.OP=a.map(r=>({n:r[0]||(r[2]!=null?Math.round(r[2]/0.3048).toLocaleString("en-US")+" ft":"Peak"),c:"",en:r[1]||"",em:r[2],la:r[3],lo:r[4]}));const e=$("cn_OP");if(e)e.textContent=DB.OP.length}
+/* v4.7.9 b8: ชื่อใน OSM ที่เป็นตัวเลขความสูงเมตร (เช่น "1770", "1335m") แปลงเป็นฟุต x,xxx ft เหมือนยอดเขาไม่มีชื่อ */
+function opName(r){const ft=m=>Math.round(m/0.3048).toLocaleString("en-US")+" ft",s=String(r[0]||"").trim(),mm=/^(\d{2,4}(?:\.\d+)?)\s*(?:m|ม\.?|เมตร)?$/i.exec(s);
+ if(mm)return ft(parseFloat(mm[1]));if(s)return s;return r[2]!=null?ft(r[2]):"Peak"}
+function opBuild(a){DB.OP=a.map(r=>({n:opName(r),c:"",en:r[1]||"",em:r[2],la:r[3],lo:r[4]}));const e=$("cn_OP");if(e)e.textContent=DB.OP.length}
 function osmPop(c,p){const ft=m=>Math.round(m/0.3048).toLocaleString("en-US");let h="";
  if(p.en)h+=`<div class="pm">${esc(p.en)}</div>`;
  if(c==="OH")h+=`<div class="pm">${OHT[p.t]||""}${p.ef!=null&&p.ef!==""?" · ความสูง "+Number(p.ef).toLocaleString("en-US")+" ft":""}</div>`;
