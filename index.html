@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.9</title>
+<title>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.8.0</title>
 <meta name="theme-color" content="#0f6c78">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -496,7 +496,7 @@ input.scol{width:34px;height:30px;padding:0;border:1px solid var(--line);border-
 </head>
 <body>
 <div class="wrap">
-<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.7.9</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
+<div class="hd"><h1>วางแผนเส้นทางบินเฮลิคอปเตอร์ v 4.8.0</h1><div class="hr"><span class="hlk"><a id="mnl" href="https://ow3652.github.io/Tpadhelicopterplanner/docs/manual.pdf" target="_blank" rel="noopener">📖 คู่มือการใช้งาน</a><button type="button" class="b s" id="offb">📥 แผนที่ออฟไลน์</button></span><label class="tkey"><span class="myuser" id="myuser" hidden></span>กรอกรหัส<input id="mykey2" type="password" autocomplete="off" aria-label="กรอกรหัสซิงก์ชีต" placeholder="รหัสซิงก์"></label></div></div>
 <div class="tabs" role="tablist">
 <button class="tab" role="tab" id="t1" aria-selected="true">วางแผนเส้นทาง</button>
 <button class="tab" role="tab" id="t2" aria-selected="false">เส้นทางที่เก็บไว้</button>
@@ -2631,7 +2631,7 @@ const g=q(".grid");if(g)g.removeAttribute("data-s");q("#fs").textContent="⛶ �
 const pl=userPayload();q("#udb").textContent="\n[\n"+pl.map(x=>JSON.stringify(x)).join(",\n")+"\n]\n".replace(/<\//g,"<\\/");
 q("#udb").textContent=q("#udb").textContent.replace(/<\//g,"<\\/");
 return"<!DOCTYPE html>\n"+c.outerHTML}
-$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.7.9 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
+$("uhtml").onclick=async()=>{const ok=await saveFile("Tpad Helicopter Planner V4.8.0 (my points).html",embeddedHtml(),"text/html;charset=utf-8");toast(ok?"สร้างไฟล์ HTML ที่ฝังจุดร่วม "+DB.CU.length+" จุดแล้ว (ดูในโฟลเดอร์ดาวน์โหลด)":"สร้างไฟล์ไม่สำเร็จ")};
 $("ujs").onclick=async()=>{const ok=await saveFile("my-points.json",JSON.stringify({type:"heli-user-points",points:userPayload()},null,1),"application/json");toast(ok?"ส่งออกจุดร่วมแล้ว":"ส่งออกไม่สำเร็จ")};
 $("mbk").onclick=async()=>{const L=myOn()?MYP:MYL;if(!L.length){toast("ยังไม่มีจุดของฉันให้สำรอง");return}const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const ok=await saveFile("my-points-"+ds+".json",JSON.stringify({type:"heli-my-points",v:1,at:d.toISOString(),points:L.map(p=>({n:p.n,la:p.la,lo:p.lo,note:p.note||""}))},null,1),"application/json");
@@ -4544,7 +4544,7 @@ flSync();FL.tm=setInterval(()=>{try{flTick()}catch(e){}},1000);
 try{if(window.speechSynthesis)speechSynthesis.getVoices()}catch(e){}})();
 </script>
 <script id="pwa">
-/* PWA (v4.7.9; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
+/* PWA (v4.8.0; เริ่มมีตั้งแต่ v4.3.0 และเพิ่มแผนที่ออฟไลน์ใน v4.4.0): ติดตั้งลงหน้าจอโฮม/ใช้ออฟไลน์ ทำงานเฉพาะเมื่อเปิดผ่านเว็บ (http/https) ไฟล์ที่เปิดจากเครื่อง (file://) ไม่ใช้ส่วนนี้
    อัปเดต: เวอร์ชันใหม่จะถูกโหลดเก็บไว้เงียบๆ แล้วถามผู้ใช้ ไม่สลับเวอร์ชันเอง (ผู้ใช้กด "อัปเดตตอนนี้" หน้าจะโหลดใหม่) */
 (function(){
 var bar=null,offEl=null,accepted=false;
@@ -4955,6 +4955,20 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #flyLg .lgb{padding:4px 14px 6px}#flyLg .lgb button{width:100%;min-height:56px;border-radius:10px;border:1px solid #2e7d32;background:#1b5e20;color:#fff;font:700 18px system-ui,sans-serif}
 #flyLg .fom{padding:6px 14px 12px;font-size:13px}
 @media (max-width:600px){#flyLg .lgf{grid-template-columns:minmax(0,1fr);gap:8px;padding:8px 10px}#flyLg .lgf input{height:48px;font-size:17px}#flyLg .lgb{padding:4px 10px 6px}}
+
+#flyT [data-fk="dto"] .i{white-space:nowrap;letter-spacing:-1px}/* v4.8.0: ปุ่ม -D→ ไม่ตัดบรรทัดบนมือถือ */
+/* v4.8.0: หน้าต่าง TAWS — ความเข้มสี / GPS ALT / 🔊 */
+#flyPk .pkop{display:flex;align-items:center;gap:10px;padding:8px 14px 4px;color:#fff;font:700 16px system-ui,sans-serif}#flyPk .pkop span{color:#ffd54f;white-space:nowrap}
+#flyPk .pkop input{flex:1;min-width:0;height:44px;accent-color:#ffb300}#flyPk .pkop b{min-width:52px;text-align:right}
+#flyPk .pkck{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:6px 14px 4px}
+#flyPk .pkck label{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#fff;font:700 18px system-ui,sans-serif;cursor:pointer}
+#flyPk .pkck label.on{background:#0d47a1;border-color:#64b5f6}#flyPk .pkck input{width:24px;height:24px;margin:0;accent-color:#64b5f6}
+/* v4.8.0: ปุ่มย่อ/ปิดใหญ่ — กล่องรายละเอียดสิ่งที่เลือก (เส้นทาง Active), รูปแบบ SAR, เส้นทางค้นหาที่เก็บไว้, พื้นที่ SAR ที่เก็บไว้ (โหมดบิน และจอสัมผัส) */
+#map.fly :is(#msel,#msar,#lbs,#lba) .ph{min-height:48px;align-items:center;font-size:17px}
+#map.fly :is(#msel,#msar,#lbs,#lba) .ph>span{display:flex;gap:8px;align-items:center}
+#map.fly :is(#msel,#msar,#lbs,#lba) .ph button{min-width:48px;min-height:48px;height:48px;font-size:22px;line-height:1;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:0}
+@media (pointer:coarse){:is(#msel,#msar,#lbs,#lba) .ph{min-height:48px;align-items:center}:is(#msel,#msar,#lbs,#lba) .ph>span{display:flex;gap:8px;align-items:center}
+:is(#msel,#msar,#lbs,#lba) .ph button{min-width:48px;min-height:48px;height:48px;font-size:22px;line-height:1;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:0}}
 </style>
 <script id="enr">
 /* v4.7.7 b15: ตัวควบคุมชั้น ENR Chart — ช่อง "ซ้อน ENR" + ความทึบ (ในแถบชั้นข้อมูลหน้าหลัก และกล่องชั้นข้อมูลเต็มจอ/โหมดบิน) · โหลด meta.json ล่าสุดจาก Tpadenr เมื่อออนไลน์ */
@@ -5246,6 +5260,17 @@ LG.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-lg
 LG.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){LG.hidden=true;return}if(e.target.closest("[data-lgp]")){lgSave();LG.hidden=true;try{$f("logbtn").click()}catch(x){}}});
 window.lgRender=lgRender;
 
+/* v4.8.0: โหมดบิน — กล่องรายละเอียดสิ่งที่เลือก / รูปแบบ SAR / เส้นทางค้นหา / พื้นที่ SAR / กราฟความสูง ไม่ให้ลอดใต้คอลัมน์ปุ่มขวา (ปุ่ม ✕ ▾ กดได้เสมอ) · ไม่ยุ่งกับกล่องที่ผู้ใช้ลากไว้ (PNL[id].x) · ออกจากโหมดบินล้างค่าที่ตั้ง */
+function flyClamp(){const ids=["msel","msar","lbs","lba","mprof"];
+ if(!isFly()){ids.forEach(id=>{const el=$f(id);if(el&&el.dataset.fc){el.style.left="";el.style.right="";el.style.maxWidth="";delete el.dataset.fc}});return}
+ const fz=$f("flyZ");if(!fz||fz.hidden)return;const mr=mp.getBoundingClientRect(),zl=fz.getBoundingClientRect().left-mr.left;
+ ids.forEach(id=>{const el=$f(id);if(!el||getComputedStyle(el).display==="none"||!el.offsetWidth)return;let p=null;try{p=PNL[id]}catch(e){}if(p&&p.x!=null)return;
+  const r=el.getBoundingClientRect(),L=r.left-mr.left,R=r.right-mr.left;if(R<=zl-6)return;const mw=Math.max(200,zl-14);
+  if(r.width>mw){el.style.maxWidth=mw+"px"}const w=Math.min(r.width,mw);el.style.left=Math.max(8,Math.min(L,zl-6-w))+"px";el.style.right="auto";el.dataset.fc="1"})}
+window.flyClamp=flyClamp;
+["dock","lbOpen","selRender","sarShow","lbRender"].forEach(n=>{const f=window[n];if(typeof f!=="function"||f._fc)return;const g=function(){const r=f.apply(this,arguments);setTimeout(flyClamp,0);return r};g._fc=1;window[n]=g});
+new MutationObserver(()=>setTimeout(flyClamp,0)).observe(mp,{attributes:true,attributeFilter:["class"]});
+
 /* v4.7.7: กัน #map ถูกเลื่อน (scroll) เองเมื่อแตะ/โฟกัสช่องกรอกในหน้าต่าง (ชั้น TAWS วาดกว้างกว่าจอทำให้เลื่อนได้) — หน้าต่าง/ปุ่มจะไม่หลุดจอ */
 mp.addEventListener("scroll",()=>{if(mp.scrollLeft||mp.scrollTop){mp.scrollLeft=0;mp.scrollTop=0}});
 
@@ -5272,9 +5297,13 @@ function pkRender(k){PK.k=k;const bt=(a,t,cls)=>`<button type="button" ${a} clas
   h=`<div class="foh"><b>Route</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pr="rt-new"',"➕ New Route")+bt('data-pr="rt-list"',"🗂 Saved Route"+(on?" (เปิดอยู่)":""),on?"on":"")+bt('data-pr="gpx"',"📄 GPX")+bt('data-pr="cl-rt"',"🧹 Clear","x")+`</div><div class="fom pkn">GPX = นำเข้า/ส่งออกไฟล์ .gpx · Clear = ล้างเส้นทาง Active ออกจากแผนที่ (เส้นทางที่บันทึกไว้ไม่ถูกลบ) ถ้ายังไม่ได้บันทึกต้องแตะยืนยันอีกครั้ง</div>`}
  else if(k==="gpx"){h=`<div class="foh"><b>GPX</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pg="imp"',"📂 Import GPX")+bt('data-pg="exp"',"💾 Export GPX")+bt('data-pg="back"',"◀ Route")+`</div><div class="fom pkn">Import = เปิดไฟล์ .gpx แล้วเลือก “ใช้เป็นเส้นทาง Active” ในกล่องที่ขึ้นบนแผนที่ · Export = บันทึกเส้นทาง Active (และพื้นที่ SAR) เป็นไฟล์ .gpx</div>`}
  else{const tw=!!TW.on,fl=!!TW.fl;
-  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+bt('data-pt="prf"',"📈 Terrain profile: "+(TW.pf?"On":"Off"),TW.pf?"on":"")+`</div><div class="pkalt"><span>FLT ALTITUDE</span><button type="button" data-pa="-100" aria-label="FLT ALTITUDE −100 ft">−</button><input id="pkAlt" inputmode="numeric" maxlength="5" value="${Math.round(+TW.alt||0)}" aria-label="FLT ALTITUDE (ft)"><button type="button" data-pa="100" aria-label="FLT ALTITUDE +100 ft">+</button><span>ft</span></div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
+  h=`<div class="foh"><b>TAWS</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+bt('data-pt="taws"',"⛰ TAWS: "+(tw?"On":"Off"),tw?"on":"")+bt('data-pt="fl"',"⚠ FLTA: "+(fl?"On":"Off"),fl?"on":"")+bt('data-pt="prf"',"📈 Terrain profile: "+(TW.pf?"On":"Off"),TW.pf?"on":"")+`</div><div class="pkalt"><span>FLT ALTITUDE</span><button type="button" data-pa="-100" aria-label="FLT ALTITUDE −100 ft">−</button><input id="pkAlt" inputmode="numeric" maxlength="5" value="${Math.round(+TW.alt||0)}" aria-label="FLT ALTITUDE (ft)"><button type="button" data-pa="100" aria-label="FLT ALTITUDE +100 ft">+</button><span>ft</span></div><div class="pkop"><span>TAWS intensity</span><input type="range" id="pkOp" min="5" max="90" step="5" value="${Math.round(+TW.op||55)}" aria-label="TAWS intensity"><b id="pkOpV">${Math.round(+TW.op||55)}%</b></div><div class="pkck"><label class="${TW.gps?"on":""}"><input type="checkbox" data-pc="gps"${TW.gps?" checked":""}>GPS ALT</label><label class="${TW.snd?"on":""}" title="FLTA audio"><input type="checkbox" data-pc="snd"${TW.snd?" checked":""} aria-label="FLTA audio">🔊</label></div><div class="fom pkn">TAWS = ระบายสีภูมิประเทศเทียบกับความสูงบิน · FLTA = เตือนภูมิประเทศข้างหน้า (เครื่องช่วยเตือนเท่านั้น ไม่รวมสิ่งกีดขวาง)</div>`}
  PK.innerHTML=h}
 window.pkRender=pkRender;
+/* v4.8.0: หน้าต่าง TAWS — ความเข้มสี (twSet op, หน่วง 150 ms ขณะลาก) · GPS ALT (twSet gps) · 🔊 เสียง FLTA (flSet snd) */
+let pkOpT=0;PK.addEventListener("input",e=>{if(e.target.id!=="pkOp")return;const v=+e.target.value,o=$f("pkOpV");if(o)o.textContent=v+"%";clearTimeout(pkOpT);pkOpT=setTimeout(()=>{try{twSet({op:v})}catch(x){}},150)});
+PK.addEventListener("change",e=>{const t=e.target;if(t.id==="pkOp"){clearTimeout(pkOpT);try{twSet({op:+t.value})}catch(x){}return}
+ const k=t.dataset&&t.dataset.pc;if(!k)return;try{if(k==="gps")twSet({gps:t.checked});else if(k==="snd")flSet({snd:t.checked})}catch(x){}const l=t.closest("label");if(l)l.classList.toggle("on",t.checked)});
 PK.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){PK.hidden=true;return}let b;
  /* v4.7.9 b2: หน้าต่าง GPX — Import = ปุ่ม "นำเข้า .gpx" (#imp → เลือกไฟล์) · Export = ปุ่ม "ส่งออก .gpx" (#gpx) ของหน้าจอปกติ (ต้องเรียกในจังหวะแตะ เพื่อให้ iOS เปิดหน้าต่างเลือกไฟล์ได้) */
  if((b=e.target.closest("[data-pg]"))){const g=b.dataset.pg;if(g==="back"){pkRender("rt");return}PK.hidden=true;if(g==="imp")$f("imp").click();else $f("gpx").click();setTimeout(flyUi,0);return}

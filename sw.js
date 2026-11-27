@@ -6,9 +6,9 @@
  * แคชแผนที่แยกจากแคชของแอป (ชื่อไม่ขึ้นต้นด้วย tpad-) เพื่อไม่ถูกลบเมื่ออัปเดตเวอร์ชัน
  * เวอร์ชันใหม่จะรอ (ไม่สลับเอง) จนกว่าผู้ใช้กด "อัปเดตตอนนี้" ในแอป
  */
-const VERSION = '4.7.9';
+const VERSION = '4.8.0';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b14';
+const BUILD = 'b1';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
 const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];

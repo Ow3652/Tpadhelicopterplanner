@@ -379,6 +379,20 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
      oh:OHX.has("w1474797456")&&!DB.OH.some(x=>/ค่ายวชิราลงกรณ์/.test(x.n))&&OH0.some(r=>r[7]==="w1474797456")};
    RO.length=0;JSON.parse(keep).forEach(x=>RO.push(x));M.fitPts=null;drawMap(false);return r});
   t('T48 v4.7.9 b14 ลบ ค่ายวชิราลงกรณ์ จาก OSM Airport (OHX) · ชื่อเส้นทางบนแผนที่ไม่ทับเส้น มีขอบขาว (paint-order stroke) เหมือนชื่อจุด',o.oh&&!o.hit&&o.stroke==='rgb(255, 255, 255)'&&o.sw>=3&&o.po==='stroke',o)}
+ // v4.8.0: หน้าต่าง TAWS — ความเข้มสี / GPS ALT / 🔊 FLTA · ปุ่มย่อ/ปิดใหญ่ใน รายละเอียดสิ่งที่เลือก / รูปแบบ SAR / เส้นทางค้นหา / พื้นที่ SAR ไม่ลอดใต้คอลัมน์ขวา
+ {await p.evaluate(()=>{if($('flyT').hidden)$('flyR').click()});await W(200);
+  const keep=await p.evaluate(()=>({op:TW.op,gps:TW.gps,snd:TW.snd}));
+  await p.tap('#flyT [data-fk="taws"]');await W(300);
+  const tw=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),o=$('pkOp'),c=document.querySelector('#flyPk [data-pc="gps"]'),s=document.querySelector('#flyPk [data-pc="snd"]');
+   const r={has:!!o&&!!c&&!!s,lab:c&&c.closest('label').textContent.trim(),spk:s&&s.closest('label').textContent.trim(),h:Math.min(g(c.closest('label')).height,g(s.closest('label')).height),oh:Math.round(g(o).height)};
+   o.value=25;o.dispatchEvent(new Event('change',{bubbles:true}));const g0=TW.gps,s0=TW.snd;c.click();s.click();r.op=TW.op;r.gps=TW.gps!==g0;r.snd=TW.snd!==s0;r.sync=$('twop').value==='25'&&$('twgps').checked===TW.gps&&$('flsnd').checked===TW.snd;return r});
+  await p.evaluate(k=>{$('flyPk').hidden=true;twSet({op:k.op,gps:k.gps});flSet({snd:k.snd})},keep);
+  t('T49 a v4.8.0 TAWS (โหมดบิน): ความเข้มสี (range) + GPS ALT + 🔊 FLTA ปุ่ม ≥ 52 px ตรงกับช่องเดิม (twop/twgps/flsnd)',tw.has&&tw.lab==='GPS ALT'&&tw.spk==='🔊'&&tw.h>=52&&tw.oh>=40&&tw.op===25&&tw.gps&&tw.snd&&tw.sync,tw);
+  const bx=await p.evaluate(()=>{const R=[{name:"AAA",lat:"1235.00N",lon:"10207.00E"},{name:"BBB",lat:"1240.70N",lon:"10100.33E"}];const keep=store();putStore(keep.concat([{name:"T49R",fmt:"ddmm",pts:R,t:Date.now()}]));
+   roAdd('my',store().find(x=>x.name==="T49R"),true);selSet({k:"ro",src:"my",name:"T49R"});lbOpen('s');lbOpen('a');sarShow(true);drawMap(false);return 1});await W(500);
+  const bm=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),zl=g($('flyZ')).left;const o={};['msel','msar','lbs','lba'].forEach(id=>{const e=$(id),bs=[...e.querySelectorAll('.ph button')];o[id]={vis:!!e.offsetParent,h:Math.min(...bs.map(b=>g(b).height)),w:Math.min(...bs.map(b=>g(b).width)),right:Math.round(g(e).right),zl:Math.round(zl)}});return o});
+  await p.evaluate(()=>{try{sarShow(false)}catch(e){}['lbs','lba'].forEach(id=>$(id).classList.remove('on'));try{selClear()}catch(e){}const r=RO.findIndex(x=>x.name==="T49R");if(r>=0)RO.splice(r,1);putStore(store().filter(x=>x.name!=="T49R"));drawList();drawMap(false)});await W(200);
+  t('T49 b รายละเอียดสิ่งที่เลือก (เส้นทาง Active) / รูปแบบ SAR / เส้นทางค้นหาที่เก็บไว้ / พื้นที่ SAR ที่เก็บไว้: ปุ่ม ▾ ✕ ≥ 48 px และไม่ลอดใต้คอลัมน์ปุ่มขวา',Object.values(bm).every(v=>v.vis&&v.h>=48&&v.w>=48&&v.right<=v.zl-4),bm)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
