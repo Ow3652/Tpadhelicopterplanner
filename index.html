@@ -4829,6 +4829,7 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 /* v4.7.6: ปุ่ม North up เหลือสัญลักษณ์ · TAWS บรรทัดเดียวในโหมดบิน · กล่อง Summary/Aircraft ใหญ่ขึ้นในโหมดบิน · แตะ ETE สลับ ETA */
 #flyZ [data-fk="rot"] .l{display:none}#flyZ [data-fk="rot"] .i{font-size:26px}
 #map.fly #twl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}#map.fly #twl .twn{display:none}#map.fly #twl .tws{display:inline;margin-left:10px;font-size:12px}#map.fly #twl .twk{margin-left:12px}#map.fly #twl i{width:14px;height:14px;vertical-align:-2px}@media (max-width:440px){#map.fly #twl{max-width:calc(100% - 88px);font-size:13px;padding:4px 8px}#map.fly #twl .twk{margin-left:8px;gap:3px}}
+/* v4.8.0 b4: แถวเดียวกัน — ตัวหนังสือ/กล่องสีอยู่กึ่งกลางแนวเดียวกัน (เดิม .twk แบบ inline-flex ลอยสูงกว่าข้อความ) */#map.fly #twl:not([hidden]){display:flex;align-items:center;flex-wrap:nowrap;line-height:1.2}#map.fly #twl .twa,#map.fly #twl .twk{flex:none;display:inline-flex;align-items:center;gap:4px}#map.fly #twl .twa b,#map.fly #twl .twk b{line-height:1.2}#map.fly #twl i{vertical-align:middle;flex:none}#map.fly #twl .tws{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 #flyB .fe2{cursor:pointer}#flyB .fe2:active{background:#0d47a1}#flyB .fe2 small:after{content:" ⇄";color:#90caf9}
 #map.fly #mac,#map.fly #msum{width:340px;max-width:calc(100% - 16px);font-size:16px;padding:8px 12px}
