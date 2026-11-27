@@ -8,7 +8,7 @@
  */
 const VERSION = '4.8.1';
 // BUILD: เพิ่มทุกครั้งที่แก้ไฟล์แอปโดยไม่เปลี่ยนเลขเวอร์ชัน (เช่น b2, b3) ไม่เช่นนั้นเครื่องที่ติดตั้งแล้วจะไม่เห็นการอัปเดต
-const BUILD = 'b1';
+const BUILD = 'b2';
 const CACHE = 'tpad-' + VERSION + '-' + BUILD;
 const TC_AUTO = 'tiles-auto', TC_AREA = 'tiles-area', TC_CFG = 'tiles-cfg';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];

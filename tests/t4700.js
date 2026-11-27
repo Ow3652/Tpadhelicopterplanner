@@ -405,17 +405,18 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   await p.tap('#flyT [data-fk="hide"]');await W(400);
   const c=await p.evaluate(()=>{const m=mp.getBoundingClientRect(),u=$('ubadge').getBoundingClientRect(),w=$('flyWk'),wr=w.getBoundingClientRect();return{l:Math.round(u.left-m.left),t:Math.round(u.top-m.top),wk:w.hidden||(Math.abs(wr.top-u.top)<4&&wr.left>=u.right)}});
   await p.tap('#flyR');await W(300);
-  const s=await p.evaluate(()=>{const b=$('msLog');if(!b)return{has:false};b.click();const r={has:true,txt:b.textContent.trim(),show:$('plog').classList.contains('show')};try{closeLog()}catch(e){}return r});
-  t('T50 v4.8.0 b2 ป้ายผู้ใช้มุมบนซ้าย ใต้แถบเมนู (ย่อเมนู = มุมบนซ้ายสุด, ไอคอนกันจอดับอยู่ถัดไป) · กล่อง Summary มีปุ่ม 📝 Flight log เปิดตัวอย่างพิมพ์',a.l<=12&&a.gap>=0&&a.gap<=16&&c.l<=12&&c.t<=16&&c.wk&&s.has&&/Flight log/.test(s.txt)&&s.show,{a,c,s})}
+  const s=await p.evaluate(()=>{const b=$('msLog');if(!b)return{has:false};b.click();const w=$('flyLg');const r={has:true,txt:b.textContent.trim(),win:!w.hidden&&w.getBoundingClientRect().height>100,noLogYet:!$('plog').classList.contains('show')};w.querySelector('[data-lgp]').click();r.show=$('plog').classList.contains('show')&&w.hidden;try{closeLog()}catch(e){}return r});
+  t('T50 v4.8.0 b2 ป้ายผู้ใช้มุมบนซ้าย ใต้แถบเมนู (ย่อเมนู = มุมบนซ้ายสุด, ไอคอนกันจอดับอยู่ถัดไป) · กล่อง Summary มีปุ่ม 📝 Flight log (v4.8.1 b2: เปิดหน้าต่าง Flight log ให้กรอกก่อน แล้ว Create Flight Log จึงเปิดตัวอย่างพิมพ์)',a.l<=12&&a.gap>=0&&a.gap<=16&&c.l<=12&&c.t<=16&&c.wk&&s.has&&/Flight log/.test(s.txt)&&s.win&&s.noLogYet&&s.show,{a,c,s})}
  // v4.8.1: แผนที่เต็มจอ — ซ่อนเนื้อหาหน้าแรกที่ถูกบัง (.fsx) + พักตารางผลคำนวณ แล้ววาดคืนตอนย่อกลับ (ทดสอบในหน้าแยก PC)
  {const pc=await b.newPage({viewport:{width:1280,height:900}});await pc.goto('http://localhost:8773/');await pc.waitForTimeout(1200);
   const fr=await pc.evaluate(async()=>{try{kyClose()}catch(e){}pts.length=0;pts.push({name:'A',lat:'13.0',lon:'100.5'},{name:'B',lat:'13.5',lon:'100.9'});$('fmt').value='dd';drawPts();calc();
    const w=ms=>new Promise(r=>setTimeout(r,ms));if(!mp.classList.contains('full'))fsToggle();await w(200);
    const o={hid:document.querySelectorAll('.wrap .fsx').length,resHidden:$('res-out').offsetParent===null,inMap:!document.querySelector('#map .fsx'),gsVal:$('gs').value!==''};
    pts.push({name:'C',lat:'13.9',lon:'101.2'});drawPts();calc();o.dirty=RDIRTY;o.notYet=!/B → C/.test($('res-out').textContent);
+   msumRender();try{sumShow(true)}catch(e){}await w(200);const ml=$('msLog');if(ml){ml.click();await w(150);const L=$('flyLg');o.pcWin=!L.hidden&&L.getBoundingClientRect().height>100&&!$('plog').classList.contains('show');L.hidden=true}else o.pcWin=false;
    fsToggle();await w(200);o.after=document.querySelectorAll('.fsx').length;o.shown=$('res-out').offsetParent!==null;o.hasC=/B → C/.test($('res-out').textContent);return o});
   await pc.close();
-  t('T52 v4.8.1 แผนที่เต็มจอ: ซ่อนเนื้อหาหน้าแรก (ไม่แตะในแผนที่) · ช่องกรอกยังอ่านค่าได้ · ตารางผลคำนวณพักไว้แล้ววาดคืนตอนย่อกลับ',fr.hid>=5&&fr.resHidden&&fr.inMap&&fr.gsVal&&fr.dirty&&fr.notYet&&fr.after===0&&fr.shown&&fr.hasC,fr)}
+  t('T52 v4.8.1 แผนที่เต็มจอ: ซ่อนเนื้อหาหน้าแรก (ไม่แตะในแผนที่) · ช่องกรอกยังอ่านค่าได้ · ตารางผลคำนวณพักไว้แล้ววาดคืนตอนย่อกลับ · b2: PC เต็มจอ ปุ่ม Flight log ใน Summary เปิดหน้าต่างกรอก',fr.hid>=5&&fr.resHidden&&fr.inMap&&fr.gsVal&&fr.dirty&&fr.notYet&&fr.after===0&&fr.shown&&fr.hasC&&fr.pcWin,fr)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

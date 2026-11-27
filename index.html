@@ -2478,7 +2478,7 @@ function planRow(tot,gs){const g=(NAVON&&NAVGS0!=null)?parseFloat(NAVGS0):gs,h=g
 setInterval(()=>{try{if(M.sum&&!$("dep").value&&calcData.valid.length>1)msumRender()}catch(e){}},30000);
 function sumShow(on){M.sum=on;setTimeout(dock,0);$("msum").classList.toggle("off",!on);$("sb").classList.toggle("on",on)}
 $("sb").onclick=()=>{sumShow(!M.sum);optSave()};
-$("msum").addEventListener("click",e=>{if(e.target.closest("#msx")){sumShow(false);optSave()}else if(e.target.closest("#msLog")){/* v4.8.0 b2: Flight Log จากกล่อง Summary (ใช้ได้ทั้งแผนที่เต็มจอ PC และโหมดบิน) */buildLog()}});
+$("msum").addEventListener("click",e=>{if(e.target.closest("#msx")){sumShow(false);optSave()}else if(e.target.closest("#msLog")){/* v4.8.0 b2 → b2 ของ v4.8.1: เปิดหน้าต่าง Flight log (ตัวเดียวกับ Menu) ให้กรอกข้อมูลก่อน แล้วสร้างจากปุ่มในหน้าต่าง */if(window.lgOpen)lgOpen();else buildLog()}});
 $("msum").addEventListener("wheel",e=>e.stopPropagation());
 sumShow(true);msumRender();
 
@@ -5281,7 +5281,7 @@ LG.addEventListener("input",e=>{const t=e.target.closest("[data-lg]");if(!t)retu
 LG.addEventListener("change",e=>{const t=e.target.closest("[data-lg]");if(!t)return;const o=$f(t.dataset.lg);if(o){o.value=t.value;o.dispatchEvent(new Event("change",{bubbles:true}))}});
 LG.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-lg]"))e.target.blur()});
 LG.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){LG.hidden=true;return}if(e.target.closest("[data-lgp]")){lgSave();LG.hidden=true;try{$f("logbtn").click()}catch(x){}}});
-window.lgRender=lgRender;
+window.lgRender=lgRender;window.lgOpen=()=>{lgRender();LG.hidden=false;try{LG.querySelector('[data-lg="lpic"]').value||0}catch(x){}};/* v4.8.1 b2: ปุ่ม Flight log ในกล่อง Summary เปิดหน้าต่างนี้ก่อน (กรอก PIC/ทะเบียนให้ครบ แล้วกด Create Flight Log) */
 
 /* v4.8.0: โหมดบิน — กล่องรายละเอียดสิ่งที่เลือก / รูปแบบ SAR / เส้นทางค้นหา / พื้นที่ SAR / กราฟความสูง ไม่ให้ลอดใต้คอลัมน์ปุ่มขวา (ปุ่ม ✕ ▾ กดได้เสมอ) · ไม่ยุ่งกับกล่องที่ผู้ใช้ลากไว้ (PNL[id].x) · ออกจากโหมดบินล้างค่าที่ตั้ง */
 function flyClamp(){const ids=["msel","msar","lbs","lba","mprof"];
