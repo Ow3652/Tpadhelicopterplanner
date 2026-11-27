@@ -209,6 +209,12 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   const row=document.querySelector('#mpt .pt'),I=[...row.querySelectorAll('input')],g=e=>e.getBoundingClientRect(),[n,a,o]=I.map(g),m=g($('mpt'));
   return{same:Math.abs(n.top-a.top)<2&&Math.abs(a.top-o.top)<2,w:[n.width,a.width,o.width].map(Math.round),inside:o.right<=m.right+0.5,fit:I.slice(1).every(x=>x.scrollWidth<=x.clientWidth)}});
  t('T25 v4.7.5 b3 Android 412 px: กล่องจุดพิกัดในเส้นทาง ชื่อ + ละติจูด + ลองจิจูดอยู่แถวเดียวกัน ไม่เกินกล่อง พิกัดไม่ถูกตัด',L.same&&L.inside&&L.fit&&L.w.every(x=>x>=80),L);
+ // v4.8.0 b3: มือถือ โหมดบิน — คำอธิบาย TAWS 2 บรรทัด ตัวเลขสีแดง/เหลืองไม่ถูกตัด
+ {const st0=await q.evaluate(()=>{const o={fly:mp.classList.contains('fly'),alt:TW.alt};mptShow(false);if(!o.fly)flyOn();TW.alt=3500;if(!TW.on)$('twb').click();return o});await q.waitForTimeout(900);
+  const tl=await q.evaluate(()=>{const l=$('twl'),r=l.getBoundingClientRect(),k=[...l.querySelectorAll('.twk')],rf=l.querySelector('.twa').getBoundingClientRect(),kr=k.map(x=>x.getBoundingClientRect());
+   const o={vis:!l.hidden,n:k.length,all:l.textContent.replace(/\s+/g,' ').trim(),txt:k.map(x=>x.textContent.trim()),inside:kr.every(x=>x.right<=r.right+0.5&&x.left>=r.left-0.5),h:Math.round(r.height)};if(TW.on)$('twb').click();return o});
+  await q.evaluate(o=>{TW.alt=o.alt;if(!o.fly&&mp.classList.contains('fly'))flyOff();mptShow(true)},st0);await q.waitForTimeout(400);
+  t('T51 v4.8.0 b3 มือถือ 412 px โหมดบิน: คำอธิบาย TAWS = "FLT ALT 3,500 ■ 3,400 ■ 2,500" บรรทัดเดียว ไม่ถูกตัด',tl.vis&&tl.n===2&&tl.inside&&tl.h<=36&&/^FLT ALT 3,500/.test(tl.all)&&tl.txt[0]==='3,400'&&tl.txt[1]==='2,500',tl)}
  const nm=q.locator('#mpt .pt').nth(1).locator('input.nm');await nm.click();await nm.fill('');await nm.pressSequentially('tpad');await q.waitForTimeout(300);
  const bf=await q.evaluate(()=>!$('sg').hidden&&$('sg').children.length>0);await nm.press('Enter');await q.waitForTimeout(400);const af=await q.evaluate(()=>$('sg').hidden);
  t('T25 b พิมพ์ชื่อจุดแล้วกด Enter: รายชื่อแนะนำปิดเอง',bf&&af,{bf,af});
@@ -408,9 +414,9 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
  t('T27 e โหมดบิน: กล่อง Aircraft/Summary ใหญ่ขึ้น (≥ 330 px, ตัวอักษร 16 px) ปุ่ม +/− ≥ 44 px',bx.mw>=330&&bx.sw>=330&&bx.bw>=44&&bx.bh>=44&&bx.fs>=16,bx);
  await p.evaluate(()=>{if(M.mac)$('mb').click();if(M.sum)$('sb').click()});
  await p.evaluate(()=>{if(!TW.on)$('twb').click()});await W(700);
- const tw=await p.evaluate(()=>{const l=$('twl'),n=l.querySelector('.twn');return{vis:!l.hidden,h:Math.round(l.getBoundingClientRect().height),twn:n?getComputedStyle(n).display:'none',ref:/TAWS/.test(l.textContent)}});
+ const tw=await p.evaluate(()=>{const l=$('twl'),n=l.querySelector('.twn');return{vis:!l.hidden,h:Math.round(l.getBoundingClientRect().height),twn:n?getComputedStyle(n).display:'none',ref:/^FLT ALT/.test(l.textContent.trim())}});
  await p.evaluate(()=>{if(TW.on)$('twb').click()});
- t('T27 f โหมดบิน: กล่อง TAWS เหลือบรรทัดเดียว (ตัดบรรทัดคำอธิบาย)',tw.vis&&tw.ref&&tw.twn==='none'&&tw.h<=34,tw);
+ t('T27 f โหมดบิน: กล่อง TAWS เหลือบรรทัดเดียว (v4.8.0 b3: FLT ALT ■ ■)',tw.vis&&tw.ref&&tw.twn==='none'&&tw.h<=34,tw);
  const cdp=await ctx.newCDPSession(p);const TE=(type,q)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:q.map((x,i)=>({x:x[0],y:x[1],id:i}))});
  const pin=async(d0,d1)=>{await p.evaluate(()=>{window.__dm=0;if(!window.__dmw){window.__dmw=1;const o=window.drawMap;window.drawMap=function(){window.__dm++;return o.apply(this,arguments)}}});const z0=await p.evaluate(()=>M.z);
   await TE('touchStart',[[400-d0/2,550],[400+d0/2,550]]);let mid=null;for(let i=1;i<=12;i++){const d=d0+(d1-d0)*i/12;await TE('touchMove',[[400-d/2,550],[400+d/2,550]]);if(i===6)mid=await p.evaluate(()=>$('rot').style.transform)}
