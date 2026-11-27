@@ -4792,7 +4792,7 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 #map.fly #wxb{bottom:calc(var(--flyb,72px) + 30px)}
 #map.fly #acst{bottom:calc(var(--flyb,72px) + 22px)}
 #map.fly #acd{bottom:calc(var(--flyb,72px) + 56px)}
-#map.fly #twl{bottom:calc(var(--flyb,72px) + 46px);max-width:calc(100% - 100px)}
+#map.fly #twl{bottom:calc(var(--flyb,72px) + var(--ath,20px) + 2px);max-width:calc(100% - 100px)}/* v4.8.0 b5: ชิดเหนือแถบข้อความแผนที่ © (#at) พอดี — --ath = ความสูงจริงของ #at (ubPos) */
 #map.fly #mprof{bottom:calc(var(--flyb,72px) + 28px)}
 #map.fly #simbox{top:calc(var(--flyt,66px) + 8px)}
 /* v4.7.5: ชื่อผู้ใช้มุมล่างซ้าย · กล่องชั้นข้อมูลไม่เกินจอ · ช่องกรอกตัวใหญ่พอไม่ให้ iOS ซูมเอง */
@@ -5210,6 +5210,7 @@ addEventListener("resize",()=>{if(isFly())setTimeout(()=>{setVars();try{dock();l
   else{const ub=document.getElementById("uib");if(vis(ub)){const r=ub.getBoundingClientRect();l=r.right-mr.left+8;t=r.top-mr.top+Math.max(0,(r.height-30)/2)}
    else document.querySelectorAll("#map .mc,#map .mc2").forEach(e=>{if(vis(e))t=Math.max(t,e.getBoundingClientRect().bottom-mr.top+6)})}
   const s=mp.style,tv=Math.round(t)+"px",lv=Math.round(l)+"px";if(s.getPropertyValue("--ubt")!==tv)s.setProperty("--ubt",tv);if(s.getPropertyValue("--ubl")!==lv)s.setProperty("--ubl",lv);
+  {const at=document.getElementById("at"),av=(at&&at.offsetHeight?at.offsetHeight:0)+"px";if(s.getPropertyValue("--ath")!==av)s.setProperty("--ath",av)}
   const wl=Math.round(l+(U.offsetWidth||90)+8)+"px";if(s.getPropertyValue("--wkl")!==wl)s.setProperty("--wkl",wl)};
  const uu=window.ubUpd;window.ubUpd=function(){uu();try{ubPos()}catch(e){}};
  ubUpd();setInterval(()=>{if(!document.hidden)ubUpd()},3000);
