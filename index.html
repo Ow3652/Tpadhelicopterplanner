@@ -267,6 +267,7 @@ tfoot td{font-weight:600;border-bottom:0}
 #plog .two{display:grid;grid-template-columns:1.1fr 1fr 1.2fr;gap:10px;align-items:start}
 #plog .box td{height:9mm}
 #plog .fine{font-size:9.5px;color:#222;margin-top:4px}
+/* v4.7.9 b13: ลายเซ็นชิดล่างขวาของหน้ากระดาษ (กล่องสูงเท่าหน้า A4 แนวนอน 281×194 มม. หักขอบ) */#plog .pg{display:flex;flex-direction:column;aspect-ratio:281/192}#plog .lsig{margin-top:auto;padding-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px}#plog .lsig .sg{font-size:13px;font-weight:600;white-space:nowrap}
 #plog svg{display:block;width:100%;height:auto;border:1.5px solid #000}
 #plog .pg,#plog .pg *{color:#000}
 #plog .pg th,#plog .pg td{border:1.3px solid #000;font-weight:500;white-space:normal;font-size:11.5px;padding:3px 5px}
@@ -1011,7 +1012,7 @@ BP:`ตชด ภ1;;1404.72;10042.20
 32พะเยา;;1911.97;9953.37
 33สันทราย;;1856.97;9900.03
 314ฟากท่า;;1801.57;10053.97
-315ชาติตะการ;;1715.93;10037.07
+315ชาติตระการ;;1715.93;10037.07
 316น้ำปาด;;1744.90;10042.72
 317บ้านโคก;;1759.68;10101.91
 324น่าน;;1849.56;10045.69
@@ -2680,24 +2681,23 @@ const fu=v=>isFinite(v)?fl(v,u).join(" "):"-",nf=v=>isFinite(v)?String(Math.roun
 const cc=p=>fc(p.la,true,fm)+" "+fc(p.lo,false,fm);
 const td=(v,c)=>`<td${c?` class="${c}"`:""}>${v}</td>`;
 let rows="";const f0=valid[0];
-rows+=`<tr class="dep">${td("DEP")}${td(esc(f0.name),"l")}${td(cc(f0))}${td(esc(poiInfo(f0)),"l")}${td("")}${td("")}${td("")}${td(tot.toFixed(1))}${td("")}${td("")}${td(dep||"")}${td("")}${td("")}${td(hasF?nf(fob-tx):"")}${td("")}${td("")}</tr>`;
+rows+=`<tr class="dep">${td("DEP")}${td(esc(f0.name),"l")}${td(cc(f0))}${td(esc(poiInfo(f0)),"l")}${td("")}${td("")}${td(tot.toFixed(1))}${td("")}${td("")}${td(dep||"")}${td("")}${td("")}${td(hasF?nf(fob-tx):"")}${td("")}${td("")}</tr>`;
 let cd=0,ct=0;
 legs.forEach((l,i)=>{cd+=l.d;const t=gs>0?l.d/gs:NaN;ct+=t;const f=okF?t*ff:NaN,cf=okF?ct*ff:NaN;
-rows+=`<tr>${td(i+1)}${td(esc(l.a.name)+" → <span class='to'>"+esc(l.b.name)+"</span>","l")}${td(cc(l.b))}${td(esc(poiInfo(l.b)),"l")}${td(bt(l.brg))}${td(bm(l.brg))}${td(l.d.toFixed(1))}${td((tot-cd).toFixed(1))}${td(isFinite(gs)?gs:"")}${td(hmm(t))}${td(eta(ct)==="-"?"":eta(ct))}${td("")}${td(nf(f))}${td(hasF&&okF?nf(fob-tx-cf):"")}${td("")}${td("")}</tr>`});
-rows+=`<tr class="tot">${td("")}${td("TOTAL","l")}${td("")}${td("")}${td("")}${td("")}${td(tot.toFixed(1))}${td("")}${td("")}${td(hmm(hr))}${td(eta(hr)==="-"?"":eta(hr))}${td("")}${td(nf(trip))}${td("")}${td("")}${td("")}</tr>`;
-const th=["#","FROM → TO","COORDINATES (TO)","FREQ / INFO","TC","MC","DIST<br>NM","REM<br>NM","GS<br>kt","ETE","ETA","ATA","FUEL<br>"+u,"F.REM<br>"+u,"F.ACT<br>"+u,"REMARKS"];
+rows+=`<tr>${td(i+1)}${td(esc(l.a.name)+" → <span class='to'>"+esc(l.b.name)+"</span>","l")}${td(cc(l.b))}${td(esc(poiInfo(l.b)),"l")}${td(bt(l.brg))}${td(l.d.toFixed(1))}${td((tot-cd).toFixed(1))}${td(isFinite(gs)?gs:"")}${td(hmm(t))}${td(eta(ct)==="-"?"":eta(ct))}${td("")}${td(nf(f))}${td(hasF&&okF?nf(fob-tx-cf):"")}${td("")}${td("")}</tr>`});
+rows+=`<tr class="tot">${td("")}${td("TOTAL","l")}${td("")}${td("")}${td("")}${td(tot.toFixed(1))}${td("")}${td("")}${td(hmm(hr))}${td(eta(hr)==="-"?"":eta(hr))}${td("")}${td(nf(trip))}${td("")}${td("")}${td("")}</tr>`;
+const th=["#","FROM → TO","COORDINATES (TO)","FREQ / INFO","TC","DIST<br>NM","REM<br>NM","GS<br>kt","ETE","ETA","ATA","FUEL<br>"+u,"F.REM<br>"+u,"F.ACT<br>"+u,"REMARKS"];
 const info=(k,v)=>`<th>${k}</th><td>${v}</td>`;
-const mvs=mvar();
 const body=`<div class="pg"><h1>FLIGHT LOG — ${esc($("rname").value.trim()||"Untitled route")}</h1><p class="sub2">Helicopter flight plan log · ใช้เพื่อวางแผนเบื้องต้น ตรวจสอบกับ AIP/NOTAM/สภาพอากาศก่อนบินทุกครั้ง</p>
 <table class="it"><tr>${info("DATE",esc(dstr))}${info("AIRCRAFT",esc(hn))}${info("REG",esc($("lreg").value))}${info("PIC",esc($("lpic").value))}</tr>
-<tr>${info("ETD",esc(dep||""))}${info("GS",isFinite(gs)?gs+" kt":"-")}${info("FUEL FLOW",isFinite(ff)?ff+" "+u+"/hr":"-")}${info("MAG VAR",mvs===0?"0° (TC = MC)":Math.abs(mvs)+"°"+(mvs>0?"E":"W"))}</tr>
-<tr>${info("ROUTE",esc(valid.map(p=>p.name).join(" – ")))}${info("TOTAL",tot.toFixed(1)+" NM · "+hmm(hr)+" h")}${info("NOTE",esc($("lnote").value))}${info("COORD FMT",fm==="ddmmss"?"DDMMSS":fm==="ddmm"?"DDMM.MM":"DD.DDDD")}</tr></table>
+<tr>${info("ETD",esc(dep||""))}${info("GS",isFinite(gs)?gs+" kt":"-")}${info("FUEL FLOW",isFinite(ff)?ff+" "+u+"/hr":"-")}${info("COORD FMT",fm==="ddmmss"?"DDMMSS":fm==="ddmm"?"DDMM.MM":"DD.DDDD")}</tr>
+<tr><th>ROUTE</th><td colspan="3">${esc(valid.map(p=>p.name).join(" – "))}</td>${info("TOTAL",tot.toFixed(1)+" NM · "+hmm(hr)+" h")}${info("NOTE",esc($("lnote").value))}</tr></table>
 <table class="nv"><thead><tr>${th.map(h=>"<th>"+h+"</th>").join("")}</tr></thead><tbody>${rows}</tbody></table>
 <div class="two">
 <table class="it"><tr><th colspan="2">FUEL PLAN (${u})</th></tr><tr>${info("Taxi",fu(tx))}</tr><tr>${info("Trip",fu(trip))}</tr><tr>${info("Reserve "+res+" min",fu(rsv))}</tr><tr>${info("Required",fu(need))}</tr><tr>${info("On board",hasF?fu(fob):"")}</tr><tr>${info("Margin",hasF&&isFinite(need)?fu(fob-need):"")}</tr></table>
 <table class="it box"><tr><th colspan="2">ACTUAL</th></tr><tr>${info("Off-block","")}</tr><tr>${info("Takeoff","")}</tr><tr>${info("Landing","")}</tr><tr>${info("On-block","")}</tr><tr>${info("Flight time","")}</tr><tr>${info("Fuel used","")}</tr></table>
-<div>${logPlot(valid)}<p class="fine">TC = ทิศจริง · MC = TC − ค่าแปรผันแม่เหล็ก · ETA/ETE คิดจาก groundspeed ค่าเดียว ไม่ได้คิดลม · ระยะคำนวณแบบ great circle</p></div></div>
-<p class="fine">PIC signature: ______________________________ &nbsp;&nbsp; Prepared: ${new Date().toLocaleString("en-GB")}</p></div>`;
+<div>${logPlot(valid)}<p class="fine">ETA/ETE คิดจาก groundspeed ค่าเดียว ไม่ได้คิดลม</p></div></div>
+<div class="lsig"><span class="fine">Prepared: ${new Date().toLocaleString("en-GB")}</span><span class="sg">PIC signature: ______________________________</span></div></div>`;
 LOGBODY=body;LOGNAME=($("rname").value.trim()||"route").replace(/[\\\/:*?"<>|]+/g,"_");const L=$("plog");L.innerHTML=logToolbar()+body;L.classList.add("show");L.scrollTop=0;document.body.style.overflow="hidden"}
 let LOGBODY="",LOGNAME="route";
 function logToolbar(){return`<div class="tb"><span>ตัวอย่าง Flight Log (A4 แนวนอน) · ถ้าสั่งพิมพ์ไม่ได้ ให้ใช้ “ดาวน์โหลด PDF” แล้วพิมพ์จากไฟล์ PDF</span><button class="pbtn p" id="pdfbtn" onclick="saveLogPdf()">ดาวน์โหลด PDF</button><button class="pbtn" onclick="saveLogFile()">ไฟล์ .html สำหรับพิมพ์</button><button class="pbtn" onclick="printLog()">พิมพ์</button><button class="pbtn" onclick="closeLog()">ปิด</button></div>`}
@@ -5041,8 +5041,8 @@ function tkDrawLast(){if(TK.P)try{trkDraw(...TK.P)}catch(e){}}
 /* v4.7.1: ชื่อปุ่มภาษาอังกฤษ · ปุ่ม REC Track → Rec Route (เส้นทางที่บันทึกไว้) */
 /* v4.7.2: + NAV, + Coords · North up ย้ายไปเหนือปุ่มซูม · Edit route ย้ายไปแตะช่อง NAV TO · Prev/Next WP */
 /* v4.7.3: NAV แสดงเฉพาะสถานะ · D→ เฉพาะสัญลักษณ์ · My position ไอคอนเครื่องบินสีขาว · Rec Route → Route */
-const BT=[["prev","◀","Prev WP"],["dto","D→",""],["next","▶","Next WP"],["nav","STBY",""],["lay","☰","Layers"],["menu","▦","Menu"],
- ["coord","⌖","พิกัด"],["rul","📏","Ruler"],["sar","🔍","SAR"],["rrt","🗂","Route"],["taws","⛰","TAWS"],["hide","⇱","Hide menu"]];
+const BT=[["prev","◀","Prev WP"],["dto","-D→",""],["next","▶","Next WP"],["nav","STBY",""],["lay","☰","Layers"],["menu","▦","Menu"],
+ ["coord","⌖","Lat/Lon"],["rul","📏","Ruler"],["sar","🔍","SAR"],["rrt","🗂","Route"],["taws","⛰","TAWS"],["hide","⇱","Hide menu"]];
 const BTA={dto:"Direct to",nav:"NAV / STBY"};
 const host=mp;
 const T=document.createElement("div");T.id="flyT";T.className="fly-ui";T.hidden=true;
@@ -5232,9 +5232,9 @@ MKW.addEventListener("change",e=>{const t=e.target.closest("[data-mn]");if(!t)re
 MKW.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-mn]"))e.target.blur()});
 
 /* v4.7.9 b12: Flight log — ช่องกรอกชุดเดียวกับการ์ด "Flight Log สำหรับพิมพ์" หน้าแรก (เขียนกลับช่องเดิมทันที) ปุ่มใหญ่สำหรับ iPad/มือถือ */
-const LGF=[["lpic","Pilot in Command (PIC)","text"],["lreg","Aircraft registration","text"],["ldate","Date","date"],["lfob","Fuel on board (U)","number"],["ltx","Taxi fuel (U)","number"],["lnote","Remarks","text"],["mv","Magnetic variation (°) E + / W −","number"]];
+const LGF=[["lpic","Pilot in Command (PIC)","text"],["lreg","Aircraft registration","text"],["ldate","Date","date"],["lfob","Fuel on board (U)","number"],["ltx","Taxi fuel (U)","number"],["lnote","Remarks","text"]];/* v4.7.9 b13: ไม่มีค่าแปรผันแม่เหล็ก (ในไทยน้อยมาก) */
 function lgRender(){const u=($f("unit")&&$f("unit").value)||"lbs";let h=`<div class="foh"><b>Flight log</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="lgf">`;
- LGF.forEach(f=>{const o=$f(f[0]);if(!o)return;h+=`<label class="${f[0]==="lnote"||f[0]==="mv"?"w":""}"><span>${esc(f[1].replace("(U)","("+u+")"))}</span><input data-lg="${f[0]}" type="${f[2]}"${f[2]==="number"?' inputmode="decimal" step="any"':""} value="${esc(o.value)}" placeholder="${esc(o.placeholder||"")}" autocomplete="off"></label>`});
+ LGF.forEach(f=>{const o=$f(f[0]);if(!o)return;h+=`<label class="${f[0]==="lnote"||f[0]==="lpic"?"w":""}"><span>${esc(f[1].replace("(U)","("+u+")"))}</span><input data-lg="${f[0]}" type="${f[2]}"${f[2]==="number"?' inputmode="decimal" step="any"':""} value="${esc(o.value)}" placeholder="${esc(o.placeholder||"")}" autocomplete="off"></label>`});
  h+=`</div><div class="lgb"><button type="button" data-lgp="1" class="p">🖨 Create Flight Log</button></div><div class="fom">ข้อมูลชุดเดียวกับ Flight Log หน้าแรก · Fuel on board ว่าง = ใช้ Take off fuel อัตโนมัติ</div>`;LG.innerHTML=h}
 function lgSave(){try{localStorage.setItem("heliLogInfo",JSON.stringify({pic:$f("lpic").value,reg:$f("lreg").value}))}catch(e){}}
 LG.addEventListener("input",e=>{const t=e.target.closest("[data-lg]");if(!t)return;const o=$f(t.dataset.lg);if(!o)return;o.value=t.value;o.dispatchEvent(new Event("input",{bubbles:true}));if(t.dataset.lg==="lpic"||t.dataset.lg==="lreg")lgSave()});
