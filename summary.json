@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-27",
+ "source": "© OpenStreetMap contributors (ODbL)",
+ "pbf_bytes": 330913180,
+ "th_area_deg2": 52.54,
+ "air": {
+  "rows": 476,
+  "named": 108,
+  "by_type": {
+   "aerodrome": 99,
+   "airstrip": 1,
+   "heliport": 0,
+   "helipad": 376
+  }
+ },
+ "peak": {
+  "rows": 1858,
+  "named": 1230,
+  "with_ele": 1530,
+  "all_nodes": 2577
+ }
+}
