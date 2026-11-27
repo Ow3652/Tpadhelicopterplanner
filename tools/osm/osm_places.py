@@ -84,6 +84,9 @@ def ele_m(s):
     except Exception:
         return None
 
+# จุดที่ผู้ใช้สั่งไม่ให้ขึ้นตาราง (รหัส OSM แบบคอลัมน์ "OSM") — v4.7.9 b14: ค่ายวชิราลงกรณ์
+EXCLUDE = {"way/1474797456"}
+
 def main():
     os.makedirs("out", exist_ok=True)
     today = datetime.date.today().isoformat()
@@ -99,6 +102,7 @@ def main():
         rows.append([t.get("name", "") or t.get("name:th", "") or t.get("name:en", ""), t.get("name:en", ""), t.get("aeroway", ""),
                      t.get("icao", ""), t.get("iata", ""), dm(la, True), dm(lo, False), "" if em is None else round(em / 0.3048),
                      round(la, 6), round(lo, 6), f"{ {'n':'node','w':'way','r':'relation'}.get(ty,ty)}/{oid}"])
+    rows = [r for r in rows if r[10] not in EXCLUDE]
     order = {"aerodrome": 0, "airstrip": 1, "heliport": 2, "helipad": 3}
     rows.sort(key=lambda r: (order.get(r[2], 9), r[0] == "", r[0], r[8]))
     with open("out/helipad_airport.csv", "w", newline="", encoding="utf-8") as f:

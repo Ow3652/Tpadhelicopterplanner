@@ -341,7 +341,7 @@ a.cl{color:var(--accent);text-decoration:underline;cursor:pointer;font-weight:60
 #msarb #sarc>h2{display:none}
 #msarb #sarc .sdesc{font-size:.8rem}
 .sa.sp2{fill:rgba(123,31,162,.08);stroke:#7b1fa2}
-.sal{font-size:13px;font-weight:800;fill:#063c44;stroke:none}
+.sal{font-size:14px;font-weight:800;fill:#063c44;paint-order:stroke;stroke:#fff;stroke-width:4.5px;stroke-linejoin:round}
 #sarl{margin-top:10px}
 #sarl .qrow small{display:inline;margin-left:4px}
 #srl .qrow small{display:inline;margin-left:4px}
@@ -1799,7 +1799,10 @@ try{srPts()}catch(e){}
 let rv="";RO.forEach(r=>{if(r.hid||r.pts.length<2)return;const P=r.pts.map(p=>{const q=wp(p.la,p.lo,z);return[q[0]-ox,q[1]-oy,p]}),pp=P.map(a=>a[0].toFixed(1)+","+a[1].toFixed(1)).join(" "),sl=roSel===roKey(r);
 rv+=`<g style="pointer-events:none"><polyline points="${pp}" fill="none" stroke="#fff" stroke-width="${sl?9:6}" opacity=".7" stroke-linejoin="round"/><polyline points="${pp}" fill="none" stroke="${r.col}" stroke-width="${sl?4.5:3}" stroke-linejoin="round"/>`;
 P.forEach((a,i)=>{const e=i===0||i===P.length-1;rv+=`<circle cx="${a[0].toFixed(1)}" cy="${a[1].toFixed(1)}" r="${e?5:3.5}" fill="${r.col}" stroke="#fff" stroke-width="1.5"/>`;if(e||P.length<=40)rv+=`<text class="ml" style="fill:${r.col}" x="${(a[0]+8).toFixed(1)}" y="${(a[1]-6).toFixed(1)}">${esc(a[2].n)}</text>`});
-const mi=P[Math.floor(P.length/2)];rv+=`<text class="sal" style="fill:${r.col}" text-anchor="middle" x="${mi[0].toFixed(1)}" y="${(mi[1]-12).toFixed(1)}">${esc(r.name)}</text></g>`});
+/* v4.7.9 b14: ชื่อเส้นทางวางกลางขาตรงกลาง ขยับออกตั้งฉากกับเส้น 18 px (ไม่ทับเส้น) + ขอบขาวแบบชื่อจุด (.sal) */
+{const k=Math.max(0,Math.floor((P.length-2)/2)),A=P[k],B=P[k+1]||P[k];let dx=B[0]-A[0],dy=B[1]-A[1];const L=Math.hypot(dx,dy)||1;let nx=dy/L,ny=-dx/L;if(ny>0||(Math.abs(ny)<1e-6&&nx<0)){nx=-nx;ny=-ny}
+ const D=18,cx=(A[0]+B[0])/2+nx*D,cy=(A[1]+B[1])/2+ny*D,an=nx>.35?"start":nx<-.35?"end":"middle";
+ rv+=`<text class="sal" style="fill:${r.col}" text-anchor="${an}" x="${cx.toFixed(1)}" y="${(cy+(ny>-.35?4:0)).toFixed(1)}">${esc(r.name)}</text></g>`}});
 if(ACT.hid){s="";lh=""}
 $("ov").innerHTML=rtx(pvLayer(z,ox,oy,W,H)+bdLayer(z,ox,oy,W,H)+tdLayer(z,ox,oy,W,H)+rzs+rv+gx+lh+m+ar+s+dg+npin+edHandles(z,ox,oy)+acLayer(z,ox,oy,W,H)+myLeg(z,ox,oy)+(typeof courseLayer==="function"?courseLayer(z,ox,oy):"")+(typeof simLayer==="function"?simLayer(z,ox,oy,W,H,"g"):"")+gpsLayer(z,ox,oy)+(typeof simLayer==="function"?simLayer(z,ox,oy,W,H,"p"):""));if($("qv").checked){clearTimeout(M.qt);M.qt=setTimeout(qrender,250)}}
 var OVB=null;
@@ -3664,7 +3667,7 @@ var OHT={A:"Aerodrome (สนามบิน)",S:"Airstrip (ลานบิน)"
 /* v4.7.9 b6: ไม่นำสนามบิน OSM ที่ซ้ำกับหมวด Airport (รหัส ICAO ตรงกัน หรือห่างไม่เกิน 3 กม.) มาแสดง */
 function ohDup(r){const ic=String(r[3]||"").trim().toUpperCase(),la=r[5],lo=r[6],k=Math.cos(la*Math.PI/180);return(DB.AP||[]).some(p=>(ic&&String(p.c||"").trim().toUpperCase()===ic)||Math.hypot((p.la-la)*111.2,(p.lo-lo)*111.2*k)<=3)}
 /* v4.7.9 b7: ปรับรายการตามผู้ใช้ (อ้างด้วยรหัส OSM จึงใช้กับข้อมูลที่โหลดจากชีตด้วย) — OHX = ไม่แสดง, OHN = ชื่อที่แสดง */
-var OHX=new Set(["n5433827755","w1466440822","w381570985","w1257425162","w698540142"]),OHN={"w316900230": "คลอง15", "w316902630": "คลอง16", "n3226084563": "เบสท์โอเชียน", "w806579162": "โคกสำราญ"};
+var OHX=new Set(["n5433827755","w1466440822","w381570985","w1257425162","w698540142","w1474797456"/* b14 ค่ายวชิราลงกรณ์ */]),OHN={"w316900230": "คลอง15", "w316902630": "คลอง16", "n3226084563": "เบสท์โอเชียน", "w806579162": "โคกสำราญ"};
 function ohBuild(a){DB.OH=a.filter(r=>(r[2]==="A"||r[2]==="S")&&!ohDup(r)&&!OHX.has(r[7])).map(r=>({n:OHN[r[7]]||r[0]||((r[2]==="H"||r[2]==="P"?"HP-":"AD-")+String(r[7]||"").slice(-5)),c:r[3]||"",en:r[1]||"",t:r[2],ef:r[4],la:r[5],lo:r[6],osm:r[7]||""}));const e=$("cn_OH");if(e)e.textContent=DB.OH.length}
 /* v4.7.9 b5: ยอดเขาไม่มีชื่อ = ความสูงเป็นฟุตแบบ x,xxx ft */
 /* v4.7.9 b8: ชื่อใน OSM ที่เป็นตัวเลขความสูงเมตร (เช่น "1770", "1335m") แปลงเป็นฟุต x,xxx ft เหมือนยอดเขาไม่มีชื่อ */
