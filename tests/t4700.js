@@ -190,7 +190,7 @@ t('T21 b v4.7.5 เปิดเพจโดยยังไม่มีรหั�
  if(process.env.SHOT)await q.screenshot({path:'/tmp/t4700_iphone.png'});await c.close()}
 // v4.7.5: ป้ายชื่อผู้ใช้
 const ub=await p.evaluate(async()=>{const r={};r.vis=$('ubadge').getClientRects().length>0;const a=$('ubadge').getBoundingClientRect(),m=mp.getBoundingClientRect(),B=$('flyB').getBoundingClientRect();r.pos=a.left-m.left<20&&a.bottom<=B.top;localStorage.setItem('heliMyKey','demo');MYDIAG.u='นักบินทดสอบ';ubUpd();r.txt=$('ubadge').textContent;$('ubadge').click();await new Promise(x=>setTimeout(x,100));r.ky=!$('kyd').hidden;kyClose();localStorage.removeItem('heliMyKey');MYDIAG.u='';ubUpd();return r});
-t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ้าย (เหนือแถบตัวเลข) แสดงชื่อ · แตะเพื่อเปิดกล่องรหัส',ub.vis&&ub.pos&&/นักบินทดสอบ/.test(ub.txt)&&ub.ky,ub);
+t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุมบนซ้าย) แสดงชื่อ · แตะเพื่อเปิดกล่องรหัส',ub.vis&&ub.pos&&/นักบินทดสอบ/.test(ub.txt)&&ub.ky,ub);
 // v4.7.5 b2: Android/หลายอุปกรณ์ — พอดีส่วนที่มองเห็นจริง (visualViewport จำลอง) + Screen fit เอง (Playwright ซูมจริงไม่ได้)
 {const c=await b.newContext({viewport:{width:412,height:915},deviceScaleFactor:2.625,isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (Linux; Android 15; SM-S731B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/27.0 Chrome/125.0 Mobile Safari/537.36'});await c.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const q=await c.newPage();const e2=[];q.on('pageerror',e=>e2.push(e.message));await q.goto('http://localhost:8773/?start=auto');await q.waitForTimeout(1500);
  const fz=await q.evaluate(async()=>{try{kyClose()}catch(e){}const W=n=>new Promise(r=>setTimeout(r,n)),g=e=>e.getBoundingClientRect(),r={fly:mp.classList.contains('fly')};const m0=g(mp);r.n=[m0.width,m0.height,mp.style.width];
@@ -393,6 +393,14 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้มุมล่างซ
   const bm=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),zl=g($('flyZ')).left;const o={};['msel','msar','lbs','lba'].forEach(id=>{const e=$(id),bs=[...e.querySelectorAll('.ph button')];o[id]={vis:!!e.offsetParent,h:Math.min(...bs.map(b=>g(b).height)),w:Math.min(...bs.map(b=>g(b).width)),right:Math.round(g(e).right),zl:Math.round(zl)}});return o});
   await p.evaluate(()=>{try{sarShow(false)}catch(e){}['lbs','lba'].forEach(id=>$(id).classList.remove('on'));try{selClear()}catch(e){}const r=RO.findIndex(x=>x.name==="T49R");if(r>=0)RO.splice(r,1);putStore(store().filter(x=>x.name!=="T49R"));drawList();drawMap(false)});await W(200);
   t('T49 b รายละเอียดสิ่งที่เลือก (เส้นทาง Active) / รูปแบบ SAR / เส้นทางค้นหาที่เก็บไว้ / พื้นที่ SAR ที่เก็บไว้: ปุ่ม ▾ ✕ ≥ 48 px และไม่ลอดใต้คอลัมน์ปุ่มขวา',Object.values(bm).every(v=>v.vis&&v.h>=48&&v.w>=48&&v.right<=v.zl-4),bm)}
+ // v4.8.0 b2: ป้ายผู้ใช้มุมบนซ้าย (ใต้แถบเมนู · ย่อเมนู = มุมบนซ้ายสุด) · ปุ่ม Flight log ในกล่อง Summary
+ {await p.evaluate(()=>{if($('flyT').hidden)$('flyR').click();try{sumShow(true)}catch(e){}});await W(300);
+  const a=await p.evaluate(()=>{const m=mp.getBoundingClientRect(),u=$('ubadge').getBoundingClientRect(),T=$('flyT').getBoundingClientRect();return{l:Math.round(u.left-m.left),gap:Math.round(u.top-T.bottom)}});
+  await p.tap('#flyT [data-fk="hide"]');await W(400);
+  const c=await p.evaluate(()=>{const m=mp.getBoundingClientRect(),u=$('ubadge').getBoundingClientRect(),w=$('flyWk'),wr=w.getBoundingClientRect();return{l:Math.round(u.left-m.left),t:Math.round(u.top-m.top),wk:w.hidden||(Math.abs(wr.top-u.top)<4&&wr.left>=u.right)}});
+  await p.tap('#flyR');await W(300);
+  const s=await p.evaluate(()=>{const b=$('msLog');if(!b)return{has:false};b.click();const r={has:true,txt:b.textContent.trim(),show:$('plog').classList.contains('show')};try{closeLog()}catch(e){}return r});
+  t('T50 v4.8.0 b2 ป้ายผู้ใช้มุมบนซ้าย ใต้แถบเมนู (ย่อเมนู = มุมบนซ้ายสุด, ไอคอนกันจอดับอยู่ถัดไป) · กล่อง Summary มีปุ่ม 📝 Flight log เปิดตัวอย่างพิมพ์',a.l<=12&&a.gap>=0&&a.gap<=16&&c.l<=12&&c.t<=16&&c.wk&&s.has&&/Flight log/.test(s.txt)&&s.show,{a,c,s})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

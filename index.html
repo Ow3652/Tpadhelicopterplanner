@@ -2463,7 +2463,7 @@ const gs=parseFloat($("gs").value),ff=parseFloat($("ff").value),u=$("unit").valu
 const tot=legs.reduce((a,l)=>a+l.d,0),hr=gs>0?tot/gs:NaN,okF=ff>0&&isFinite(hr);
 const trip=okF?fl(hr*ff,u):["-",""],rv=okF?fl(ff*res/60,u):["-",""];
 let rem="";if(okF&&isFinite(tof)){const a=tof-hr*ff,b=a-ff*res/60,st=x=>x<0?' style="color:#c62828"':"";rem=`<div><small>คงเหลือ</small><b${st(a)}>${fl(a,u)[0]}</b></div><div><small>คงเหลือ - reserved</small><b${st(b)}>${fl(b,u)[0]}</b></div>`}
-el.innerHTML=`<div class="mg"><div><small>ระยะทางรวม</small><b>${tot.toFixed(1)} NM</b></div><div><small>เวลาบิน</small><b>${hm(hr)}</b></div><div><small>เชื้อเพลิงเส้นทาง</small><b>${trip[0]}</b></div><div><small>reserved ${res} นาที</small><b>${rv[0]}</b></div>${rem}${navSumRows()}${planRow(tot,gs)}</div>`}
+el.innerHTML=`<div class="mg"><div><small>ระยะทางรวม</small><b>${tot.toFixed(1)} NM</b></div><div><small>เวลาบิน</small><b>${hm(hr)}</b></div><div><small>เชื้อเพลิงเส้นทาง</small><b>${trip[0]}</b></div><div><small>reserved ${res} นาที</small><b>${rv[0]}</b></div>${rem}${navSumRows()}${planRow(tot,gs)}</div><button type="button" class="b s mslog" id="msLog" title="สร้าง Flight Log เพื่อพิมพ์ (ใช้ PIC/ทะเบียน/วันที่จากการ์ด Flight Log หรือ Menu → Flight log)">📝 Flight log</button>`}
 /* v4.7.7 b8: บรรทัดสุดท้าย Plan ETE = เวลาบินรวมตามแผน (ระยะรวม ÷ GS ที่ตั้งในแผน; ขณะ NAV ช่อง GS ถูกแทนด้วยค่า GPS จึงใช้ค่าก่อนเปิด NAV `NAVGS0`) */
 /* v4.7.7 b14: เปลี่ยนเป็น Plan ETA = เวลาถึงตามนาฬิกา = เวลาออกบิน (#dep) + เวลาบินตามแผน · ไม่กรอกเวลาออกบิน = นับจากเวลาปัจจุบัน (รีเฟรชทุก 30 วินาทีขณะกล่องเปิด) */
 function planRow(tot,gs){const g=(NAVON&&NAVGS0!=null)?parseFloat(NAVGS0):gs,h=g>0?tot/g:NaN,dv=$("dep").value;let t="-",base="";
@@ -2472,7 +2472,7 @@ function planRow(tot,gs){const g=(NAVON&&NAVGS0!=null)?parseFloat(NAVGS0):gs,h=g
 setInterval(()=>{try{if(M.sum&&!$("dep").value&&calcData.valid.length>1)msumRender()}catch(e){}},30000);
 function sumShow(on){M.sum=on;setTimeout(dock,0);$("msum").classList.toggle("off",!on);$("sb").classList.toggle("on",on)}
 $("sb").onclick=()=>{sumShow(!M.sum);optSave()};
-$("msum").addEventListener("click",e=>{if(e.target.closest("#msx")){sumShow(false);optSave()}});
+$("msum").addEventListener("click",e=>{if(e.target.closest("#msx")){sumShow(false);optSave()}else if(e.target.closest("#msLog")){/* v4.8.0 b2: Flight Log จากกล่อง Summary (ใช้ได้ทั้งแผนที่เต็มจอ PC และโหมดบิน) */buildLog()}});
 $("msum").addEventListener("wheel",e=>e.stopPropagation());
 sumShow(true);msumRender();
 
@@ -4796,8 +4796,8 @@ if(OK)setTimeout(function(){try{if(localStorage.getItem(KC))postCfg()}catch(e){}
 #map.fly #mprof{bottom:calc(var(--flyb,72px) + 28px)}
 #map.fly #simbox{top:calc(var(--flyt,66px) + 8px)}
 /* v4.7.5: ชื่อผู้ใช้มุมล่างซ้าย · กล่องชั้นข้อมูลไม่เกินจอ · ช่องกรอกตัวใหญ่พอไม่ให้ iOS ซูมเอง */
-#ubadge{display:none;position:absolute;left:8px;bottom:6px;z-index:28;max-width:46%;height:30px;padding:0 10px;border-radius:15px;border:1px solid #888;background:rgba(20,20,20,.82);color:#fff;font:600 14px/1 system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-#ubadge.in{border-color:#4caf50}#map.full #ubadge{display:block}#map.fly #ubadge{bottom:calc(var(--flyb,72px) + 6px)}#map.flyh #ubadge{bottom:calc(var(--flyb,72px) + 6px)}
+#ubadge{display:none;position:absolute;left:var(--ubl,8px);top:max(var(--ubt,8px),calc(env(safe-area-inset-top,0px) + 8px));bottom:auto;z-index:28;max-width:46%;height:30px;padding:0 10px;border-radius:15px;border:1px solid #888;background:rgba(20,20,20,.82);color:#fff;font:600 14px/1 system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+#ubadge.in{border-color:#4caf50}#map.full #ubadge{display:block}
 #map.full .fp{max-width:calc(100% - 16px);box-sizing:border-box}#map.fly .fp{top:calc(var(--flyt,66px) + 8px)!important;max-height:calc(100% - var(--flyt,66px) - var(--flyb,72px) - 24px)!important;z-index:31!important}
 #kyi,#svn{font-size:16px}
 @media (max-width:600px){#map.full .fp{left:6px!important;right:6px!important;width:auto}.fp .fp2{grid-template-columns:1fr 1fr}.fp .fp2>.chip,.fp .fp2>label{min-width:0}.fp select,.fp input:not([type=checkbox]):not([type=range]):not([type=color]){max-width:100%;box-sizing:border-box}}
@@ -4869,7 +4869,7 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #mlmenu .mlh{display:none}#map.fly #mlmenu .mlh{display:block;text-align:center;font:700 13px system-ui,sans-serif;color:var(--mute);padding:4px 0 6px;cursor:grab;touch-action:none;border-bottom:1px solid var(--line)}
 #map.fly #mlmenu{min-width:240px;font-size:16px;touch-action:none}#map.fly #mlmenu .chip,#map.fly #mlmenu .b{min-height:44px;font-size:16px}
 #rlplus{display:none}#rulb.rmin>#rlplus{display:inline-flex!important;font-size:22px;font-weight:800;min-width:44px;justify-content:center;align-items:center;margin-left:6px}#map.fly #rulb.rmin>#rlplus{min-height:44px;min-width:52px}
-#flyWk{position:absolute;left:104px;bottom:calc(var(--flyb,0px) + 6px);z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}.enrc select{margin-left:4px;padding:1px 2px}.enrc input:disabled+*{opacity:.5}.enrc2{grid-column:1/-1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin-top:2px;white-space:nowrap}.enrc2 input[type=checkbox]{width:22px;height:22px;margin:0}.enrc2 .enrop{flex:0 0 auto;width:auto!important;min-width:84px;min-height:34px;font-size:15px;margin-left:4px}#at .enrat{color:#b3261e;font-weight:600}
+#flyWk{position:absolute;left:var(--wkl,104px);top:max(var(--ubt,8px),calc(env(safe-area-inset-top,0px) + 8px));bottom:auto;z-index:29;width:30px;height:30px;border-radius:15px;border:2px solid #fff;font:700 16px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);padding:0;display:flex;align-items:center;justify-content:center}#flyWk[hidden]{display:none}#flyWk.ok{background:#2e7d32;color:#fff}#flyWk.no{background:#757575;color:#fff}.enrc select{margin-left:4px;padding:1px 2px}.enrc input:disabled+*{opacity:.5}.enrc2{grid-column:1/-1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin-top:2px;white-space:nowrap}.enrc2 input[type=checkbox]{width:22px;height:22px;margin:0}.enrc2 .enrop{flex:0 0 auto;width:auto!important;min-width:84px;min-height:34px;font-size:15px;margin-left:4px}#at .enrat{color:#b3261e;font-weight:600}
 /* v4.7.9 b3: หน้าต่างชั้นข้อมูล (#fp) ในโหมดบิน — ปุ่มปิด/ย่อ 44 px และตัวเลือกใหญ่สำหรับ iPad/มือถือ (แนวเดียวกับกล่อง Aircraft) */
 #map.fly .fp{font-size:16px;padding:10px 12px;min-width:min(420px,calc(100% - 16px))}
 #map.fly .fp .ph{margin:-2px 0 10px}
@@ -4969,6 +4969,9 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #map.fly :is(#msel,#msar,#lbs,#lba) .ph button{min-width:48px;min-height:48px;height:48px;font-size:22px;line-height:1;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:0}
 @media (pointer:coarse){:is(#msel,#msar,#lbs,#lba) .ph{min-height:48px;align-items:center}:is(#msel,#msar,#lbs,#lba) .ph>span{display:flex;gap:8px;align-items:center}
 :is(#msel,#msar,#lbs,#lba) .ph button{min-width:48px;min-height:48px;height:48px;font-size:22px;line-height:1;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:0}}
+
+/* v4.8.0 b2: ปุ่ม Flight log ในกล่อง Summary */
+#msb .mslog{display:block;width:100%;margin-top:8px;font-weight:700}#map.fly #msb .mslog{min-height:44px;font-size:16px}
 </style>
 <script id="enr">
 /* v4.7.7 b15: ตัวควบคุมชั้น ENR Chart — ช่อง "ซ้อน ENR" + ความทึบ (ในแถบชั้นข้อมูลหน้าหลัก และกล่องชั้นข้อมูลเต็มจอ/โหมดบิน) · โหลด meta.json ล่าสุดจาก Tpadenr เมื่อออนไลน์ */
@@ -5198,7 +5201,18 @@ addEventListener("resize",()=>{if(isFly())setTimeout(()=>{setVars();try{dock();l
  ["pointerdown","click","touchstart","dblclick","contextmenu"].forEach(ev=>U.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu")x.preventDefault()}));
  U.addEventListener("click",()=>{try{kyOpen()}catch(e){}});
  window.ubUpd=function(){let n="",k=false;try{k=!!myKey();n=myOn()&&MYDIAG.u?MYDIAG.u:""}catch(e){}U.textContent=n?"👤 "+n:(k?"👤 …":"🔑 Sign in");U.classList.toggle("in",!!n)};
- ubUpd();setInterval(()=>{if(!document.hidden)ubUpd()},3000)}
+ /* v4.8.0 b2: ป้ายผู้ใช้มุมบนซ้าย — ใต้แถบเมนู (โหมดบิน: ใต้ #flyT · เต็มจอ: ใต้แถวปุ่ม) · ย่อเมนู: โหมดบิน = มุมบนซ้ายสุด, เต็มจอ = แถวเดียวกับปุ่ม ☰ เมนู (ต่อท้ายทางขวา) · ไอคอนกันจอดับ #flyWk อยู่ถัดไปทางขวา */
+ const vis=e=>!!e&&!e.hidden&&getComputedStyle(e).display!=="none"&&e.offsetHeight>0;
+ window.ubPos=function(){if(!mp.classList.contains("full"))return;const mr=mp.getBoundingClientRect();let t=8,l=8;
+  if(mp.classList.contains("fly")){const T=document.getElementById("flyT");if(vis(T))t=T.getBoundingClientRect().bottom-mr.top+8}
+  else{const ub=document.getElementById("uib");if(vis(ub)){const r=ub.getBoundingClientRect();l=r.right-mr.left+8;t=r.top-mr.top+Math.max(0,(r.height-30)/2)}
+   else document.querySelectorAll("#map .mc,#map .mc2").forEach(e=>{if(vis(e))t=Math.max(t,e.getBoundingClientRect().bottom-mr.top+6)})}
+  const s=mp.style,tv=Math.round(t)+"px",lv=Math.round(l)+"px";if(s.getPropertyValue("--ubt")!==tv)s.setProperty("--ubt",tv);if(s.getPropertyValue("--ubl")!==lv)s.setProperty("--ubl",lv);
+  const wl=Math.round(l+(U.offsetWidth||90)+8)+"px";if(s.getPropertyValue("--wkl")!==wl)s.setProperty("--wkl",wl)};
+ const uu=window.ubUpd;window.ubUpd=function(){uu();try{ubPos()}catch(e){}};
+ ubUpd();setInterval(()=>{if(!document.hidden)ubUpd()},3000);
+ {const q=()=>setTimeout(()=>{try{ubPos()}catch(e){}},0);addEventListener("resize",q);new MutationObserver(q).observe(mp,{attributes:true,attributeFilter:["class"]});
+  setTimeout(()=>{["uib","flyT"].forEach(id=>{const e=document.getElementById(id);if(e)new MutationObserver(q).observe(e,{attributes:true,attributeFilter:["hidden","class","style"]})});q()},0)}}
 
 /* v4.7.5 b2: หลายอุปกรณ์ — ให้แผนที่เต็มจอ/โหมดบินพอดีส่วนที่มองเห็นจริง
    (Android บางเครื่อง/บางเบราว์เซอร์ขยายหน้า หรือแถบของเบราว์เซอร์บังขอบล่าง → ใช้ visualViewport)
