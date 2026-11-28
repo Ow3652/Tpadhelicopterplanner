@@ -12,7 +12,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- v4.8.1 b8: โหลดฟอนต์แบบไม่บล็อก (media=print → all เมื่อโหลดเสร็จ) — เดิมเน็ตสัญญาณแย่ (คำขอค้าง) ทำให้หน้า/สคริปต์ทั้งหมดรอจนหมดเวลา แอปค้าง · ไม่มีฟอนต์ = ใช้ฟอนต์ของเครื่อง -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 :root{--bg:#e9eeee;--surface:#f8faf9;--ink:#13243a;--mute:#5b6b7b;--line:#c5d0d3;--accent:#0f6c78;--accent-ink:#fff;--route:#d98a00;--err:#b3261e;--field:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -1688,18 +1689,23 @@ var BLK="#000000";try{const c=localStorage.getItem("heliBlank");if(/^#[0-9a-f]{6
 function blkUi(){document.querySelectorAll(".blkc").forEach(i=>{i.value=BLK;i.hidden=LAY.k!=="blank"})}
 var IS=1;
 const TERR={};var RFS=0;
-function mapRefresh(){RFS=Date.now();for(const k in TERR)delete TERR[k];try{for(const[,im]of M.cache)im.remove();M.cache.clear()}catch(e){}try{for(const[,im]of WX.img)im.remove();WX.img.clear()}catch(e){}drawMap(false);toast("รีเฟรชแผนที่แล้ว — กำลังโหลดภาพแผนที่ใหม่")}
+function mapRefresh(){RFS=Date.now();for(const k in TERR)delete TERR[k];try{for(const[,im]of M.cache)tileDrop(im);M.cache.clear()}catch(e){}try{for(const[,im]of WX.img)im.remove();WX.img.clear()}catch(e){}drawMap(false);toast("รีเฟรชแผนที่แล้ว — กำลังโหลดภาพแผนที่ใหม่")}
 function tileErr(L){TERR[L.k]=(TERR[L.k]||0)+1;if(TERR[L.k]===10&&LAY.k===L.k)toast(navigator.onLine===false?"ออฟไลน์: ไม่มีแผนที่ “"+L.n+"” ที่เก็บไว้สำหรับบริเวณนี้ (โหลดล่วงหน้าได้ที่ 📥 แผนที่ออฟไลน์)":"โหลดไทล์แผนที่ “"+L.n+"” ไม่ได้ (ไม่มีอินเทอร์เน็ต หรือเซิร์ฟเวอร์ปฏิเสธ)"+" ลองเปลี่ยนชนิดแผนที่")}
 /* v4.4.1: ขยายภาพแผนที่แม่ — ถ้าโหลดแผ่นที่ระดับซูมนี้ไม่ได้ (ออฟไลน์/ไม่มีในแคช/เกินซูมสูงสุดของแผนที่) ให้ใช้แผ่นระดับซูมต่ำกว่า (ถอยได้สูงสุด OZMAX ระดับ) ขยายแล้วตัดเฉพาะส่วนของแผ่นนี้ */
 const OZMAX=6;
 function tileSrc(u,z,x,y){return u.replace("{s}","abc"[(x+y)%3]).replace("{z}",z).replace("{x}",x).replace("{y}",y)+(RFS?(u.indexOf("?")<0?"?":"&")+"_r="+RFS:"")}
+/* v4.8.1 b8: เน็ตสัญญาณแย่ (คำขอค้าง ไม่ error) — ยกเลิกการโหลดแผ่นที่ออกนอกจอ (เดิมแค่เอาออกจากหน้า คำขอยังค้างสะสม ~4 คำขอ/วินาทีขณะตาม GPS)
+   และแผ่นในจอที่ไม่มาใน TILETO ms ถือว่าโหลดไม่ได้ → ใช้แผ่นแม่ (มักอยู่ในแคชออฟไลน์) */
+const TILETO=15000,TBLANK="data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+function tileWatch(im){clearTimeout(im._tw);im._tw=setTimeout(()=>{if(im.isConnected&&!(im.complete&&im.naturalWidth)&&im.onerror)im.onerror()},TILETO);im.addEventListener("load",()=>clearTimeout(im._tw),{once:true})}
+function tileDrop(im){clearTimeout(im._tw);if(!(im.complete&&im.naturalWidth)){im.onerror=null;im.onload=null;try{im.src=TBLANK}catch(e){}}im.remove()}
 function tileOz(im,L){const d=im._d+1;if(d>OZMAX||im._z-d<0){tileErr(L);return}
 const f=2**d,S=TS*f,sx=(im._x%f)*TS,sy=(im._y%f)*TS,l=parseFloat(im.style.left)||0,t=parseFloat(im.style.top)||0;
 im.style.left=(l+im._sx-sx)+"px";im.style.top=(t+im._sy-sy)+"px";im._d=d;im._sx=sx;im._sy=sy;
 im.style.width=im.style.height=S+"px";im.style.clipPath="inset("+sy+"px "+(S-sx-TS)+"px "+(S-sy-TS)+"px "+sx+"px)";
-im.src=tileSrc(im._u,im._z-d,Math.floor(im._x/f),Math.floor(im._y/f))}
+im.src=tileSrc(im._u,im._z-d,Math.floor(im._x/f),Math.floor(im._y/f));tileWatch(im)}
 function setLayer(k,keep){LAY=LAYERS.find(l=>l.k===k)||LAYERS[0];enrAt();
-for(const[,im]of M.cache)im.remove();M.cache.clear();
+for(const[,im]of M.cache)tileDrop(im);M.cache.clear();
 try{if(!keep)localStorage.setItem("heliLayer",LAY.k)}catch(e){}blkUi();drawMap(false)}
 /* map: OpenTopoMap tiles */
 const M={z:10,cx:0,cy:0,touched:false,init:false,cache:new Map(),zt:0},TS=256;
@@ -1721,9 +1727,9 @@ for(let tx=Math.floor((ox-RMX)/TS);tx<=Math.floor((ox+W+RMX)/TS);tx++){
 const wx=((tx%n)+n)%n;
 layU().forEach((u,ui)=>{const en=u===ENR.u;if(en&&!enrIn(z,wx,ty))return;const k=LAY.k+ui+"/"+z+"/"+wx+"/"+ty+"/"+tx;want.add(k);
 let im=M.cache.get(k);
-if(!im){im=new Image();im.alt="";im.draggable=false;im.className="tile";{const L=LAY;im.onerror=()=>tileOz(im,L)}im.style.zIndex=ui;im._u=u;im._z=z;im._x=wx;im._y=ty;im._d=0;im._sx=0;im._sy=0;if(en)enrTile(im);else im.src=tileSrc(u,z,wx,ty);tl.appendChild(im);M.cache.set(k,im)}
+if(!im){im=new Image();im.alt="";im.draggable=false;im.className="tile";{const L=LAY;im.onerror=()=>tileOz(im,L)}im.style.zIndex=ui;im._u=u;im._z=z;im._x=wx;im._y=ty;im._d=0;im._sx=0;im._sy=0;if(en)enrTile(im);else{im.src=tileSrc(u,z,wx,ty);tileWatch(im)}tl.appendChild(im);M.cache.set(k,im)}
 im.style.left=(tx*TS-ox-im._sx)+"px";im.style.top=(ty*TS-oy-im._sy)+"px"})}}
-for(const[k,im]of M.cache)if(!want.has(k)){im.remove();M.cache.delete(k)}
+for(const[k,im]of M.cache)if(!want.has(k)){tileDrop(im);M.cache.delete(k)}
 {const wb=$("wx");if(RMX||RMY){wb.style.inset="auto";wb.style.left=-RMX+"px";wb.style.top=-RMY+"px";wb.style.width=(W+2*RMX)+"px";wb.style.height=(H+2*RMY)+"px"}else{wb.style.inset="";wb.style.left=wb.style.top=wb.style.width=wb.style.height=""}}
 wxDraw(W+2*RMX,H+2*RMY,ox-RMX,oy-RMY,z);if(typeof twsDraw==="function")try{twsDraw(W+2*RMX,H+2*RMY,ox-RMX,oy-RMY,z,-RMX,-RMY)}catch(e){}
 /* v4.7.9: ระหว่างลากด้วยนิ้ว (PANB) ไม่สร้างชั้น SVG (#ov: เส้นทาง จุด ป้ายชื่อ เขตแดน ฯลฯ) ใหม่ — เลื่อนภาพเดิมตามระยะที่แผนที่เลื่อน แล้วสร้างใหม่ครั้งเดียวเมื่อยกนิ้ว (panFlush) */
@@ -2072,7 +2078,7 @@ else if(m==="fc"){WX.base=Math.floor(Date.now()/3600e3)*3600e3;WX.idx=0;wxSlider
 drawMap(false)}
 function wxSlider(v,mx){$("wxs").max=mx;$("wxs").value=v}
 async function wxLoadRadar(keep){if(!keep){WX.err="";wxLabel()}
-try{const r=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store"});if(!r.ok)throw new Error(r.status);const j=await r.json();
+try{const r=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store",signal:(window.AbortSignal&&AbortSignal.timeout)?AbortSignal.timeout(15000):undefined});if(!r.ok)throw new Error(r.status);const j=await r.json();
 const fr=((j.radar&&j.radar.past)||[]).slice(-12);if(!fr.length)throw new Error("empty");
 if(WX.mode!=="radar")return;WX.host=j.host;WX.frames=fr;WX.idx=keep?Math.min(WX.idx,fr.length-1):fr.length-1;wxSlider(WX.idx,fr.length-1);WX.err=""}
 catch(e){if(WX.mode!=="radar")return;if(!keep){WX.frames=[];WX.err="โหลดข้อมูลเรดาร์ไม่ได้ (ต้องออนไลน์และเข้าถึง rainviewer.com ได้)"}}
@@ -4382,9 +4388,10 @@ TR.t.set(k,a);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);TR.err="
 function trImg(b){if(window.createImageBitmap)return createImageBitmap(b);return new Promise((ok,no)=>{const u=URL.createObjectURL(b),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);ok(im)};im.onerror=e=>{URL.revokeObjectURL(u);no(e)};im.src=u})}
 function trPump(){if(TOWN.st==="loading")return;while(TR.pend.size<6&&TR.qs.size){const k=TR.qs.values().next().value;TR.qs.delete(k);if(TR.t.has(k))continue;
 const p=k.split("/").map(Number),src=trSrc(p[0],p[1],p[2]);if(!src){TR.bad.set(k,Date.now());continue}TR.pend.add(k);
-fetch(src.u,{mode:"cors",credentials:"omit"}).then(async r=>{if(r.status===404&&src.own){TR.t.set(k,TR0);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);return}
+/* v4.8.1 b8: จำกัดเวลา 15 วินาที — เดิมคำขอค้าง (สัญญาณแย่) ยึดช่องโหลด 6 ช่องจน TAWS/FLTA ไม่ได้ข้อมูลใหม่ */const ac=new AbortController(),tmo=setTimeout(()=>ac.abort(),15000);
+fetch(src.u,{mode:"cors",credentials:"omit",signal:ac.signal}).then(async r=>{if(r.status===404&&src.own){TR.t.set(k,TR0);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);return}
 if(!r.ok)throw new Error("http "+r.status);const bm=await trImg(await r.blob());try{trDecode(k,bm)}catch(e){TR.err="cors";throw e}finally{/* v4.8.1 b6: คืนหน่วยความจำภาพทันที (iOS เก็บไว้นาน) */try{if(bm&&bm.close)bm.close()}catch(x){}}})
-.catch(()=>{TR.bad.set(k,Date.now())}).finally(()=>{TR.pend.delete(k);trChanged();trPump()})}}
+.catch(()=>{TR.bad.set(k,Date.now())}).finally(()=>{clearTimeout(tmo);TR.pend.delete(k);trChanged();trPump()})}}
 /* หาแผ่นข้อมูลของช่อง (tx,ty) ที่ซูม ez ถ้ายังไม่มี ใช้แผ่นแม่ที่ซูมต่ำกว่า (สูงสุด 6 ระดับ) ที่โหลดไว้แล้ว */
 function trRes(ez,tx,ty,req){const n0=2**ez;if(ty<0||ty>=n0)return null;let pb=false;
 for(let d=0;d<=6&&ez-d>=0;d++){const z=ez-d,n=2**z,f=2**d,ax=Math.floor(tx/f),ay=Math.floor(ty/f),wx=((ax%n)+n)%n,k=z+"/"+wx+"/"+ay,a=TR.t.get(k);

@@ -489,6 +489,17 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   await q.evaluate(()=>{__fix(MLP.la+0.0004,MLP.lo+0.0004,120)});await q.waitForTimeout(2500);const r3=await q.evaluate(()=>({rz:RZ,run:ROTRUN,ovT:getComputedStyle(document.getElementById('map')).getPropertyValue('--rz').trim()}));
   const bm=await q.evaluate(async()=>{for(let i=0;i<40&&__bm.n===0;i++)await new Promise(r=>setTimeout(r,100));return __bm});await c3.close();
   t('T56 v4.8.1 b7 โหมดบิน GPS Track up: หัวแกว่ง ±2.5° ทุกวินาที วาด #ov ใหม่ ≤ 5 ครั้ง/วินาที (เดิม ~15) · เปลี่ยน < 1° ไม่หมุน · เลี้ยว 120° หมุนจบที่ 240° · ImageBitmap ถูก close ครบ',r1.up&&r1.ov/sec<=5&&Math.abs(r2.rz-r0)<0.01&&!r2.run&&Math.abs(r3.rz-240)<0.5&&!r3.run&&r3.ovT===r3.rz+'deg'&&bm.n>0&&bm.c===bm.n,{perSec:+(r1.ov/sec).toFixed(1),r0,r2,r3,bm})}
+// v4.8.1 b8: เน็ตต่ออยู่แต่สัญญาณแย่ (คำขอภายนอกค้าง ไม่ตอบ) — ฟอนต์ไม่บล็อกหน้า · แผ่นแผนที่ที่ออกนอกจอถูกยกเลิก · ข้อมูลความสูงเลิกรอใน 15 วินาที
+ {const c4=await b.newContext({viewport:{width:810,height:1080},isMobile:true,hasTouch:true,serviceWorkers:'block',userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'});
+  await c4.route(u=>!/localhost|127\.0\.0\.1/.test(u.href),()=>{});
+  const q=await c4.newPage();const t0=Date.now();let ok=true;await q.goto('http://localhost:8773/',{waitUntil:'domcontentloaded',timeout:15000}).catch(()=>{ok=false});const dcl=Date.now()-t0;
+  let r={};if(ok){await q.waitForTimeout(800);
+   r=await q.evaluate(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));try{kyClose()}catch(e){}flyOn();M.z=12;M.touched=true;drawMap(false);await w(300);
+    const ims=[...M.cache.values()].filter(im=>!im.classList.contains('enr'));const o={n:ims.length,font:document.querySelector('link[href*="fonts.googleapis"][rel=stylesheet]').media};
+    M.cx+=6000;drawMap(false);await w(100);o.dropped=ims.filter(im=>!im.isConnected).length;o.blanked=ims.filter(im=>!im.isConnected&&/^data:image\/gif/.test(im.src)).length;
+    for(let i=0;i<100&&TOWN.st==='loading';i++)await w(100);o.st=TOWN.st;TR.bad.delete('12/3191/1889');trReq(12,3191,1889);await w(400);o.pend0=TR.pend.size;await w(15600);o.pend1=TR.pend.has('12/3191/1889');o.bad=TR.bad.has('12/3191/1889');return o})}
+  await c4.close();
+  t('T57 v4.8.1 b8 เน็ตสัญญาณแย่ (คำขอค้าง): หน้าเปิดได้ < 8 วินาที (ฟอนต์ไม่บล็อก) · แผ่นแผนที่ที่ออกนอกจอถูกยกเลิกการโหลด · ข้อมูลความสูงเลิกรอใน 15 วินาที แล้วรอลองใหม่',ok&&dcl<8000&&r.font==='print'&&r.n>4&&r.dropped===r.n&&r.blanked===r.n&&r.pend0>=1&&!r.pend1&&r.bad,{dcl,...r})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
