@@ -417,6 +417,20 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
    fsToggle();await w(200);o.after=document.querySelectorAll('.fsx').length;o.shown=$('res-out').offsetParent!==null;o.hasC=/B → C/.test($('res-out').textContent);return o});
   await pc.close();
   t('T52 v4.8.1 แผนที่เต็มจอ: ซ่อนเนื้อหาหน้าแรก (ไม่แตะในแผนที่) · ช่องกรอกยังอ่านค่าได้ · ตารางผลคำนวณพักไว้แล้ววาดคืนตอนย่อกลับ · b2: PC เต็มจอ ปุ่ม Flight log ใน Summary เปิดหน้าต่างกรอก',fr.hid>=5&&fr.resHidden&&fr.inMap&&fr.gsVal&&fr.dirty&&fr.notYet&&fr.after===0&&fr.shown&&fr.hasC&&fr.pcWin,fr)}
+// v4.8.1 b3: เครื่องมือวัดมุมในไม้บรรทัด (PC เมาส์: แตะเป้า/ลากจุดกลาง · iPad โหมดกากบาท: เป้า = กลางจอ)
+ {const pc=await b.newPage({viewport:{width:1280,height:900}});await pc.goto('http://localhost:8773/');await pc.waitForTimeout(1200);
+  const a=await pc.evaluate(async()=>{try{kyClose()}catch(e){}const w=ms=>new Promise(r=>setTimeout(r,ms));if(!mp.classList.contains('full'))fsToggle();M.touched=true;await w(300);mp.classList.remove('uih');
+   rulOn(true);await w(80);const o={pcH:$('rlpc').hidden};$('rlpr').click();await w(150);o.btn=$('rlpr').getClientRects().length>0;const P=M.prot,r=mp.getBoundingClientRect();
+   o.on=P.on&&$('rlpr').classList.contains('on')&&!$('rlpc').hidden;o.nums=document.querySelectorAll('#ov .prn').length;o.hub=!!document.querySelector('#ov [data-prot]');o.c=[P.la,P.lo];o.cx=r.left+mp.clientWidth/2;o.cy=r.top+mp.clientHeight/2;return o});
+  await pc.mouse.click(a.cx+120,a.cy-120);await pc.waitForTimeout(250);
+  const b1=await pc.evaluate(()=>({lab:[...document.querySelectorAll('#ov .prl')].map(e=>e.textContent),rp:M.rul.pts.length,rings:document.querySelectorAll('#ov .prr').length}));
+  await pc.mouse.move(a.cx,a.cy);await pc.mouse.down();await pc.mouse.move(a.cx-80,a.cy+60,{steps:6});await pc.mouse.up();await pc.waitForTimeout(250);
+  const c1=await pc.evaluate(()=>{const o={c:[M.prot.la,M.prot.lo],lab:[...document.querySelectorAll('#ov .prl')].map(e=>e.textContent)};rulOn(false);o.off=!M.prot.on&&!document.querySelector('#ov .prn')&&$('rlpc').hidden;return o});
+  await pc.close();
+  t('T53 v4.8.1 b3 วัดมุม: ปุ่ม 🧭 ในไม้บรรทัด · วงองศา 36 ตัวเลข + วงระยะ · คลิกแผนที่ = ทิศ°T/ระยะ (ไม่เพิ่มจุดไม้บรรทัด) · ลากจุดกลางย้ายวง · ปิดไม้บรรทัด = ปิดวัดมุม',a.btn&&a.pcH&&a.on&&a.nums===36&&a.hub&&b1.lab.length===1&&/^0[3-5]\d°T \//.test(b1.lab[0])&&b1.rp===0&&b1.rings>=2&&(c1.c[0]<a.c[0]&&c1.c[1]<a.c[1])&&c1.lab.length===1&&c1.lab[0]!==b1.lab[0]&&c1.off,{a,b1,c1})}
+ {const r=await p.evaluate(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));rulOn(true);await w(80);$('rlpr').click();await w(150);M.touched=true;M.cx+=100;M.cy-=100;drawMap(false);await w(150);
+   const o={cross:crossMode(),lab:[...document.querySelectorAll('#ov .prl')].map(e=>e.textContent)};rulOn(false);await w(80);return o});
+  t('T53 b iPad (โหมดกากบาท): เป้าวัดมุม = กากบาทกลางจอ เลื่อนแผนที่แล้วได้ทิศ 045°T',r.cross&&r.lab.length===1&&/^045°T/.test(r.lab[0]),r)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
