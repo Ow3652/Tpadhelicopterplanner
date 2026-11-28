@@ -469,6 +469,26 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   const items=await q.evaluate(()=>[...document.querySelectorAll('#sg div[data-i]')].map(d=>d.textContent));
   await q.tap('#sg div[data-i="0"]').catch(()=>{});await q.waitForTimeout(300);const p1=await q.evaluate(()=>pts[1].name+' '+pts[1].lat);await c2.close();
   t('T55 v4.8.1 b6 ค้นหาออนไลน์ iPad: คีย์บอร์ดเปิด (visualViewport เปลี่ยน 20 ครั้ง) ไม่ย่อแผนที่/วาด ≤ 2 ครั้ง · แตะค้นหาแล้วปิดคีย์บอร์ด ไม่แตะทะลุโดนช่องพิกัด → แผนที่พอดีจอหลังปิด · photon ไม่ตอบ = เลิกรอใน 8–10 วินาที · ตัดผลนอกภูมิภาค · เลือกผลได้',k1.h===''&&k1.draws<=2&&k2.blur&&k2.h==='620px'&&el>=7500&&el<11000&&items.length===1&&/Siriraj/.test(items[0])&&/bounded=1/.test(nomU)&&/^Siriraj 1345/.test(p1),{k1,k2,el,items,p1})}
+// v4.8.1 b7: โหมดบิน + GPS + Track up — หมุนแผนที่ไม่วาดเต็มทุกเฟรม (เดิม ~15 ครั้ง/วินาที) · หัวแกว่ง < 1° ไม่หมุน · คืนหน่วยความจำภาพข้อมูลความสูง (ImageBitmap.close)
+ {const fs=require('fs'),zlib=require('zlib');const c3=await b.newContext({viewport:{width:810,height:1080},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'});
+  const png=(()=>{const crc=b=>{let c,t=[];for(let n=0;n<256;n++){c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;t[n]=c>>>0}let x=0xffffffff;for(const v of b)x=t[(x^v)&255]^(x>>>8);return (x^0xffffffff)>>>0};const ch=(ty,d)=>{const l=Buffer.alloc(4);l.writeUInt32BE(d.length);const td=Buffer.concat([Buffer.from(ty),d]);const c=Buffer.alloc(4);c.writeUInt32BE(crc(td));return Buffer.concat([l,td,c])};
+   const ih=Buffer.alloc(13);ih.writeUInt32BE(256,0);ih.writeUInt32BE(256,4);ih[8]=8;ih[9]=2;const raw=Buffer.alloc(256*(1+256*3));for(let y=0;y<256;y++){raw[y*769]=0;for(let x=0;x<256;x++){raw[y*769+1+x*3]=128;raw[y*769+2+x*3]=50}}
+   return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),ch('IHDR',ih),ch('IDAT',zlib.deflateSync(raw)),ch('IEND',Buffer.alloc(0))])})();
+  await c3.route(/terrarium|Tpadterrain\/\d/,r=>r.fulfill({contentType:'image/png',body:png,headers:{'Access-Control-Allow-Origin':'*'}}));
+  await c3.addInitScript(()=>{window.__bm={n:0,c:0};const o=window.createImageBitmap;if(o)window.createImageBitmap=async(...a)=>{const bm=await o(...a);__bm.n++;const cl=bm.close.bind(bm);bm.close=()=>{__bm.c++;cl()};return bm}});
+  const q=await c3.newPage();await q.goto('http://localhost:8773/');await q.waitForTimeout(1300);
+  await q.evaluate(()=>{try{kyClose()}catch(e){}flyOn();pts.length=0;pts.push({name:"A",lat:"1342.00N",lon:"10024.00E"},{name:"B",lat:"1500.00N",lon:"10200.00E"});drawPts();calc();MLP.on=true;MLP.first=false;
+   M.z=12;M.touched=true;try{$("mlf").checked=true}catch(e){}navGo();if(!(NAVON?NAVUP:TUP))navRzn();
+   window.__ov=0;new MutationObserver(()=>__ov++).observe(document.getElementById('ov'),{childList:true});
+   window.__fix=(la,lo,hd)=>{MLP.la=la;MLP.lo=lo;MLP.ll={la,lo};MLP.hd=hd;MLP.sp=60;MLP.t=Date.now();gpsText();navText();navFix();gpsDraw($("mlf").checked)}});
+  await q.waitForTimeout(400);await q.evaluate(()=>{__ov=0});let la=13.70,lo=100.40;const T0=Date.now();
+  for(let k=0;k<10;k++){la+=0.0004;lo+=0.0004;await q.evaluate(([a,c,d])=>__fix(a,c,d),[la,lo,45+(k%2?2.5:-2.5)]);await q.waitForTimeout(1000)}
+  const r1=await q.evaluate(()=>({ov:__ov,up:NAVON?NAVUP:TUP}));const sec=(Date.now()-T0)/1000;
+  await q.evaluate(()=>{__fix(MLP.la+0.0004,MLP.lo+0.0004,47)});await q.waitForTimeout(1500);const r0=await q.evaluate(()=>RZ);
+  await q.evaluate(()=>{__fix(MLP.la+0.0004,MLP.lo+0.0004,47.6)});await q.waitForTimeout(800);const r2=await q.evaluate(()=>({rz:RZ,run:ROTRUN}));
+  await q.evaluate(()=>{__fix(MLP.la+0.0004,MLP.lo+0.0004,120)});await q.waitForTimeout(2500);const r3=await q.evaluate(()=>({rz:RZ,run:ROTRUN,ovT:getComputedStyle(document.getElementById('map')).getPropertyValue('--rz').trim()}));
+  const bm=await q.evaluate(async()=>{for(let i=0;i<40&&__bm.n===0;i++)await new Promise(r=>setTimeout(r,100));return __bm});await c3.close();
+  t('T56 v4.8.1 b7 โหมดบิน GPS Track up: หัวแกว่ง ±2.5° ทุกวินาที วาด #ov ใหม่ ≤ 5 ครั้ง/วินาที (เดิม ~15) · เปลี่ยน < 1° ไม่หมุน · เลี้ยว 120° หมุนจบที่ 240° · ImageBitmap ถูก close ครบ',r1.up&&r1.ov/sec<=5&&Math.abs(r2.rz-r0)<0.01&&!r2.run&&Math.abs(r3.rz-240)<0.5&&!r3.run&&r3.ovT===r3.rz+'deg'&&bm.n>0&&bm.c===bm.n,{perSec:+(r1.ov/sec).toFixed(1),r0,r2,r3,bm})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

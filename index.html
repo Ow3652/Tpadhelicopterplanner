@@ -1964,9 +1964,12 @@ function RE(e){if(!RZ)return e;const r=mp.getBoundingClientRect(),W=mp.clientWid
 return new Proxy(e,{get(t,k){if(k==="clientX")return X;if(k==="clientY")return Y;const v=t[k];return typeof v==="function"?v.bind(t):v}})}
 var ROTT=null,ROTI=false,ROTRUN=false,ROTLT=0;
 function rotTo(t){ROTT=((t%360)+360)%360;if(!ROTRUN){ROTRUN=true;requestAnimationFrame(rotStep)}}
+/* v4.8.1 b6: ระหว่างหมุนแผนที่ (Track/Heading up) เดิม drawMap เต็มทุก 40 ms — หัว GPS แกว่งทุกวินาทีจึงวาดใหม่ ~15 ครั้ง/วินาทีไม่หยุด (iPad ร้อน/หน่วยความจำขยะสะสม → แอปปิด)
+   ตอนนี้เฟรมระหว่างทางหมุนด้วย CSS (--rz) อย่างเดียว วาดเต็มเมื่อหมุนเสร็จ หรือทุก ROTFULL ms ถ้ายังหมุนต่อเนื่อง */
+var ROTFD=0;const ROTFULL=500;
 function rotStep(ts){if(ROTT==null){ROTRUN=false;return}if(ts-ROTLT<40){requestAnimationFrame(rotStep);return}ROTLT=ts;const d=((ROTT-RZ+540)%360)-180;
-if(Math.abs(d)<0.15){const t=ROTT;ROTI=true;setRot(t,true);ROTI=false;ROTT=null;ROTRUN=false;return}ROTI=true;setRot(RZ+d*0.25,true);ROTI=false;requestAnimationFrame(rotStep)}
-function setRot(v,fr){if(!ROTI)ROTT=null;RZ=(((fr?v:Math.round(v))%360)+360)%360;$("map").style.setProperty("--rz",RZ+"deg");{const H=(360-Math.round(RZ)%360)%360||360;$("rzn").textContent=({360:"N",90:"E",180:"S",270:"W"}[H]||"")+"↑ "+String(H).padStart(3,"0")+"°";try{if(NAVON?NAVUP:TUP)$("rzn").textContent=rotLbl()+"↑ "+String(H).padStart(3,"0")+"°"}catch(e){}}try{if(NAVON)navText()}catch(e){}drawMap(false)}
+if(Math.abs(d)<0.15){const t=ROTT;ROTI=true;setRot(t,true);ROTI=false;ROTT=null;ROTRUN=false;ROTFD=ts;return}const full=ts-ROTFD>=ROTFULL;if(full)ROTFD=ts;ROTI=true;setRot(RZ+d*0.25,true,!full);ROTI=false;requestAnimationFrame(rotStep)}
+function setRot(v,fr,lite){if(!ROTI)ROTT=null;RZ=(((fr?v:Math.round(v))%360)+360)%360;$("map").style.setProperty("--rz",RZ+"deg");{const H=(360-Math.round(RZ)%360)%360||360;$("rzn").textContent=({360:"N",90:"E",180:"S",270:"W"}[H]||"")+"↑ "+String(H).padStart(3,"0")+"°";try{if(NAVON?NAVUP:TUP)$("rzn").textContent=rotLbl()+"↑ "+String(H).padStart(3,"0")+"°"}catch(e){}}if(lite)return;try{if(NAVON)navText()}catch(e){}drawMap(false)}
 (function(){let t=null,iv=null;const st=()=>{clearTimeout(t);clearInterval(iv)};
 const bind=(id,d)=>{const b=$(id);b.addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();st();setRot(Math.round(RZ)+d);t=setTimeout(()=>{iv=setInterval(()=>setRot(Math.round(RZ)+d),90)},450)});["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,st));b.addEventListener("click",e=>{if(e.detail===0)setRot(Math.round(RZ)+d)})};
 bind("rzl",-1);bind("rzr",1);$("rzn").addEventListener("click",()=>{try{if(navRzn())return}catch(e){}setRot(0)});$("rzn").addEventListener("dblclick",e=>{e.preventDefault();try{NAVUP=false;TUP=false;RMODE=""}catch(x){}setRot(0,true)});["rzl","rzr"].forEach(id=>$(id).addEventListener("pointerdown",()=>{try{if(NAVON&&NAVUP)NAVUP=false;if(TUP)TUP=false}catch(e){}},true))})();
@@ -4038,7 +4041,7 @@ if(on){NAVGS0=$("gs").value;NAVRZ0=RZ;NAVUP=!!TUP;$("gs").readOnly=true;if($("mg
 else{if(NAVGS0!=null){$("gs").value=NAVGS0;NAVGS0=null}$("gs").readOnly=false;if($("mgs"))$("mgs").readOnly=false;setRot(NAVRZ0,true);try{calc()}catch(e){}}}
 function navFix(){let ch=false;
 if(NAVON){const v=MLP.sp!=null?Math.round(MLP.sp*1.943844):0;if(v>=3&&String($("gs").value)!==String(v)){$("gs").value=v;ch=true}if(ch)calc();else msumRender()}
-if(!(NAVON?NAVUP:TUP))return;const t=rotVal();if(t!=null){const r=((360-t)%360+360)%360;if(ROTT==null?Math.abs(((r-RZ+540)%360)-180)>=0.3:Math.abs(((r-ROTT+540)%360)-180)>=0.3)rotTo(r)}}
+if(!(NAVON?NAVUP:TUP))return;const t=rotVal();if(t!=null){const r=((360-t)%360+360)%360;if(ROTT==null?Math.abs(((r-RZ+540)%360)-180)>=1:Math.abs(((r-ROTT+540)%360)-180)>=1)rotTo(r)}}
 function navRzn(){const up=NAVON?NAVUP:TUP,setUp=v=>{if(NAVON)NAVUP=v;else TUP=v};
 let nx;if(!up)nx=CPON?"H":(MLP.on?"T":"");else if(RMODE==="H")nx=MLP.on?"T":"";else nx="";
 if(!up&&nx===""){if(NAVON)nx="T";else{toast("ยังไม่มีทิศทาง — เปิด “ใช้ตำแหน่ง” หรือ “ใช้เข็มทิศเครื่อง” ในเมนูตำแหน่งฉันก่อน");return false}}
@@ -4380,7 +4383,7 @@ function trImg(b){if(window.createImageBitmap)return createImageBitmap(b);return
 function trPump(){if(TOWN.st==="loading")return;while(TR.pend.size<6&&TR.qs.size){const k=TR.qs.values().next().value;TR.qs.delete(k);if(TR.t.has(k))continue;
 const p=k.split("/").map(Number),src=trSrc(p[0],p[1],p[2]);if(!src){TR.bad.set(k,Date.now());continue}TR.pend.add(k);
 fetch(src.u,{mode:"cors",credentials:"omit"}).then(async r=>{if(r.status===404&&src.own){TR.t.set(k,TR0);if(TR.t.size>TR.max)TR.t.delete(TR.t.keys().next().value);return}
-if(!r.ok)throw new Error("http "+r.status);const bm=await trImg(await r.blob());try{trDecode(k,bm)}catch(e){TR.err="cors";throw e}})
+if(!r.ok)throw new Error("http "+r.status);const bm=await trImg(await r.blob());try{trDecode(k,bm)}catch(e){TR.err="cors";throw e}finally{/* v4.8.1 b6: คืนหน่วยความจำภาพทันที (iOS เก็บไว้นาน) */try{if(bm&&bm.close)bm.close()}catch(x){}}})
 .catch(()=>{TR.bad.set(k,Date.now())}).finally(()=>{TR.pend.delete(k);trChanged();trPump()})}}
 /* หาแผ่นข้อมูลของช่อง (tx,ty) ที่ซูม ez ถ้ายังไม่มี ใช้แผ่นแม่ที่ซูมต่ำกว่า (สูงสุด 6 ระดับ) ที่โหลดไว้แล้ว */
 function trRes(ez,tx,ty,req){const n0=2**ez;if(ty<0||ty>=n0)return null;let pb=false;
