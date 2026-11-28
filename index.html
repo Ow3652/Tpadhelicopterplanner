@@ -150,7 +150,7 @@ tfoot td{font-weight:600;border-bottom:0}
 #map.ruler{cursor:crosshair}
 #rl.on{background:#e65100;color:#fff;border-color:#e65100}
 #rlpr.on{background:#00838f;color:#fff;border-color:#00838f}#rlpc[hidden]{display:none}
-#ov .prn{font:600 11px system-ui,sans-serif;fill:#0b2a33}#ov .prn.b{font-size:13px;font-weight:800}#ov .prr{font:600 10px system-ui,sans-serif;fill:#00636b;paint-order:stroke;stroke:#fff;stroke-width:3px}
+#ov .prn{font:700 13px system-ui,sans-serif;fill:#00636b;paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}#ov .prn.b{font-size:16px;font-weight:800}#ov .prr{font:600 10px system-ui,sans-serif;fill:#00636b;paint-order:stroke;stroke:#fff;stroke-width:3px}
 #wx{position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:.75}
 #wx .wt{position:absolute;max-width:none;user-select:none}
 #wxc{position:absolute;left:0;top:0;filter:blur(5px)}
@@ -1835,18 +1835,19 @@ function protOn(on){const P=M.prot;P.on=on;P.tgt=null;P.drag=0;if(on){if(!M.rul.
  $("rlpr").classList.toggle("on",on);$("rlpr").setAttribute("aria-pressed",String(on));$("rlpc").hidden=!on;drawMap(false)}
 function protSvg(z,ox,oy,W,H){const P=M.prot,q=wp(P.la,P.lo,z),cx=q[0]-ox,cy=q[1]-oy,R=protR(),ri=R-36,f=v=>v.toFixed(1),C="#00838f",sn=Math.sin,cs=Math.cos,rd=Math.PI/180;
  const at=(d,r)=>[cx+r*sn(d*rd),cy-r*cs(d*rd)];
- let s=`<g class="prt" style="pointer-events:none"><circle cx="${f(cx)}" cy="${f(cy)}" r="${f((R+ri)/2)}" fill="none" stroke="#fff" stroke-opacity=".78" stroke-width="${R-ri}"/><circle cx="${f(cx)}" cy="${f(cy)}" r="${R}" fill="none" stroke="${C}" stroke-width="2"/><circle cx="${f(cx)}" cy="${f(cy)}" r="${ri}" fill="none" stroke="${C}" stroke-width="1.2"/>`;
+ let s=`<g class="prt" style="pointer-events:none"><circle cx="${f(cx)}" cy="${f(cy)}" r="${R}" fill="none" stroke="#fff" stroke-width="4.5" opacity=".7"/><circle cx="${f(cx)}" cy="${f(cy)}" r="${R}" fill="none" stroke="${C}" stroke-width="2"/>`;
  /* วงระยะ */
  const ppn=TS*2**z/360/60/Math.cos(P.la*rd);let st=0;for(const v of [0.1,0.2,0.5,1,2,5,10,20,25,50,100,200]){if(v*ppn>=ri/5){st=v;break}}
  if(st){const n=Math.floor((ri-4)/(st*ppn)),u=RU;for(let k=1;k<=n;k++){const r=k*st*ppn,a=at(135,r),v=k*st;s+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r)}" fill="none" stroke="${C}" stroke-width="1.2" stroke-dasharray="5 4" opacity=".85"/><text class="prr" x="${f(a[0]+3)}" y="${f(a[1]+11)}">${(+v.toFixed(1))+(k===n?" NM":"")}</text>`}}
  /* เส้นรัศมีทุก 30° */
- let ln="";for(let d=0;d<360;d+=30){const a=at(d,10),b=at(d,ri);ln+=`M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}`}
+ let ln="";for(let d=0;d<360;d+=45){const a=at(d,10),b=at(d,R-34);ln+=`M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}`}
  s+=`<path d="${ln}" stroke="${C}" stroke-width="1" opacity=".45"/>`;
  /* ขีดองศา */
- let tk="";for(let d=0;d<360;d++){const L=d%10===0?13:d%5===0?8:(R>=110?4:0);if(!L)continue;const a=at(d,R),b=at(d,R-L);tk+=`M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}`}
- s+=`<path d="${tk}" stroke="#0b2a33" stroke-width="1.1"/>`;
+ let tk="",tm="";for(let d=0;d<360;d+=10){if(d%45===0)continue;const a=at(d,R),b=at(d,R-10);tk+=`M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}`}
+ for(let d=0;d<360;d+=45){const a=at(d,R),b=at(d,R-18);tm+=`M${f(a[0])} ${f(a[1])}L${f(b[0])} ${f(b[1])}`}
+ s+=`<path d="${tk}${tm}" stroke="#fff" stroke-width="4" opacity=".7"/><path d="${tk}" stroke="${C}" stroke-width="1.6"/><path d="${tm}" stroke="${C}" stroke-width="2.6"/>`;
  /* ตัวเลขทุก 10° (หันออกนอกวง) */
- for(let d=0;d<360;d+=10){s+=`<text class="prn${d%90===0?" b":""}" transform="rotate(${d} ${f(cx)} ${f(cy)})" x="${f(cx)}" y="${f(cy-R+26)}" text-anchor="middle">${d}</text>`}
+ for(let d=0;d<360;d+=45){const a=at(d,R-31);s+=`<text class="prn${d%90===0?" b":""}" x="${f(a[0])}" y="${f(a[1])}" text-anchor="middle" dominant-baseline="central">${{0:"N",90:"E",180:"S",270:"W"}[d]||d}</text>`}
  /* ลูกศรเหนือจริง */
  const n1=at(0,R+3);s+=`<polygon points="${f(n1[0])},${f(n1[1]-11)} ${f(n1[0]-6)},${f(n1[1])} ${f(n1[0]+6)},${f(n1[1])}" fill="${C}" stroke="#fff" stroke-width="1.5"/></g>`;
  /* เป้า: แตะ หรือกากบาทกลางจอ (โหมดกากบาท) */
