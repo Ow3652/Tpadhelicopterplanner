@@ -5020,12 +5020,32 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #flyWp .wpc button{min-height:54px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#fff;font:700 16px system-ui,sans-serif}#flyWp .wpc button.p{background:#1565c0;border-color:#64b5f6}#flyWp .wpc button:disabled{opacity:.4}
 #flyWp .wpe{margin:0 14px 6px;padding:8px 10px;border-radius:8px;background:#4a1c1c;color:#ffcdd2;font:600 14px system-ui,sans-serif}
 #flyWp .wps{display:flex;gap:8px;padding:8px 12px 4px}#flyWp .wps button{flex:0 0 56px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#fff;font:700 18px system-ui,sans-serif}
-#flyWp .mkl{display:flex;flex-direction:column;gap:8px;padding:4px 12px 12px;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 190px);overflow:auto}
+#flyWp .mkl{display:flex;flex-direction:column;gap:8px;padding:4px 12px 12px;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 250px);overflow:auto}
 #flyWp .mkr{border:1px solid #444;border-radius:10px;padding:8px;background:#1d1d1d}
 #flyWp .wpn{font:700 18px system-ui,sans-serif;color:#ffd54f}#flyWp .wpn span{font-weight:600;font-size:14px;color:#9e9e9e}
 #flyWp .mkr small{display:block;margin:4px 0 6px;color:#bbb;font:500 14px ui-monospace,Menlo,monospace}
+#flyWp .wpt{display:flex;gap:6px;overflow-x:auto;padding:4px 12px 6px;scrollbar-width:thin}#flyWp .wpt button{flex:0 0 auto;min-height:44px;padding:0 12px;border-radius:22px;border:1px solid #555;border-left:5px solid var(--cc,#888);background:#2a2a2a;color:#fff;font:600 15px system-ui,sans-serif;white-space:nowrap}#flyWp .wpt button.on{background:#1565c0;border-color:#64b5f6}#flyWp .wpt span,#flyWp .wph span{opacity:.7;font-weight:500}
+#flyWp .wph{position:sticky;top:-4px;z-index:1;margin-top:4px;padding:6px 10px;background:#111;border-left:6px solid #888;border-radius:6px;font:700 16px system-ui,sans-serif;color:#fff}
+#flyWp .wpm{min-height:44px;border-radius:8px;border:1px dashed #666;background:transparent;color:#90caf9;font:600 15px system-ui,sans-serif}
 #flyWp .mkb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 #flyWp .mkb button{min-height:44px;border-radius:8px;border:1px solid #555;background:#2a2a2a;color:#fff;font:600 15px system-ui,sans-serif}
+/* v4.8.1 b9: ขนาดปุ่ม Waypoint ตามเครื่อง — iPad (จอสัมผัส > 600 px) ปุ่มใหญ่สำหรับกดขณะบิน · มือถือ (≤ 600 px) กะทัดรัดแต่ยังแตะได้ ≥ 44 px */
+@media (pointer:coarse) and (min-width:601px){
+#flyWp.flyw{width:min(680px,94%)}
+#flyWp .wpt button{min-height:52px;padding:0 16px;font-size:17px}
+#flyWp .mkb button{min-height:52px;font-size:17px}
+#flyWp .wpn{font-size:20px}#flyWp .wpn span{font-size:16px}#flyWp .mkr small{font-size:16px}#flyWp .wph{font-size:18px;padding:8px 12px}
+#flyWp .wps input,#flyWp .lgf input,#flyWp .lgf select{height:56px;font-size:20px}#flyWp .wps button{flex-basis:64px;font-size:20px}
+#flyWp .wpc button{min-height:60px;font-size:18px}#flyWp .wpm{min-height:52px;font-size:16px}}
+@media (max-width:600px){
+#flyWp.flyw{width:96%}
+#flyWp .lgf{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:8px 10px}#flyWp .lgf label{font-size:13px}
+#flyWp .lgf input,#flyWp .lgf select,#flyWp .wps input{height:46px;font-size:16px}
+#flyWp .wpc{grid-template-columns:1fr 1fr;padding:4px 10px 8px}#flyWp .wpc button{min-height:48px;font-size:14px}#flyWp .wpc button.p{grid-column:1/-1}
+#flyWp .wps{padding:6px 10px 4px}#flyWp .wps button{flex-basis:48px}
+#flyWp .wpt{padding:4px 10px 6px;gap:5px}#flyWp .wpt button{min-height:44px;padding:0 10px;font-size:14px}
+#flyWp .mkl{padding:4px 10px 10px;gap:6px}#flyWp .mkr{padding:6px}#flyWp .mkb{gap:5px}#flyWp .mkb button{min-height:44px;font-size:14px}
+#flyWp .wpn{font-size:16px}#flyWp .wpn span{font-size:13px}#flyWp .mkr small{font-size:13px}#flyWp .wph{font-size:15px}}
 /* v4.7.9 b12: หน้าต่าง Flight log */
 #flyLg.flyw{width:min(600px,94%)}
 #flyLg .lgf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 14px;overflow:auto;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 210px)}
@@ -5360,23 +5380,31 @@ LG.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-lg
 LG.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){LG.hidden=true;return}if(e.target.closest("[data-lgp]")){lgSave();LG.hidden=true;try{$f("logbtn").click()}catch(x){}}});
 /* v4.8.1 b5: Menu → 📌 Waypoint (เมนูย่อย Create / List) — สร้างจุดด้วยฟอร์มเดิมของหน้าแรก (#un/#uc/#ula/#ulo/#ut/#ud → #uadd) · รายการ = จุดของฉัน (DB.MY) + จุดร่วม (DB.CU) */
 function wpPos(){if(MLP.on&&MLP.la!=null)return[MLP.la,MLP.lo];return ctrLL()}
-function wpRows(q){const fm=$f("fmt").value,U=s=>String(s||"").toUpperCase(),Q=U(q).trim();let L=[];
- ["MY","CU"].forEach(k=>(DB[k]||[]).forEach((p,i)=>{if(!Q||U(p.n).includes(Q)||U(p.c).includes(Q))L.push({k,i,p})}));
- L.sort((a,b)=>String(a.p.n).localeCompare(String(b.p.n),"th"));const n=L.length;L=L.slice(0,300);
- if(!n)return `<div class="fom">${Q?"ไม่พบจุดที่ตรงกับคำค้น":"ยังไม่มีจุด — กด ➕ Create เพื่อสร้างจุดใหม่"}</div>`;
- return L.map(o=>`<div class="mkr"><div class="wpn">${o.k==="MY"?"⭐":"📌"} <b>${esc(o.p.n)}</b>${o.p.c&&o.p.c!==o.p.n?` <span>${esc(o.p.c)}</span>`:""}</div><small>${fc(o.p.la,true,fm)} ${fc(o.p.lo,false,fm)}${o.p.note?" · "+esc(o.p.note):""}</small><div class="mkb wpb"><button type="button" data-wv="${o.k}:${o.i}">👁 Show</button><button type="button" data-wd="${o.k}:${o.i}">D→</button><button type="button" data-wr="${o.k}:${o.i}">+ Route</button></div></div>`).join("")+(n>300?`<div class="fom">แสดง 300 จาก ${n} จุด — พิมพ์ค้นหาเพื่อกรอง</div>`:"")}
+/* v4.8.1 b9: List = จุดทั้งหมดทุกประเภท (ตาม CATS) แยกหัวข้อ + ปุ่มเลือกประเภท (WP.cat) · ค้นหาชื่อ/รหัสข้ามทุกประเภท */
+function wpCats(){const o=["MY","CU"];CATS.forEach(c=>{if(!o.includes(c.k))o.push(c.k)});return o.map(k=>{const c=CATS.find(x=>x.k===k)||{k,n:k,c:"#888"};return{k,n:c.n,c:c.c,L:(DB[k]||[]).filter(p=>p&&isFinite(p.la)&&isFinite(p.lo))}}).filter(c=>c.L.length)}
+function wpRow(k,i,p,fm){return `<div class="mkr"><div class="wpn">${k==="MY"?"⭐ ":k==="CU"?"📌 ":""}<b>${esc(p.n)}</b>${p.c&&p.c!==p.n?` <span>${esc(p.c)}</span>`:""}</div><small>${fc(p.la,true,fm)} ${fc(p.lo,false,fm)}${p.note?" · "+esc(p.note):""}${p.x?" · "+esc(String(p.x).slice(0,60)):""}</small><div class="mkb wpb"><button type="button" data-wv="${k}:${i}">👁 Show</button><button type="button" data-wd="${k}:${i}">D→</button><button type="button" data-wr="${k}:${i}">+ Route</button></div></div>`}
+function wpRows(q){const fm=$f("fmt").value,U=s=>String(s||"").toUpperCase(),Q=U(q).trim(),cs=wpCats(),sel=WP.cat||"all",one=sel!=="all";let h="",tot=0;
+ const lim=one?400:(Q?60:12);
+ for(const c of cs){if(one&&c.k!==sel)continue;let L=c.L.map(p=>({p,i:DB[c.k].indexOf(p)}));if(Q)L=L.filter(o=>U(o.p.n).includes(Q)||U(o.p.c).includes(Q));if(!L.length)continue;
+  L.sort((a,b)=>String(a.p.n).localeCompare(String(b.p.n),"th"));tot+=L.length;
+  h+=`<div class="wph" style="border-left-color:${c.c}">${esc(c.n)} <span>${L.length}</span></div>`+L.slice(0,lim).map(o=>wpRow(c.k,o.i,o.p,fm)).join("");
+  if(L.length>lim)h+=`<button type="button" class="wpm" data-wc="${c.k}">${one?`แสดง ${lim} จาก ${L.length} จุด — พิมพ์ค้นหาเพื่อกรอง`:`ดูทั้งหมด ${L.length} จุดใน ${esc(c.n)} ›`}</button>`}
+ if(!tot)return `<div class="fom">${Q?"ไม่พบจุดที่ตรงกับคำค้น":"ยังไม่มีจุดในประเภทนี้"}</div>`;return h}
+function wpChips(){const cs=wpCats(),sel=WP.cat||"all",n=cs.reduce((s,c)=>s+c.L.length,0);
+ return `<div class="wpt">`+[`<button type="button" data-wc="all" class="${sel==="all"?"on":""}">ทั้งหมด <span>${n}</span></button>`].concat(cs.map(c=>`<button type="button" data-wc="${c.k}" class="${sel===c.k?"on":""}" style="--cc:${c.c}">${esc(c.n)} <span>${c.L.length}</span></button>`)).join("")+`</div>`}
 function wpRender(k){WP.k=k;const X=`<button type="button" data-fx="1" aria-label="Close">✕</button>`,cnt=(DB.MY||[]).length+(DB.CU||[]).length;let h;
  if(k==="c"){const f=$f("ufmt").value,P=wpPos(),d=WP.ud||"my",fl=[["un","Name","",1],["uc","Code (optional)",""],["ut","Note (optional)",""],["ula","Latitude",fc(P[0],true,f)],["ulo","Longitude",fc(P[1],false,f)]];
   h=`<div class="foh"><b>Create waypoint</b>${X}</div><div class="lgf">`+fl.map(a=>`<label class="${a[3]?"w":""}"><span>${a[1]}</span><input data-wf="${a[0]}" value="${esc(a[2])}" autocomplete="off"${a[0]==="ula"||a[0]==="ulo"?' spellcheck="false"':""}></label>`).join("")+
   `<label class="w"><span>Save to</span><select data-wf="ud"><option value="my"${d==="my"?" selected":""}>⭐ จุดของฉัน (ส่วนตัว)</option><option value="pub"${d!=="my"?" selected":""}>📌 จุดร่วม (Pub_point · ทุกคนเห็น)</option></select></label></div>`+
   `<div class="wpe" hidden></div><div class="lgb wpc"><button type="button" data-wp="ctr">⌖ Map center</button><button type="button" data-wp="me"${MLP.on&&MLP.la!=null?"":" disabled"}>✈ My position</button><button type="button" data-wp="save" class="p">💾 Save</button></div><div class="fom">พิกัดเริ่มต้น = ${MLP.on&&MLP.la!=null?"ตำแหน่งเครื่อง (GPS)":"กลางจอ (กากบาท)"} · รูปแบบพิกัดตามช่อง “รูปแบบพิกัด” ของจุดร่วมหน้าแรก</div>`}
- else if(k==="l"){h=`<div class="foh"><b>Waypoints (${cnt})</b>${X}</div><div class="wps"><input data-ws="1" placeholder="🔎 ค้นหาชื่อ / รหัส" autocomplete="off" value="${esc(WP.q||"")}"><button type="button" data-wp="back">◀</button></div><div class="mkl wpl">${wpRows(WP.q)}</div>`}
- else h=`<div class="foh"><b>Waypoint</b>${X}</div><div class="fog">`+`<button type="button" data-wp="c">➕ Create</button><button type="button" data-wp="l">📋 List (${cnt})</button>`+`</div><div class="fom pkn">Create = สร้างจุดใหม่ (จุดของฉัน หรือจุดร่วม) · List = ดูจุดทั้งหมดที่สร้างไว้ แตะ Show เพื่อไปที่จุดบนแผนที่</div>`;
+ else if(k==="l"){h=`<div class="foh"><b>Waypoints — จุดทั้งหมด</b>${X}</div><div class="wps"><input data-ws="1" placeholder="🔎 ค้นหาชื่อ / รหัส (ทุกประเภท)" autocomplete="off" value="${esc(WP.q||"")}"><button type="button" data-wp="back">◀</button></div>${wpChips()}<div class="mkl wpl">${wpRows(WP.q)}</div>`}
+ else h=`<div class="foh"><b>Waypoint</b>${X}</div><div class="fog">`+`<button type="button" data-wp="c">➕ Create</button><button type="button" data-wp="l">📋 List (all points)</button>`+`</div><div class="fom pkn">Create = สร้างจุดใหม่ (จุดของฉัน หรือจุดร่วม) · List = ดูพิกัดจุดทั้งหมดแยกตามประเภท แตะ Show เพื่อไปที่จุดบนแผนที่</div>`;
  WP.innerHTML=h}
 function wpKey(s){const a=String(s).split(":");return[a[0],+a[1]]}
 WP.addEventListener("input",e=>{const t=e.target.closest("[data-ws]");if(!t)return;WP.q=t.value;const l=WP.querySelector(".wpl");if(l)l.innerHTML=wpRows(WP.q)});
 WP.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-wf],[data-ws]"))e.target.blur()});
 WP.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){WP.hidden=true;return}let b;
+ if((b=e.target.closest("[data-wc]"))){WP.cat=b.dataset.wc;const t=WP.querySelector(".wpt"),l=WP.querySelector(".wpl");if(t)t.outerHTML=wpChips();if(l){l.innerHTML=wpRows(WP.q);l.scrollTop=0}const on=WP.querySelector(".wpt .on");if(on)on.scrollIntoView({block:"nearest",inline:"center"});return}
  if((b=e.target.closest("[data-wp]"))){const g=b.dataset.wp;
   if(g==="c"||g==="l"){wpRender(g);return}if(g==="back"){wpRender("m");return}
   if(g==="ctr"||g==="me"){const P=g==="me"?(MLP.on&&MLP.la!=null?[MLP.la,MLP.lo]:null):ctrLL();if(!P)return;const f=$f("ufmt").value;WP.querySelector('[data-wf="ula"]').value=fc(P[0],true,f);WP.querySelector('[data-wf="ulo"]').value=fc(P[1],false,f);return}

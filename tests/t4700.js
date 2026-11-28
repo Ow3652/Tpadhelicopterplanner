@@ -447,9 +447,15 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   const l1=await p.evaluate(()=>{const r=[...document.querySelectorAll('#flyWp .mkr')];return{rows:r.length,txt:r[0]?r[0].querySelector('.wpn').textContent:''}});
   await p.tap('#flyWp .mkr [data-wv]');await W(300);
   const v1=await p.evaluate(()=>({closed:document.querySelector('#flyWp').hidden,pop:M.pop&&M.pop.c==='MY'&&DB.MY[M.pop.i].n==='T54 WPT'}));
+  await p.evaluate(()=>{const w=document.getElementById('flyWp');w.q='';w.cat='all';wpOpen('l')});await p.waitForTimeout(150);
+  const c1=await p.evaluate(()=>{const q=s=>[...document.querySelectorAll(s)];const r={chips:q('#flyWp .wpt button').map(b=>b.dataset.wc),heads:q('#flyWp .wph').length,chipH:Math.round(q('#flyWp .wpt button')[0].getBoundingClientRect().height)};
+   document.querySelector('#flyWp [data-ws]').value='';document.querySelector('#flyWp [data-ws]').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('#flyWp .wpt [data-wc="VOR"]').click();
+   const rows=q('#flyWp .wpl .mkr');r.vorRows=rows.length;r.vorAll=DB.VOR.length;const cmp=rows.find(x=>/CMP/.test(x.textContent));r.cmp=cmp?cmp.querySelector('small').textContent:'';r.heads2=q('#flyWp .wph').map(x=>x.textContent);
+   document.querySelector('#flyWp .wpt [data-wc="all"]').click();document.getElementById('flyWp').hidden=true;return r});
   const vor=await p.evaluate(()=>{const v=DB.VOR.find(x=>x.c==='CMP');return v&&{n:v.n,la:+v.la.toFixed(4),lo:+v.lo.toFixed(4),x:v.x}});
   await p.evaluate(()=>{const i=MYL.findIndex(x=>x.n==='T54 WPT');if(i>=0){MYL.splice(i,1);mylSave();myAfter()}M.pop=null;document.querySelector('#flyWp').q='';drawMap(false)}).catch(()=>{});
   t('T54 v4.8.1 b5 Menu → 📌 Waypoint: เมนูย่อย Create/List · Create พิกัดเริ่มต้นกรอกให้ ปุ่ม ≥ 50 px · ไม่มีชื่อ = แจ้งเตือนในหน้าต่าง · บันทึกเป็นจุดของฉัน · List ค้นหา + Show ไปที่จุด',m0.tile&&sub==='c,l'&&/N$/.test(c0.la)&&/E$/.test(c0.lo)&&c0.h>=50&&e1.open&&!!e1.err&&s1.closed&&s1.n===m0.n+1&&s1.has&&l1.rows===1&&/T54 WPT/.test(l1.txt)&&v1.closed&&v1.pop,{m0,sub,c0,e1,s1,l1,v1});
+  t('T54 c v4.8.1 b9 List = จุดทั้งหมดแยกประเภท: ปุ่มประเภท (ทั้งหมด/จุดของฉัน/…/VOR/…) สูง ≥ 44 px · เลือก VOR แสดงครบพร้อมพิกัด CMP',c1.chips[0]==='all'&&c1.chips.includes('VOR')&&c1.chips.includes('AP')&&c1.chips.includes('TP')&&c1.chips.length>=8&&c1.heads>=8&&c1.chipH>=44&&c1.vorRows===c1.vorAll&&/(1638\.12N.*10159\.33E|16\.635\dN.*101\.988\dE)/.test(c1.cmp)&&c1.heads2.length===1&&/^VOR/.test(c1.heads2[0]),c1);
   t('T54 b VOR CMP (Chum Phae 112.90) 1638.12N 10159.33E อยู่ใน DB.VOR',vor&&vor.n==='Chum Phae'&&vor.la===16.6353&&vor.lo===101.9888&&vor.x==='112.90',vor)}
 // v4.8.1 b6: ค้นหาออนไลน์บน iPad — คีย์บอร์ดเปิดไม่ย่อ/ย้ายแผนที่ (เดิมวน resize/scroll จนค้าง) · กันแตะทะลุ · จำกัดเวลา 8 วินาที · เฉพาะภูมิภาคไทย
  {const c2=await b.newContext({viewport:{width:810,height:1080},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'});
