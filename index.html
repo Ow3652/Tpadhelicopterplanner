@@ -1089,7 +1089,8 @@ Chumphon;CPN;1042.67;09921.70;110.00
 Ranong;RAN;0946.70;09835.10;113.40
 Nakhon Si Thammarat;NKS;0832.49;09956.81;117.40
 Trang;TRT;0730.50;09937.00;113.90
-Narathiwat;NTA;0631.20;10144.60;112.30`,
+Narathiwat;NTA;0631.20;10144.60;112.30
+Chum Phae;CMP;1638.12;10159.33;112.90`,
 PT:`CAVPAD;;1346.32;10032.62
 RPCA;;1343.66;10013.06
 รร2ขลบุรี;;1322.07;10059.89
@@ -4994,6 +4995,22 @@ body.flying #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #map.fly #mpt .pt input{height:46px;font-size:15px;padding:0 4px}#map.fly #mpt .pt .nm{grid-column:2}#map.fly #mpt .pt [data-k=lat]{grid-column:3;grid-row:1}#map.fly #mpt .pt [data-k=lon]{grid-column:4;grid-row:1}#map.fly #mpt .pt .acts{grid-column:2/-1;grid-row:2;gap:6px}#map.fly #mpt .pt .acts .b{max-width:none;height:44px;font-size:18px}
 #map.fly #mpt .bar .b,#map.fly #lbr .b{min-height:46px;font-size:15px;padding:0 10px}#map.fly #lbr .qrow>div:first-child{flex-basis:100%}#map.fly #lbr .qrow>.bar{flex:1;justify-content:flex-end}}
 
+/* v4.8.1 b5: หน้าต่าง Waypoint */
+#flyWp.flyw{width:min(600px,94%)}
+#flyWp .lgf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 14px;overflow:auto;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 230px)}
+#flyWp .lgf label{display:flex;flex-direction:column;gap:4px;font:600 14px system-ui,sans-serif;color:#ccc;min-width:0}#flyWp .lgf label.w{grid-column:1/-1}
+#flyWp .lgf input,#flyWp .lgf select,#flyWp .wps input{height:50px;box-sizing:border-box;width:100%;min-width:0;padding:4px 12px;border-radius:10px;border:1px solid #555;background:#111;color:#fff;font:600 18px system-ui,sans-serif;color-scheme:dark}
+#flyWp .lgf input:focus,#flyWp .wps input:focus{outline:2px solid #64b5f6;border-color:#64b5f6}
+#flyWp .wpc{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;padding:4px 14px 8px}
+#flyWp .wpc button{min-height:54px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#fff;font:700 16px system-ui,sans-serif}#flyWp .wpc button.p{background:#1565c0;border-color:#64b5f6}#flyWp .wpc button:disabled{opacity:.4}
+#flyWp .wpe{margin:0 14px 6px;padding:8px 10px;border-radius:8px;background:#4a1c1c;color:#ffcdd2;font:600 14px system-ui,sans-serif}
+#flyWp .wps{display:flex;gap:8px;padding:8px 12px 4px}#flyWp .wps button{flex:0 0 56px;border-radius:10px;border:1px solid #555;background:#2a2a2a;color:#fff;font:700 18px system-ui,sans-serif}
+#flyWp .mkl{display:flex;flex-direction:column;gap:8px;padding:4px 12px 12px;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 190px);overflow:auto}
+#flyWp .mkr{border:1px solid #444;border-radius:10px;padding:8px;background:#1d1d1d}
+#flyWp .wpn{font:700 18px system-ui,sans-serif;color:#ffd54f}#flyWp .wpn span{font-weight:600;font-size:14px;color:#9e9e9e}
+#flyWp .mkr small{display:block;margin:4px 0 6px;color:#bbb;font:500 14px ui-monospace,Menlo,monospace}
+#flyWp .mkb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#flyWp .mkb button{min-height:44px;border-radius:8px;border:1px solid #555;background:#2a2a2a;color:#fff;font:600 15px system-ui,sans-serif}
 /* v4.7.9 b12: หน้าต่าง Flight log */
 #flyLg.flyw{width:min(600px,94%)}
 #flyLg .lgf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 14px;overflow:auto;max-height:calc(100vh - var(--flyt,66px) - var(--flyb,72px) - 210px)}
@@ -5127,8 +5144,9 @@ const PK=document.createElement("div");PK.id="flyPk";PK.className="fly-ui flyo f
 const SW=document.createElement("div");SW.id="flySar";SW.className="fly-ui flyo flyw";SW.hidden=true;
 const MKW=document.createElement("div");MKW.id="flyMk";MKW.className="fly-ui flyo flyw";MKW.hidden=true;
 const LG=document.createElement("div");LG.id="flyLg";LG.className="fly-ui flyo flyw";LG.hidden=true;
+const WP=document.createElement("div");WP.id="flyWp";WP.className="fly-ui flyo flyw";WP.hidden=true;WP.k="";
 const RB=document.createElement("button");RB.id="flyRec";RB.type="button";RB.className="fly-ui";RB.hidden=true;RB.setAttribute("aria-label","Track recording — open Tracks");RB.textContent="● REC";
-[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK,LG].forEach(e=>host.appendChild(e));
+[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK,LG,WP].forEach(e=>host.appendChild(e));
 ["pointerdown","pointerup","click","dblclick","touchstart","touchend","wheel","contextmenu","mousedown"].forEach(ev=>[T,B,Z,R,MN,DL,KL,RB,GP,MKW,SW,PK,LG].forEach(e=>e.addEventListener(ev,x=>{x.stopPropagation();if(ev==="contextmenu"||ev==="dblclick")x.preventDefault()},ev==="wheel"?{passive:true}:false)));
 function setVars(){const t=T.hidden?0:T.offsetHeight,b=B.hidden?0:B.offsetHeight;mp.style.setProperty("--flyt",t+"px");mp.style.setProperty("--flyb",b+"px");mp.style.setProperty("--flyzw",(Z.hidden?0:Z.offsetWidth)+"px")}
 function closeO(except){[MN,DL,KL,GP,MKW,SW,PK].forEach(o=>{if(o!==except)o.hidden=true})}
@@ -5172,7 +5190,7 @@ function menuRender(){/* v4.7.9 b12: ลำดับตามผู้ใช้ 
  ["hsi","HSI",HSIc()],["fms","FMS",$f("nlbtn").getAttribute("aria-pressed")==="true"?"on":""],["rmi","RMI",$f("navbtn").getAttribute("aria-pressed")==="true"?"on":""],
  ["sim","SIM",$f("simbox")&&!$f("simbox").hidden?"on":""],["log","📝 Flight log",""],["mk","🚩 Marks ("+DB.MK.length+")",""],
  ["ref","🔄 Refresh map",""],["fit","📐 Screen fit: "+FIT.k+"%",FIT.k<100?"on":""],["dl","📥 Download map/TAWS",""],
- ["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["man","📖 Manual",""],["exit","✕ Exit flight mode","x"]];
+ ["wk",WK.on?"☀ Screen awake: On":"☀ Screen awake: Off",WK.on?"on":""],["man","📖 Manual",""],["wpt","📌 Waypoint",""],["exit","✕ Exit flight mode","x"]];
  const h=`<div class="foh"><b>Menu</b><button type="button" data-fx="1" aria-label="Close">✕</button></div><div class="fog">`+t.map(a=>`<button type="button" data-fm="${a[0]}" class="${a[2]}">${a[1]}</button>`).join("")+`</div><div class="fom fdi">${esc(fitInfo())}</div>`;
  if(MN.innerHTML!==h)MN.innerHTML=h}
 /* v4.7.3: หน้าต่างตำแหน่งฉัน (GPS) — ใช้ตำแหน่ง · ตามตำแหน่ง · เข็มทิศเครื่อง · กลางแผนที่ (ตัวเดียวกับเมนู 📍 ตำแหน่งฉัน ของหน้าจอปกติ) */
@@ -5228,6 +5246,7 @@ MN.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){MN.hidden=true
  else if(k==="fit"){const L=[100,96,92,88,84];FIT.k=L[(L.indexOf(FIT.k)+1)%L.length];try{localStorage.setItem("heliFit",String(FIT.k))}catch(e){}fitApply()}
  else if(k==="mk"){MN.hidden=true;mkRender();MKW.hidden=false;return}
  else if(k==="log"){MN.hidden=true;lgRender();LG.hidden=false;return}
+ else if(k==="wpt"){MN.hidden=true;wpRender("m");WP.hidden=false;return}
  else if(k==="ref"){MN.hidden=true;try{mapRefresh()}catch(x){}/* v4.7.9 b11: ข้อมูลความสูงที่เคยโหลดไม่สำเร็จ ให้ลองใหม่ด้วย */try{TR.bad.clear();trPump();trChanged()}catch(x){}return}
  else if(k==="dl"){MN.hidden=true;try{$f("twdl").click()}catch(x){}return}
  else if(k==="wk"){wkSet(!WK.on)}
@@ -5321,6 +5340,39 @@ LG.addEventListener("input",e=>{const t=e.target.closest("[data-lg]");if(!t)retu
 LG.addEventListener("change",e=>{const t=e.target.closest("[data-lg]");if(!t)return;const o=$f(t.dataset.lg);if(o){o.value=t.value;o.dispatchEvent(new Event("change",{bubbles:true}))}});
 LG.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-lg]"))e.target.blur()});
 LG.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){LG.hidden=true;return}if(e.target.closest("[data-lgp]")){lgSave();LG.hidden=true;try{$f("logbtn").click()}catch(x){}}});
+/* v4.8.1 b5: Menu → 📌 Waypoint (เมนูย่อย Create / List) — สร้างจุดด้วยฟอร์มเดิมของหน้าแรก (#un/#uc/#ula/#ulo/#ut/#ud → #uadd) · รายการ = จุดของฉัน (DB.MY) + จุดร่วม (DB.CU) */
+function wpPos(){if(MLP.on&&MLP.la!=null)return[MLP.la,MLP.lo];return ctrLL()}
+function wpRows(q){const fm=$f("fmt").value,U=s=>String(s||"").toUpperCase(),Q=U(q).trim();let L=[];
+ ["MY","CU"].forEach(k=>(DB[k]||[]).forEach((p,i)=>{if(!Q||U(p.n).includes(Q)||U(p.c).includes(Q))L.push({k,i,p})}));
+ L.sort((a,b)=>String(a.p.n).localeCompare(String(b.p.n),"th"));const n=L.length;L=L.slice(0,300);
+ if(!n)return `<div class="fom">${Q?"ไม่พบจุดที่ตรงกับคำค้น":"ยังไม่มีจุด — กด ➕ Create เพื่อสร้างจุดใหม่"}</div>`;
+ return L.map(o=>`<div class="mkr"><div class="wpn">${o.k==="MY"?"⭐":"📌"} <b>${esc(o.p.n)}</b>${o.p.c&&o.p.c!==o.p.n?` <span>${esc(o.p.c)}</span>`:""}</div><small>${fc(o.p.la,true,fm)} ${fc(o.p.lo,false,fm)}${o.p.note?" · "+esc(o.p.note):""}</small><div class="mkb wpb"><button type="button" data-wv="${o.k}:${o.i}">👁 Show</button><button type="button" data-wd="${o.k}:${o.i}">D→</button><button type="button" data-wr="${o.k}:${o.i}">+ Route</button></div></div>`).join("")+(n>300?`<div class="fom">แสดง 300 จาก ${n} จุด — พิมพ์ค้นหาเพื่อกรอง</div>`:"")}
+function wpRender(k){WP.k=k;const X=`<button type="button" data-fx="1" aria-label="Close">✕</button>`,cnt=(DB.MY||[]).length+(DB.CU||[]).length;let h;
+ if(k==="c"){const f=$f("ufmt").value,P=wpPos(),d=WP.ud||"my",fl=[["un","Name","",1],["uc","Code (optional)",""],["ut","Note (optional)",""],["ula","Latitude",fc(P[0],true,f)],["ulo","Longitude",fc(P[1],false,f)]];
+  h=`<div class="foh"><b>Create waypoint</b>${X}</div><div class="lgf">`+fl.map(a=>`<label class="${a[3]?"w":""}"><span>${a[1]}</span><input data-wf="${a[0]}" value="${esc(a[2])}" autocomplete="off"${a[0]==="ula"||a[0]==="ulo"?' spellcheck="false"':""}></label>`).join("")+
+  `<label class="w"><span>Save to</span><select data-wf="ud"><option value="my"${d==="my"?" selected":""}>⭐ จุดของฉัน (ส่วนตัว)</option><option value="pub"${d!=="my"?" selected":""}>📌 จุดร่วม (Pub_point · ทุกคนเห็น)</option></select></label></div>`+
+  `<div class="wpe" hidden></div><div class="lgb wpc"><button type="button" data-wp="ctr">⌖ Map center</button><button type="button" data-wp="me"${MLP.on&&MLP.la!=null?"":" disabled"}>✈ My position</button><button type="button" data-wp="save" class="p">💾 Save</button></div><div class="fom">พิกัดเริ่มต้น = ${MLP.on&&MLP.la!=null?"ตำแหน่งเครื่อง (GPS)":"กลางจอ (กากบาท)"} · รูปแบบพิกัดตามช่อง “รูปแบบพิกัด” ของจุดร่วมหน้าแรก</div>`}
+ else if(k==="l"){h=`<div class="foh"><b>Waypoints (${cnt})</b>${X}</div><div class="wps"><input data-ws="1" placeholder="🔎 ค้นหาชื่อ / รหัส" autocomplete="off" value="${esc(WP.q||"")}"><button type="button" data-wp="back">◀</button></div><div class="mkl wpl">${wpRows(WP.q)}</div>`}
+ else h=`<div class="foh"><b>Waypoint</b>${X}</div><div class="fog">`+`<button type="button" data-wp="c">➕ Create</button><button type="button" data-wp="l">📋 List (${cnt})</button>`+`</div><div class="fom pkn">Create = สร้างจุดใหม่ (จุดของฉัน หรือจุดร่วม) · List = ดูจุดทั้งหมดที่สร้างไว้ แตะ Show เพื่อไปที่จุดบนแผนที่</div>`;
+ WP.innerHTML=h}
+function wpKey(s){const a=String(s).split(":");return[a[0],+a[1]]}
+WP.addEventListener("input",e=>{const t=e.target.closest("[data-ws]");if(!t)return;WP.q=t.value;const l=WP.querySelector(".wpl");if(l)l.innerHTML=wpRows(WP.q)});
+WP.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.closest("[data-wf],[data-ws]"))e.target.blur()});
+WP.addEventListener("click",e=>{if(e.target.closest("[data-fx]")){WP.hidden=true;return}let b;
+ if((b=e.target.closest("[data-wp]"))){const g=b.dataset.wp;
+  if(g==="c"||g==="l"){wpRender(g);return}if(g==="back"){wpRender("m");return}
+  if(g==="ctr"||g==="me"){const P=g==="me"?(MLP.on&&MLP.la!=null?[MLP.la,MLP.lo]:null):ctrLL();if(!P)return;const f=$f("ufmt").value;WP.querySelector('[data-wf="ula"]').value=fc(P[0],true,f);WP.querySelector('[data-wf="ulo"]').value=fc(P[1],false,f);return}
+  if(g==="save"){const v=k=>{const o=WP.querySelector('[data-wf="'+k+'"]');return o?o.value:""},er=WP.querySelector(".wpe");
+   ["un","uc","ut","ula","ulo"].forEach(k=>{$f(k).value=v(k)});$f("ud").value=v("ud");WP.ud=v("ud");const nm=v("un").trim()||v("uc").trim().toUpperCase();
+   const n0=(DB.MY||[]).length+(DB.CU||[]).length;try{$f("uadd").click()}catch(x){}const ue=$f("uerr");
+   if(ue&&!ue.hidden){er.hidden=false;er.textContent=ue.textContent;return}
+   if(((DB.MY||[]).length+(DB.CU||[]).length)<n0&&v("ud")==="my"){er.hidden=false;er.textContent="บันทึกไม่สำเร็จ";return}
+   WP.hidden=true;toast("สร้าง “"+nm+"” แล้ว");return}
+  return}
+ if((b=e.target.closest("[data-wv]"))){const [k,i]=wpKey(b.dataset.wv),p=DB[k]&&DB[k][i];if(!p)return;const c=$f("c_"+k);if(c)c.checked=true;M.pop={c:k,i};M.fitPts=[{la:p.la,lo:p.lo}];WP.hidden=true;drawMap(true);return}
+ if((b=e.target.closest("[data-wd]"))){const [k,i]=wpKey(b.dataset.wd);if(!needPos())return;try{directTo("P:"+k+":"+i)}catch(x){}WP.hidden=true;setTimeout(flyUi,0);return}
+ if((b=e.target.closest("[data-wr]"))){const [k,i]=wpKey(b.dataset.wr);try{addPoi(k,i)}catch(x){}}});
+window.wpRender=wpRender;window.wpOpen=k=>{wpRender(k||"m");WP.hidden=false};
 window.lgRender=lgRender;window.lgOpen=()=>{lgRender();LG.hidden=false;try{LG.querySelector('[data-lg="lpic"]').value||0}catch(x){}};/* v4.8.1 b2: ปุ่ม Flight log ในกล่อง Summary เปิดหน้าต่างนี้ก่อน (กรอก PIC/ทะเบียนให้ครบ แล้วกด Create Flight Log) */
 
 /* v4.8.0: โหมดบิน — กล่องรายละเอียดสิ่งที่เลือก / รูปแบบ SAR / เส้นทางค้นหา / พื้นที่ SAR / กราฟความสูง ไม่ให้ลอดใต้คอลัมน์ปุ่มขวา (ปุ่ม ✕ ▾ กดได้เสมอ) · ไม่ยุ่งกับกล่องที่ผู้ใช้ลากไว้ (PNL[id].x) · ออกจากโหมดบินล้างค่าที่ตั้ง */

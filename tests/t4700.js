@@ -371,7 +371,7 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   const lg=await p.evaluate(()=>{const g=e=>e.getBoundingClientRect(),w=$('flyLg'),inp=[...w.querySelectorAll('[data-lg]')];return{vis:!w.hidden,flyw:w.classList.contains('flyw'),keys:inp.map(x=>x.dataset.lg).join(','),minH:Math.min(...inp.map(x=>Math.round(g(x).height))),fs:Math.min(...inp.map(x=>parseFloat(getComputedStyle(x).fontSize))),btn:Math.round(g(w.querySelector('[data-lgp]')).height),pic:$('lpic').value,reg:$('lreg').value,date:$('ldate').value,note:$('lnote').value,ls:JSON.parse(localStorage.getItem('heliLogInfo')||'{}'),w:Math.round(g(w).width),mw:Math.round(g(mp).width),lay:(()=>{const r=k=>g(w.querySelector('[data-lg="'+k+'"]'));const a=r('lpic'),b=r('lreg'),c=r('ldate'),d=r('lfob'),e=r('ltx'),n=r('lnote');return a.width>b.width*1.7&&Math.abs(b.top-c.top)<2&&Math.abs(d.top-e.top)<2&&d.top>b.top&&n.top>d.top&&n.width>b.width*1.7})()}});
   await p.tap('#flyLg [data-lgp]');await W(600);const pr=await p.evaluate(()=>({mc:!/>MC</.test($('plog').innerHTML)&&!/MAG VAR/.test($('plog').innerHTML)&&!/MC = TC/.test($('plog').textContent),sig:(()=>{const P=document.querySelector('#plog .pg').getBoundingClientRect(),S=document.querySelector('#plog .lsig .sg').getBoundingClientRect();return P.bottom-S.bottom<20&&P.right-S.right<30})(),show:$('plog').classList.contains('show'),hid:$('flyLg').hidden,txt:/T47 PIC/.test($('plog').textContent)&&/RTP9999/.test($('plog').textContent)}));
   await p.evaluate(k=>{try{closeLog()}catch(e){}$('lpic').value=k.pic;$('lreg').value=k.reg;$('lnote').value='';if(k.ls==null)localStorage.removeItem('heliLogInfo');else localStorage.setItem('heliLogInfo',k.ls)},keep);await W(200);
-  t('T47 a v4.7.9 b12 Menu เรียง 6 แถว: GPS/Aircraft/Summary · Record/Tracks/Track line · HSI/FMS/RMI · SIM/Flight log/Marks · Refresh/Screen fit/Download · Screen awake/Manual/Exit',od==='gps,ac,sum,rec,trk,show,hsi,fms,rmi,sim,log,mk,ref,fit,dl,wk,man,exit',od);
+  t('T47 a v4.7.9 b12 Menu เรียง 6 แถว: GPS/Aircraft/Summary · Record/Tracks/Track line · HSI/FMS/RMI · SIM/Flight log/Marks · Refresh/Screen fit/Download · Screen awake/Manual/Waypoint (b5)/Exit',od==='gps,ac,sum,rec,trk,show,hsi,fms,rmi,sim,log,mk,ref,fit,dl,wk,man,wpt,exit',od);
   t('T47 b Flight log (b13: PIC เต็มแถว · ทะเบียน+วันที่ · Fuel+Taxi · Remarks ไม่มีค่าแปรผัน · ใบพิมพ์ไม่มี MC ลายเซ็นล่างขวา): หน้าต่างลอย ช่อง ≥ 48 px ตัวอักษร ≥ 17 px เขียนกลับช่องหน้าแรก + จำ PIC/ทะเบียน · ปุ่ม Create Flight Log เปิดตัวอย่างพิมพ์ที่มีค่าที่กรอก',lg.vis&&lg.flyw&&lg.keys==='lpic,lreg,ldate,lfob,ltx,lnote'&&lg.lay&&lg.minH>=48&&lg.fs>=17&&lg.btn>=52&&lg.pic==='T47 PIC'&&lg.reg==='RTP9999'&&lg.date==='2026-12-01'&&lg.note==='T47 note'&&lg.ls.pic==='T47 PIC'&&lg.ls.reg==='RTP9999'&&lg.w<lg.mw-40&&pr.show&&pr.hid&&pr.txt&&pr.mc&&pr.sig,{lg,pr})}
  // v4.7.9 b14: ลบ ค่ายวชิราลงกรณ์ (OSM Airport) · ชื่อเส้นทางที่แสดงบนแผนที่ไม่ทับเส้น + ขอบขาว
  {const o=await p.evaluate(()=>{const keep=JSON.stringify(RO);RO.length=0;
@@ -431,6 +431,26 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
  {const r=await p.evaluate(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));rulOn(true);await w(80);$('rlpr').click();await w(150);M.touched=true;M.cx+=100;M.cy-=100;drawMap(false);await w(150);
    const o={cross:crossMode(),lab:[...document.querySelectorAll('#ov .prl')].map(e=>e.textContent)};rulOn(false);await w(80);return o});
   t('T53 b iPad (โหมดกากบาท): เป้าวัดมุม = กากบาทกลางจอ เลื่อนแผนที่แล้วได้ทิศ 045°T',r.cross&&r.lab.length===1&&/^045°T/.test(r.lab[0]),r)}
+// v4.8.1 b5: Menu → Waypoint (Create / List) + VOR CMP
+ {const W=ms=>new Promise(r=>setTimeout(r,ms));
+  await p.evaluate(()=>{if(!mp.classList.contains('fly'))flyOn();document.querySelector('#flyT [data-fk="menu"]').click()});await W(200);
+  const m0=await p.evaluate(()=>({tile:!!document.querySelector('#flyM [data-fm="wpt"]'),n:DB.MY.length}));
+  await p.tap('#flyM [data-fm="wpt"]');await W(200);
+  const sub=await p.evaluate(()=>[...document.querySelectorAll('#flyWp [data-wp]')].map(b=>b.dataset.wp).join());
+  await p.tap('#flyWp [data-wp="c"]');await W(200);
+  const c0=await p.evaluate(()=>({la:document.querySelector('#flyWp [data-wf="ula"]').value,lo:document.querySelector('#flyWp [data-wf="ulo"]').value,h:Math.round(document.querySelector('#flyWp [data-wp="save"]').getBoundingClientRect().height)}));
+  await p.tap('#flyWp [data-wp="save"]');await W(200);
+  const e1=await p.evaluate(()=>{const e=document.querySelector('#flyWp .wpe');return{open:!document.querySelector('#flyWp').hidden,err:e&&!e.hidden?e.textContent:''}});
+  await p.fill('#flyWp [data-wf="un"]','T54 WPT');await p.selectOption('#flyWp [data-wf="ud"]','my');await p.tap('#flyWp [data-wp="save"]');await W(400);
+  const s1=await p.evaluate(()=>({closed:document.querySelector('#flyWp').hidden,n:DB.MY.length,has:DB.MY.some(x=>x.n==='T54 WPT')}));
+  await p.evaluate(()=>wpOpen('l'));await W(200);await p.fill('#flyWp [data-ws]','t54');await W(150);
+  const l1=await p.evaluate(()=>{const r=[...document.querySelectorAll('#flyWp .mkr')];return{rows:r.length,txt:r[0]?r[0].querySelector('.wpn').textContent:''}});
+  await p.tap('#flyWp .mkr [data-wv]');await W(300);
+  const v1=await p.evaluate(()=>({closed:document.querySelector('#flyWp').hidden,pop:M.pop&&M.pop.c==='MY'&&DB.MY[M.pop.i].n==='T54 WPT'}));
+  const vor=await p.evaluate(()=>{const v=DB.VOR.find(x=>x.c==='CMP');return v&&{n:v.n,la:+v.la.toFixed(4),lo:+v.lo.toFixed(4),x:v.x}});
+  await p.evaluate(()=>{const i=MYL.findIndex(x=>x.n==='T54 WPT');if(i>=0){MYL.splice(i,1);mylSave();myAfter()}M.pop=null;document.querySelector('#flyWp').q='';drawMap(false)}).catch(()=>{});
+  t('T54 v4.8.1 b5 Menu → 📌 Waypoint: เมนูย่อย Create/List · Create พิกัดเริ่มต้นกรอกให้ ปุ่ม ≥ 50 px · ไม่มีชื่อ = แจ้งเตือนในหน้าต่าง · บันทึกเป็นจุดของฉัน · List ค้นหา + Show ไปที่จุด',m0.tile&&sub==='c,l'&&/N$/.test(c0.la)&&/E$/.test(c0.lo)&&c0.h>=50&&e1.open&&!!e1.err&&s1.closed&&s1.n===m0.n+1&&s1.has&&l1.rows===1&&/T54 WPT/.test(l1.txt)&&v1.closed&&v1.pop,{m0,sub,c0,e1,s1,l1,v1});
+  t('T54 b VOR CMP (Chum Phae 112.90) 1638.12N 10159.33E อยู่ใน DB.VOR',vor&&vor.n==='Chum Phae'&&vor.la===16.6353&&vor.lo===101.9888&&vor.x==='112.90',vor)}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);
