@@ -451,6 +451,24 @@ t('T23 v4.7.5 ป้ายชื่อผู้ใช้ (v4.8.0 b2: มุม�
   await p.evaluate(()=>{const i=MYL.findIndex(x=>x.n==='T54 WPT');if(i>=0){MYL.splice(i,1);mylSave();myAfter()}M.pop=null;document.querySelector('#flyWp').q='';drawMap(false)}).catch(()=>{});
   t('T54 v4.8.1 b5 Menu → 📌 Waypoint: เมนูย่อย Create/List · Create พิกัดเริ่มต้นกรอกให้ ปุ่ม ≥ 50 px · ไม่มีชื่อ = แจ้งเตือนในหน้าต่าง · บันทึกเป็นจุดของฉัน · List ค้นหา + Show ไปที่จุด',m0.tile&&sub==='c,l'&&/N$/.test(c0.la)&&/E$/.test(c0.lo)&&c0.h>=50&&e1.open&&!!e1.err&&s1.closed&&s1.n===m0.n+1&&s1.has&&l1.rows===1&&/T54 WPT/.test(l1.txt)&&v1.closed&&v1.pop,{m0,sub,c0,e1,s1,l1,v1});
   t('T54 b VOR CMP (Chum Phae 112.90) 1638.12N 10159.33E อยู่ใน DB.VOR',vor&&vor.n==='Chum Phae'&&vor.la===16.6353&&vor.lo===101.9888&&vor.x==='112.90',vor)}
+// v4.8.1 b6: ค้นหาออนไลน์บน iPad — คีย์บอร์ดเปิดไม่ย่อ/ย้ายแผนที่ (เดิมวน resize/scroll จนค้าง) · กันแตะทะลุ · จำกัดเวลา 8 วินาที · เฉพาะภูมิภาคไทย
+ {const c2=await b.newContext({viewport:{width:810,height:1080},isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'});
+  await c2.addInitScript(()=>{const et=new EventTarget();const vv={scale:1,offsetLeft:0,offsetTop:0,width:innerWidth,height:innerHeight,addEventListener:et.addEventListener.bind(et),removeEventListener:et.removeEventListener.bind(et),dispatchEvent:et.dispatchEvent.bind(et)};Object.defineProperty(window,'visualViewport',{value:vv,configurable:true});window.__vv=vv});
+  await c2.route(/photon\.komoot\.io/,()=>{});let nomU='';
+  await c2.route(/nominatim/,r=>{nomU=r.request().url();r.fulfill({contentType:'application/json',body:JSON.stringify([{name:'Far',lat:'40.7',lon:'-73.9',display_name:'Far, USA'},{name:'Siriraj',lat:'13.758',lon:'100.485',display_name:'Siriraj, Bangkok'}])})});
+  const q=await c2.newPage();await q.goto('http://localhost:8773/');await q.waitForTimeout(1300);
+  await q.evaluate(()=>{try{kyClose()}catch(e){}flyOn();pts.length=0;pts.push({name:"A",lat:"1345.00N",lon:"10030.00E"},{name:"",lat:"",lon:""});drawPts()});await q.waitForTimeout(600);
+  await q.tap('#fbW');await q.waitForTimeout(400);await q.locator('#mpt .pt input.nm').locator('visible=true').nth(1).tap();
+  const k1=await q.evaluate(async()=>{const w=ms=>new Promise(r=>setTimeout(r,ms));let n=0;const d0=window.drawMap;window.drawMap=function(){n++;return d0.apply(this,arguments)};
+   for(let i=0;i<10;i++){__vv.height=640-(i%2)*20;__vv.offsetTop=(i%2)*40;__vv.dispatchEvent(new Event('resize'));__vv.dispatchEvent(new Event('scroll'));await w(80)}
+   const o={h:mp.style.height,draws:n};window.drawMap=d0;return o});
+  await q.keyboard.type('Siri');await q.waitForTimeout(300);const last=await q.evaluate(()=>document.querySelectorAll('#sg div[data-i]').length-1);const ts=Date.now();
+  await q.tap(`#sg div[data-i="${last}"]`);await q.waitForTimeout(500);
+  const k2=await q.evaluate(()=>({blur:!document.activeElement.closest('#mpt'),h:mp.style.height}));
+  await q.waitForFunction(()=>[...document.querySelectorAll('#sg div[data-i]')].some(d=>/Siriraj|ค้นหาไม่ได้|ไม่พบ/.test(d.textContent)),null,{timeout:15000}).catch(()=>{});const el=Date.now()-ts;
+  const items=await q.evaluate(()=>[...document.querySelectorAll('#sg div[data-i]')].map(d=>d.textContent));
+  await q.tap('#sg div[data-i="0"]').catch(()=>{});await q.waitForTimeout(300);const p1=await q.evaluate(()=>pts[1].name+' '+pts[1].lat);await c2.close();
+  t('T55 v4.8.1 b6 ค้นหาออนไลน์ iPad: คีย์บอร์ดเปิด (visualViewport เปลี่ยน 20 ครั้ง) ไม่ย่อแผนที่/วาด ≤ 2 ครั้ง · แตะค้นหาแล้วปิดคีย์บอร์ด ไม่แตะทะลุโดนช่องพิกัด → แผนที่พอดีจอหลังปิด · photon ไม่ตอบ = เลิกรอใน 8–10 วินาที · ตัดผลนอกภูมิภาค · เลือกผลได้',k1.h===''&&k1.draws<=2&&k2.blur&&k2.h==='620px'&&el>=7500&&el<11000&&items.length===1&&/Siriraj/.test(items[0])&&/bounded=1/.test(nomU)&&/^Siriraj 1345/.test(p1),{k1,k2,el,items,p1})}
  const sm=await p.evaluate(()=>({sb:$('sb').textContent.trim(),ph:document.querySelector('#msum .ph b').textContent,h2:document.querySelector('#cs h2').textContent,old:document.documentElement.innerHTML.includes('สรุปเส้นทาง Active')}));
  t('T27 d ชื่อกล่อง "สรุปเส้นทาง Active" เปลี่ยนเป็น Summary ทั้งแอป',sm.sb==='Summary'&&sm.ph==='Summary'&&sm.h2==='Summary'&&!sm.old,sm);
  await p.evaluate(()=>{if(!M.mac)$('mb').click();if(!M.sum)$('sb').click()});await W(400);

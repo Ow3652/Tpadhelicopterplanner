@@ -2168,7 +2168,7 @@ const row=inp.closest&&inp.closest(".pt");
 if(row){const i=+row.dataset.i;pts[i]={name:nm,lat:la,lon:lo};M.touched=false;drawPts();toast("ใช้ “"+(nm||"จุดที่เลือก")+"” "+la+" "+lo)}
 else if(inp.id==="nlin"){NLAUTO=false;if(NLSEL!=null){NLPEND={nm:nm||"WP",la:x.la,lo:x.lo};inp.value=nm||"WP";nlOkUpd()}else{nlPush(nm||"WP",x.la,x.lo);inp.value=""}}else{$("pdn").value=nm;$("pdla").value=la;$("pdlo").value=lo;ptPrev();$("pdn").focus()}}
 async function sgPick(i){const x=SGL[i],inp=SGI;if(!x||!inp||x.kind==="info")return;
-if(x.kind==="find"){SGL=[{kind:"info",val:"กำลังค้นหา…",sec:"",tag:""}];sgRender(inp);const tk=SGTOK;SGBUSY=true;let a=[],er=false;try{a=await geocode(x.q)}catch(e){er=true}
+if(x.kind==="find"){/* v4.8.1 b6: ปิดคีย์บอร์ดก่อนค้นหาออนไลน์ */if(matchMedia("(pointer:coarse)").matches)try{inp.blur()}catch(e){}SGL=[{kind:"info",val:"กำลังค้นหา…",sec:"",tag:""}];sgRender(inp);const tk=SGTOK;SGBUSY=true;let a=[],er=false;try{a=await geocode(x.q)}catch(e){er=true}
 SGBUSY=false;if(tk!==SGTOK)return;
 SGL=a.length?a.map(g=>({kind:"geo",val:g.n||x.q,sec:String(g.tag||"").slice(0,70),tag:"ออนไลน์",la:g.la,lo:g.lo})):[{kind:"info",val:er?"ค้นหาไม่ได้ (ต้องออนไลน์)":"ไม่พบสถานที่นี้",sec:"",tag:""}];sgRender(inp);return}
 if(x.kind==="pos"||x.kind==="geo"){sgFill(inp,x);return}
@@ -2177,7 +2177,9 @@ inp.dispatchEvent(new Event("input",{bubbles:true}));if(single&&inp.closest(".pt
 document.addEventListener("input",e=>{const t=e.target;if(!t||e.isTrusted===false)return;if(t.classList&&t.classList.contains("nm")&&t.closest("#pts")){const r=t.closest(".pt");sgShow(t,+r.dataset.i)}else if(t.id==="pdn"||t.id==="nlin")sgShow(t,-1)});
 $("sg").addEventListener("pointerdown",e=>{e.stopPropagation();SGP={x:e.clientX,y:e.clientY,m:false};SGBUSY=true});
 $("sg").addEventListener("pointermove",e=>{if(SGP&&Math.hypot(e.clientX-SGP.x,e.clientY-SGP.y)>8)SGP.m=true});
-$("sg").addEventListener("pointerup",e=>{const p=SGP;SGP=null;setTimeout(()=>{SGBUSY=false},400);if(!p||p.m)return;const d=e.target.closest("div[data-i]");if(d)sgPick(+d.dataset.i)});
+$("sg").addEventListener("pointerup",e=>{const p=SGP;SGP=null;setTimeout(()=>{SGBUSY=false},400);if(!p||p.m)return;const d=e.target.closest("div[data-i]");if(d){SGGH=Date.now();sgPick(+d.dataset.i)}});
+/* v4.8.1 b6: กันแตะทะลุ — หลังเลือกรายการ รายการหด/หายไป ส่วนที่เหลือของการแตะเดียวกัน (mousedown/click) ไปโดนช่องพิกัดข้างใต้ → โฟกัสช่องนั้น คีย์บอร์ดเปิดซ้ำ */
+var SGGH=0;["mousedown","click"].forEach(t=>document.addEventListener(t,e=>{if(Date.now()-SGGH<650&&!(e.target.closest&&e.target.closest("#sg"))){e.preventDefault();e.stopPropagation()}},true));
 $("sg").addEventListener("pointercancel",()=>{SGP=null;setTimeout(()=>{SGBUSY=false},400)});
 $("sg").addEventListener("mousedown",e=>e.preventDefault());
 document.addEventListener("pointerdown",e=>{if(!$("sg").hidden&&!$("sg").contains(e.target)&&e.target!==SGI)sgHide()},true);
@@ -2630,11 +2632,14 @@ m=t.match(/(\d{1,3})\s*°\s*(\d{1,2})\s*['′]\s*([\d.]+)\s*(?:["″”]|'')?\s*
 if(m){const la=(+m[1]+m[2]/60+m[3]/3600)*(m[4].toUpperCase()==="S"?-1:1),lo=(+m[5]+m[6]/60+m[7]/3600)*(m[8].toUpperCase()==="W"?-1:1);return ok(la,lo,"พิกัดองศา-ลิปดา-ฟิลิปดา")}
 if(m=t.match(/^\s*(-?\d{1,2}(?:\.\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/))return ok(m[1],m[2],"พิกัดทศนิยม");
 return null}
-async function geocode(q){const bias="&lat=13.75&lon=100.5";
-try{const r=await fetch("https://photon.komoot.io/api/?limit=6&q="+encodeURIComponent(q)+bias);if(!r.ok)throw 0;const j=await r.json();
-const a=(j.features||[]).map(f=>{const p=f.properties||{},c=f.geometry.coordinates;return{n:p.name||p.street||q,la:c[1],lo:c[0],tag:[p.street,p.district,p.city||p.county,p.state,p.country].filter(Boolean).join(", ")}});if(a.length)return a}catch(e){}
-const r=await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=th&q="+encodeURIComponent(q));if(!r.ok)throw new Error("geocode");
-return(await r.json()).map(x=>({n:(x.name||x.display_name.split(",")[0]),la:+x.lat,lo:+x.lon,tag:x.display_name}))}
+/* v4.8.1 b6: จำกัดเวลา 8 วินาทีต่อแหล่ง (เดิมรอได้ไม่สิ้นสุด) + เฉพาะภูมิภาครอบประเทศไทย (ผลไกลๆ ทำให้แผนที่ซูมออกทั้งโลก หนักบน iPad) */
+const GEOBOX=[92,4,111,23];
+function geoFetch(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||8000);return fetch(u,{signal:c.signal}).finally(()=>clearTimeout(t))}
+async function geocode(q){const bias="&lat=13.75&lon=100.5&bbox="+GEOBOX.join(",");
+try{const r=await geoFetch("https://photon.komoot.io/api/?limit=6&q="+encodeURIComponent(q)+bias);if(!r.ok)throw 0;const j=await r.json();
+const a=(j.features||[]).map(f=>{const p=f.properties||{},c=f.geometry.coordinates;return{n:p.name||p.street||q,la:c[1],lo:c[0],tag:[p.street,p.district,p.city||p.county,p.state,p.country].filter(Boolean).join(", ")}}).filter(x=>x.lo>=GEOBOX[0]&&x.lo<=GEOBOX[2]&&x.la>=GEOBOX[1]&&x.la<=GEOBOX[3]);if(a.length)return a}catch(e){}
+const r=await geoFetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=th&viewbox="+[GEOBOX[0],GEOBOX[3],GEOBOX[2],GEOBOX[1]].join(",")+"&bounded=1&q="+encodeURIComponent(q));if(!r.ok)throw new Error("geocode");
+return(await r.json()).map(x=>({n:(x.name||x.display_name.split(",")[0]),la:+x.lat,lo:+x.lon,tag:x.display_name})).filter(x=>x.lo>=GEOBOX[0]&&x.lo<=GEOBOX[2]&&x.la>=GEOBOX[1]&&x.la<=GEOBOX[3])}
 let GRES=[];
 function gShow(a){GRES=a;$("gres").innerHTML=a.map((x,i)=>`<div class="pm" style="margin:8px 0;padding:8px;border:1px solid var(--line);border-radius:6px"><b>${esc(x.n||"จุดที่ค้นหา")}</b><div style="font-size:.8rem;color:var(--mute)">${esc(x.tag||"")}</div><div style="font-size:.82rem">${fc(x.la,true,"ddmm")} ${fc(x.lo,false,"ddmm")} · ${x.la.toFixed(5)}, ${x.lo.toFixed(5)}</div><div class="bar" style="margin:6px 0 0"><button class="b s p" data-g="u${i}">📌 เพิ่มเป็นจุดร่วม</button><button class="b s" data-g="r${i}">+ เพิ่มเข้าเส้นทาง</button><button class="b s" data-g="v${i}">ดูบนแผนที่</button></div></div>`).join("")}
 async function gSearch(){const q=$("gq").value.trim(),msg=$("gmsg");GRES=[];$("gres").innerHTML="";if(!q){msg.textContent="พิมพ์ชื่อสถานที่ หรือวางลิงก์/พิกัดก่อน";return}
@@ -5290,7 +5295,9 @@ var FIT={k:100,busy:false};
 function fitInfo(){const v=window.visualViewport,r=x=>Math.round(x);let dk=false;try{dk=matchMedia("(prefers-color-scheme:dark)").matches}catch(e){}
  const ua=navigator.userAgent,br=/SamsungBrowser/.test(ua)?"Samsung Internet":/CriOS|Chrome/.test(ua)?"Chrome":/Safari/.test(ua)?"Safari":"other";
  return `Screen ${r(innerWidth)}×${r(innerHeight)}`+(v?` · view ${r(v.width)}×${r(v.height)} ×${(v.scale||1).toFixed(2)}`:"")+` · DPR ${(devicePixelRatio||1).toFixed(2)} · ${dk?"dark":"light"} · ${br} · fit ${FIT.k}%`}
-function fitApply(){if(FIT.busy)return;const S=mp.style,P=["left","top","width","height","right","bottom"];
+/* v4.8.1 b6: ขณะพิมพ์ในช่องกรอก (คีย์บอร์ดบนจอเปิด) ไม่ย่อ/ย้ายแผนที่ตาม visualViewport — บน iPad คีย์บอร์ด + การเลื่อนหาช่องที่โฟกัสทำให้ resize/scroll วนไม่รู้จบ หน้าค้างแล้วแอปปิด */
+function kbOpen(){const a=document.activeElement;if(!a||a===document.body)return false;if(a.isContentEditable)return true;const t=a.tagName;if(t==="TEXTAREA")return true;if(t!=="INPUT")return false;return !/^(button|checkbox|radio|range|color|file|submit|reset|image|hidden)$/i.test(a.type||"")}
+function fitApply(){if(FIT.busy)return;if(kbOpen()&&mp.classList.contains("full")&&matchMedia("(pointer:coarse)").matches&&!(((window.visualViewport||{}).scale||1)>1.01)){FIT.kb=1;return}FIT.kb=0;const S=mp.style,P=["left","top","width","height","right","bottom"];
  const clr=()=>{if(S.width||S.height){P.forEach(p=>S.removeProperty(p));return true}return false};let ch=false;
  if(!mp.classList.contains("full"))ch=clr();
  else{const v=window.visualViewport;let x=0,y=0,w=innerWidth,h=innerHeight,vv=false;
@@ -5303,7 +5310,8 @@ window.fitApply=fitApply;window.fitInfo=fitInfo;
 {let tm=0;const q=()=>{clearTimeout(tm);tm=setTimeout(fitApply,60)};
  addEventListener("resize",()=>{if(!FIT.busy)q()});addEventListener("orientationchange",q);
  if(window.visualViewport){visualViewport.addEventListener("resize",q);visualViewport.addEventListener("scroll",q)}
- new MutationObserver(q).observe(mp,{attributes:true,attributeFilter:["class"]});setTimeout(fitApply,500)}
+ new MutationObserver(q).observe(mp,{attributes:true,attributeFilter:["class"]});setTimeout(fitApply,500);
+ document.addEventListener("focusout",()=>{if(FIT.kb)setTimeout(()=>{if(!kbOpen())q()},350)})}
 /* Samsung Internet โหมดมืดจะเปลี่ยนสีแผนที่และตัวหนังสือทับธีมของแอป → แนะนำครั้งเดียว */
 setTimeout(()=>{try{if(/SamsungBrowser/.test(navigator.userAgent)&&matchMedia("(prefers-color-scheme:dark)").matches&&!localStorage.getItem("heliSbTip")){localStorage.setItem("heliSbTip","1");toast("Samsung Internet โหมดมืดเปลี่ยนสีแผนที่/ตัวหนังสือ — ปิดได้ที่ ☰ เมนูของเบราว์เซอร์ → โหมดมืด (หรือเปิดด้วย Chrome)")}}catch(e){}},2500)
 
